@@ -1,3 +1,12 @@
+# custom for latex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
