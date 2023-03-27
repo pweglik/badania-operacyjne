@@ -1,8 +1,13 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-dist = lambda x, y: sum(abs(a - b) for a, b in zip(x, y))
-graph = nx.generators.geographical_threshold_graph(n=10, theta=0.8, metric=dist) 
+N = 30
+
+graph = nx.generators.geographical_threshold_graph(n=N, theta=N * 0.8)
+
+solitary=[ n for n in nx.algorithms.isolates(graph)]
+graph.remove_nodes_from(solitary)
+
 
 nx.drawing.draw_networkx(graph)
 plt.show()
