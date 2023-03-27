@@ -5,8 +5,13 @@ import random
 
 from Line import Line
 
-dist = lambda x, y: sum(abs(a - b) for a, b in zip(x, y))
-graph = nx.generators.geographical_threshold_graph(n=10, theta=0.8, metric=dist) 
+N = 30
+
+graph = nx.generators.geographical_threshold_graph(n=N, theta=N * 0.8)
+
+solitary=[ n for n in nx.algorithms.isolates(graph)]
+graph.remove_nodes_from(solitary)
+
 
 def gen_random_line(length):
     V = random.sample(list(graph.nodes), length)
@@ -19,7 +24,7 @@ def gen_random_line(length):
         graph.add_edge(u, v, color='r', weight=3)
 
 
-gen_random_line(7)
+gen_random_line(10)
 
 colors = [graph[u][v]['color'] if 'color' in graph[u][v] else "black" for u,v in graph.edges()]
 weights = [graph[u][v]['weight'] if 'weight' in graph[u][v] else 1 for u,v in graph.edges()]
