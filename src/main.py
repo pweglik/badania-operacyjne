@@ -35,7 +35,7 @@ for node1, pos1 in positions.items():
 
 
 for edge in G.edges:
-    G[edge[0]][edge[1]]['weight'] = weights[edge[0]][edge[1]]
+    G[edge[0]][edge[1]]["weight"] = weights[edge[0]][edge[1]]
 
 
 # list of paths
