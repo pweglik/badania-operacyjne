@@ -14,13 +14,13 @@ N = 30     # number of vertices
 
 random.seed(SEED)
 
-G = nx.generators.geographical_threshold_graph(
+G = nx.generators.geometric.geographical_threshold_graph(
     n=N,
     theta=N * 0.8,
     seed=SEED,
 )
 
-solitary = [n for n in nx.algorithms.isolates(G)]
+solitary = [n for n in nx.algorithms.isolate.isolates(G)]
 G.remove_nodes_from(solitary)
 
 # list of paths
