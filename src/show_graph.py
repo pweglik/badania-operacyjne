@@ -1,4 +1,5 @@
 import collections
+import math
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -11,17 +12,20 @@ from Line import Line
 
 def show_graph(G: nx.Graph, genotype: Genotype):
     pos = nx.spring_layout(G, seed=0)
-    nx.drawing.draw_networkx(G, pos)
+    nx.drawing.draw_networkx(G, pos, node_color="gray")
 
-    edges_size = defaultdict(list)
+    edges_lines = defaultdict(list)
+    node_sizes = defaultdict(int)
 
     for i, line in enumerate(genotype.lines):
         stops = line.stops
         edges = [(u, v) for u, v in zip(stops, stops[1:])]
         for u, v in edges:
-            edges_size[(min(u, v), max(u, v))].append(line)
+            edges_lines[(min(u, v), max(u, v))].append(line)
+            node_sizes[u] += 1
+            node_sizes[v] += 1
 
-    for (u, v), lines in edges_size.items():
+    for (u, v), lines in edges_lines.items():
         for i, line in enumerate(lines):
             w = (len(lines) - i) * 4
             nx.drawing.draw_networkx_edges(
@@ -32,6 +36,17 @@ def show_graph(G: nx.Graph, genotype: Genotype):
 
         nx.draw_networkx_edge_labels(G, pos, edge_labels={(u, v): label}, font_size=8)
 
+    node_colors = list(map(math.sqrt, node_sizes.values()))
+    v_max = max(node_colors)
+    nx.draw_networkx_nodes(
+        G,
+        pos,
+        nodelist=node_sizes.keys(),
+        node_color=node_colors,
+        vmin=0,
+        vmax=v_max + 1,
+        cmap=plt.cm.Greens,
+    )
     plt.show()
 
 
@@ -46,5 +61,3 @@ if __name__ == "__main__":
     G1.add_edges_from([(2, 3), (3, 4), (6, 7), (7, 8)])
 
     show_graph(G1, g)
-
-    print("main")
