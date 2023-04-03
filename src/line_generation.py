@@ -1,6 +1,6 @@
 import random
 
-from src.Line import Line
+from Line import Line
 
 
 def random_one(X):

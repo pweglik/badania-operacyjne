@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from functools import reduce
 
-from src.Genotype import Genotype
-from src.Line import Line
+from Genotype import Genotype
+from Line import Line
 
 
 def show_graph(G: nx.Graph, genotype: Genotype):
