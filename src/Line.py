@@ -2,21 +2,22 @@ from typing import List
 
 
 class Line:
-
     next_id = 0
     next_color = 0
     colors = ["red", "green", "yellow", "purple", "orange", "olive"]
 
-    def __init__(self, stops: List[int], graph=None):
+    def __init__(self, stops: List[int], best_paths):
         self.id = Line.get_next_id()
         self.stops = stops  # ordered list of stops
-        # self.edges = [(v, u) for v in stops for u in graph[v] if (v, u) in graph.edges]
         self.edges = []
         self.edge_color, self.edge_style = Line.get_next_edge_style()
-        for i in range(len(self.stops) - 1):
-            v = self.stops[i]
-            u = self.stops[i + 1]
-            self.edges.append((v, u))
+
+        for i in range(len(stops) - 1):
+            best_path = best_paths[self.stops[i]][self.stops[i + 1]]
+            for j in range(len(best_path) - 1):
+                v = best_path[j]
+                u = best_path[j + 1]
+                self.edges.append((v, u))
 
     @staticmethod
     def get_next_edge_style():

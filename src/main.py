@@ -6,6 +6,7 @@ import networkx as nx
 import line_generation as lg
 from Genotype import Genotype
 from show_graph import show_graph
+from fitness_function import fitness
 
 # hyperparameters
 SEED = 46
@@ -37,25 +38,16 @@ for node1, pos1 in positions.items():
 for edge in G.edges:
     G[edge[0]][edge[1]]["weight"] = weights[edge[0]][edge[1]]
 
+# mockup for tests, this should be
+# set manually or be derived from population density
+points = np.random.rand(G.number_of_nodes()) * 10
+G.graph["points"] = points
 
-# list of paths
-# double indexed by vertice number
-
-# TODO no idea from where this gets distances
-# it should from geographical_threshold_graph
-# metric which is euclidean by default
 best_paths = dict(nx.all_pairs_shortest_path(G))
 
 
-lines = [
-    lg.gen_random_line_random_vertices(G, best_paths, 10),
-    lg.gen_random_line_random_paths(G, 10),
-    lg.gen_random_line_random_paths(G, 4),
-    lg.gen_random_line_random_paths(G, 7),
-    lg.gen_random_line_random_paths(G, 4),
-    lg.gen_random_line_random_paths(G, 5),
-    lg.gen_random_line_random_paths_recursive(G, 15),
-]
+lines = set([lg.gen_random_line(G, best_paths) for _ in range(5)])
 
 genotype = Genotype(len(lines), lines)
+print(fitness(genotype, G))
 show_graph(G, genotype)
