@@ -1,2 +1,3 @@
 SEED = 46
 N = 30
+N_IN_POPULATION = 200

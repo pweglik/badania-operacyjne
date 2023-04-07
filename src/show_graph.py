@@ -9,7 +9,7 @@ from Genotype import Genotype
 from Line import Line
 
 
-def show_graph(G: nx.Graph, genotype: Genotype):
+def show_graph(G: nx.Graph, genotype: Genotype, gen_number: int = 0):
     pos = nx.drawing.layout.spring_layout(G, seed=0)
     nx.drawing.nx_pylab.draw_networkx(G, pos, node_color="gray")
 
@@ -47,7 +47,9 @@ def show_graph(G: nx.Graph, genotype: Genotype):
         vmax=v_max + 1,
         cmap=plt.cm.Greens,
     )
-    plt.show()
+    # plt.show()
+    plt.savefig(f"../results/gen_{gen_number}.svg")
+    plt.clf()
 
 
 if __name__ == "__main__":

@@ -1,4 +1,3 @@
-from typing import List
 from Genotype import Genotype
 import networkx as nx
 import numpy as np
@@ -47,7 +46,7 @@ def get_bus_stops_points(organism: Genotype, G: nx.Graph) -> np.ndarray:
     return bus_stop_points
 
 
-def get_stop_penalty(organism: Genotype) -> int:
+def get_stop_penalty(organism: Genotype) -> float:
     """
     Returns sum of penalties for stopping at bus stops
     """
@@ -56,10 +55,10 @@ def get_stop_penalty(organism: Genotype) -> int:
     for line in organism.lines:
         penalty += len(line.stops)
 
-    return penalty
+    return alpha * penalty
 
 
-def get_lines_cost(organism: Genotype, G: nx.Graph):
+def get_lines_cost(organism: Genotype, G: nx.Graph) -> float:
     """
     Returns sum of costs of paths of all lines
     """
@@ -71,13 +70,13 @@ def get_lines_cost(organism: Genotype, G: nx.Graph):
     return cost
 
 
-def fitness(organism: Genotype, G: nx.Graph):
+def fitness(organism: Genotype, G: nx.Graph) -> float:
     """
     Returns fitness of organism in graph G
     """
     bus_stop_points = get_bus_stops_points(organism, G)
     penalty_number_of_lines = beta * organism.no_of_lines
-    penalty_bus_stops = alpha * get_stop_penalty(organism)
+    penalty_bus_stops = get_stop_penalty(organism)
     penalty_lines_cost = get_lines_cost(organism, G)
 
     return (
@@ -86,9 +85,3 @@ def fitness(organism: Genotype, G: nx.Graph):
         - penalty_bus_stops
         - penalty_lines_cost
     )
-
-
-# def generation_fitnesses(generation: List[Genotype], G: nx.Graph):
-#     best_paths = dict(nx.all_pairs_shortest_path(G))
-
-#     bus_stops_points = []
