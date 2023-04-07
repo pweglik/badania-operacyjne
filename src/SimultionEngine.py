@@ -39,7 +39,7 @@ class SimulationEngine:
                 population_with_fitness
             )
 
-            # generating new population form survived
+            # generating new population from survived
             population = self.new_generation_function(population_survived, self.G)
 
             if i % report_every_n == 0:

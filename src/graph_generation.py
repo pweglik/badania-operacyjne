@@ -4,16 +4,16 @@ import numpy as np
 import networkx as nx
 
 import line_generation as lg
-from params import SEED
+from params import GRAPH_SEED
 
 
 def generate_city_graph(n: int) -> Tuple[nx.Graph, Any]:
-    rng = np.random.default_rng(SEED)
+    rng = np.random.default_rng(GRAPH_SEED)
 
     G = nx.generators.geometric.geographical_threshold_graph(
         n=n,
         theta=n * 0.8,
-        seed=SEED,
+        seed=GRAPH_SEED,
     )
 
     solitary = [n for n in nx.algorithms.isolate.isolates(G)]
