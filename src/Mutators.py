@@ -32,7 +32,6 @@ class LineMutator:
 
     def invert(self, line: Line) -> Line:
         start, end = get_sublist_borders(len(line.stops))
-        start, end = 5, 2
 
         if start <= end:
             new_stops = line.stops[:start] + line.stops[end:start-1:-1] + line.stops[end+1:]
