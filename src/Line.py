@@ -7,7 +7,6 @@ class Line:
     colors = ["red", "green", "yellow", "purple", "orange", "olive"]
 
     def __init__(self, stops: List[int], best_paths):
-        self.best_paths = best_paths # save needed for mutators
         self.id = Line.get_next_id()
         self.stops = stops  # ordered list of stops
         self.edges = []

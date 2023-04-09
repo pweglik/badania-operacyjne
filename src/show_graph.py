@@ -60,7 +60,7 @@ if __name__ == "__main__":
     l1 = Line(verticies, best_paths)
     l2 = Line([2, 3, 4, 5, 6, 7, 8], best_paths)
     l3 = Line([4, 5, 6], best_paths)
-    g = Genotype(2, set([l1, l2]))
+    g = Genotype(set([l1, l2]))
 
     G1.add_nodes_from([2, 3, 7, 8])
     G1.add_edges_from([(2, 3), (3, 4), (6, 7), (7, 8)])
