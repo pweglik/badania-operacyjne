@@ -2,6 +2,7 @@ from copy import deepcopy
 import random
 
 from networkx import Graph
+import numpy as np
 from src.Genotype import Genotype
 from src.Line import Line
 from src import line_generation
@@ -81,7 +82,28 @@ class GenotypeMutator:
         new_genotype.lines.extend([new_line1, new_line2])
         
         return new_genotype
+
+    def merge_lines(self, genotype: Genotype, no_of_lines_to_merge: int = 2, mix_stops: bool = False) -> Genotype:
+        line_ids_to_mix = np.random.randint(0, genotype.no_of_lines, size=no_of_lines_to_merge)
+
+        idxs = {line_id: 0 for line_id in line_ids_to_mix}
+        new_lines = [line for i, line in enumerate(genotype.lines) if i not in idxs]
+        new_stops = []
+        while len(idxs) > 0:
+            line_id = np.random.choice(list(idxs.keys()))
+            while True:
+                new_stops.append(genotype.lines[line_id].stops[idxs[line_id]])
+                idxs[line_id] += 1
+
+                if idxs[line_id] >= len(genotype.lines[line_id].stops):
+                    del idxs[line_id]
+                    break
+                if mix_stops:
+                    break
+
+        new_lines.append(Line(new_stops, self.best_paths))
         
+        return Genotype(new_lines)
 
 
 if __name__ == "__main__":
