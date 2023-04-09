@@ -6,6 +6,7 @@ import numpy as np
 from src.Genotype import Genotype
 from src.Line import Line
 from src import line_generation
+import generation_util
 
 
 def get_sublist_borders(n: int) -> tuple[int, int]:
@@ -28,10 +29,17 @@ class LineMutator:
 
         shift = random.randrange(len(idxs))
 
-        new_stops = deepcopy(line.stops)
+        new_stops = generation_util.shift_by_idxs(line.stops, idxs, shift)
 
-        for i in range(len(idxs)):
-            new_stops[idxs[i]] = line.stops[idxs[i-shift]]
+        return Line(new_stops, self.best_paths)
+
+    def cycle_rotation(self, line: Line) -> Line:
+        idxs = generation_util.create_index_cycle(
+                list(range(len(line.stops))), 
+                np.random.randint(0, len(line.stops) // 2 + 1)
+        )
+
+        new_stops = generation_util.shift_by_idxs(line.stops, list(idxs), 1)
 
         return Line(new_stops, self.best_paths)
 
@@ -105,17 +113,32 @@ class GenotypeMutator:
         
         return Genotype(new_lines)
 
+    def cycle_stops_shift(self, genotype: Genotype) -> Genotype:
+        stops = generation_util.LineListLinearizer(genotype.lines)
+        idxs = generation_util.create_index_cycle(
+                list(range(len(stops))), 
+                np.random.randint(0, len(stops) // 2 + 1)
+        )
+
+        new_stops = generation_util.shift_by_idxs(stops, list(idxs), 1)
+        new_lines = [Line(stops, self.best_paths) for stops in new_stops.stops()]
+
+        return Genotype(new_lines)
+
 
 if __name__ == "__main__":
-    # advanced unit tests
-    line_mutator = LineMutator([[]])
+    def main():
+        # advanced unit tests
+        line_mutator = LineMutator([[]])
 
-    class LineMock(Line):
-        def __init__(self, stops: list[int]):
-            self.stops = stops
+        class LineMock(Line):
+            def __init__(self, stops: list[int]):
+                self.stops = stops
 
 
-    line = LineMock([0,1,2,3,4,5,6])
-    print(line.stops)
-    # print(line_mutator.rotation_to_right(line).stops)
-    print(line_mutator.invert(line).stops)
+        line = LineMock([0,1,2,3,4,5,6])
+        print(line.stops)
+        # print(line_mutator.rotation_to_right(line).stops)
+        print(line_mutator.invert(line).stops)
+
+    main()
