@@ -1,9 +1,8 @@
-from typing import List
 from Line import Line
 
 
 class Genotype:
-    def __init__(self, lines: List[Line]):
+    def __init__(self, lines: list[Line]):
         self.lines = lines
 
     @property
