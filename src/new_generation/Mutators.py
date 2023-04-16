@@ -59,6 +59,11 @@ class LineMutator:
 
         return Line(new_stops, self.best_paths)
 
+    def erase_stops(self, line: Line, no_of_stops_to_erase: int = 1) -> Line:
+        idx = np.random.choice(len(line.stops) - no_of_stops_to_erase, replace=False)
+        new_stops = np.array(line.stops)[idx]
+        return Line(new_stops, self.best_paths)
+
 
 class GenotypeMutator:
     def __init__(self, graph: Graph, best_paths) -> None:
@@ -100,7 +105,12 @@ class GenotypeMutator:
         new_stops = []
         while len(idxs) > 0:
             line_id = np.random.choice(list(idxs.keys()))
+            print('line_id:', line_id)
+            print('idxs:', idxs)
             while True:
+                print('idxs:', idxs)
+                print('idx:', idxs[line_id])
+                print('stops:', genotype.lines[line_id])
                 new_stops.append(genotype.lines[line_id].stops[idxs[line_id]])
                 idxs[line_id] += 1
 

@@ -19,6 +19,9 @@ class Line:
                 u = best_path[j + 1]
                 self.edges.append((v, u))
 
+    def __repr__(self) -> str:
+        return str(self.stops)
+
     @staticmethod
     def get_next_edge_style():
         color = Line.colors[Line.next_color]
