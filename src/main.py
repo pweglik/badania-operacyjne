@@ -53,30 +53,35 @@ def new_generation_replace_random_line(
     return new_generation
 
 
-G, best_paths = generate_city_graph(N)
+def create_initial_population(
+        G,
+        best_paths
+) -> List[Genotype]:
+    initial_population: List[Genotype] = []
 
-# creating inital population
+    for _ in range(N_IN_POPULATION):
+        lines = [lg.gen_random_line(G, best_paths) for _ in range(10)]
 
-initial_population: List[Genotype] = []
+        genotype = Genotype(lines)
 
-for _ in range(N_IN_POPULATION):
-    lines = [lg.gen_random_line(G, best_paths) for _ in range(10)]
+        initial_population.append(genotype)
 
-    genotype = Genotype(lines)
-
-    initial_population.append(genotype)
+    return initial_population
 
 
-sim_engine = SimulationEngine(
-    G,
-    initial_population=initial_population,
-    fitness_function=fitness,
-    survival_function=lambda population: n_best_survive(
-        population, N_IN_POPULATION // 5
-    ),
-    new_generation_function=lambda population, graph: new_generation_replace_random_line(
-        population, graph, N_IN_POPULATION, best_paths
-    ),
-)
+if __name__ == '__main__':
+    G, best_paths = generate_city_graph(N)
 
-sim_engine.run(1000, 200)
+    sim_engine = SimulationEngine(
+        G,
+        initial_population=create_initial_population(G, best_paths),
+        fitness_function=fitness,
+        survival_function=lambda population: n_best_survive(
+            population, N_IN_POPULATION // 5
+        ),
+        new_generation_function=lambda population, graph: new_generation_replace_random_line(
+            population, graph, N_IN_POPULATION, best_paths
+        ),
+    )
+
+    sim_engine.run(1000, 200)
