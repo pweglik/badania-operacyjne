@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 
 from Genotype import Genotype
-from src.Line import Line
+from Line import Line
 
 
 def show_graph(G: nx.Graph, genotype: Genotype, gen_number: int = 0, show: bool = False):
@@ -37,16 +37,17 @@ def show_graph(G: nx.Graph, genotype: Genotype, gen_number: int = 0, show: bool 
         )
 
     node_colors = list(map(math.sqrt, node_sizes.values()))
-    v_max = max(node_colors)
-    nx.drawing.nx_pylab.draw_networkx_nodes(
-        G,
-        pos,
-        nodelist=node_sizes.keys(),
-        node_color=node_colors,
-        vmin=0,
-        vmax=v_max + 1,
-        cmap=plt.cm.Greens,
-    )
+    if len(node_colors) > 0:
+        v_max = max(node_colors)
+        nx.drawing.nx_pylab.draw_networkx_nodes(
+            G,
+            pos,
+            nodelist=node_sizes.keys(),
+            node_color=node_colors,
+            vmin=0,
+            vmax=v_max + 1,
+            cmap=plt.cm.Greens,
+        )
 
     if show:
         plt.show()
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     l1 = Line(verticies, best_paths)
     l2 = Line([2, 3, 4, 5, 6, 7, 8], best_paths)
     l3 = Line([4, 5, 6], best_paths)
-    g = Genotype(set([l1, l2]))
+    g = Genotype(2, set([l1, l2]))
 
     G1.add_nodes_from([2, 3, 7, 8])
     G1.add_edges_from([(2, 3), (3, 4), (6, 7), (7, 8)])
