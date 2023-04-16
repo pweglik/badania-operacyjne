@@ -16,7 +16,7 @@ Install hooks
 pre-commit install
 ```
 
-Recommended action before commiting:
+Running hook against all files
 ```
 pre-commit run --all-files
 ```
