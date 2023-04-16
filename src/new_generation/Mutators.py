@@ -1,5 +1,4 @@
 from copy import deepcopy
-import random
 
 from networkx import Graph
 import numpy as np
@@ -23,7 +22,7 @@ class LineMutator:
             i = (i+1) % len(line.stops)
         idxs.append(i)
 
-        shift = random.randrange(len(idxs))
+        shift = np.random.randint(len(idxs))
 
         new_stops = generation_util.shift_by_idxs(line.stops, idxs, shift)
 
@@ -67,7 +66,7 @@ class GenotypeMutator:
 
     def erase_line(self, genotype: Genotype) -> Genotype:
         new_genotype = deepcopy(genotype)
-        i = random.randrange(genotype.no_of_lines)
+        i = np.random.randint(genotype.no_of_lines)
         del new_genotype.lines[i]
 
         return new_genotype
@@ -78,13 +77,13 @@ class GenotypeMutator:
         return Genotype(genotype.lines + [new_line])
     
     def split_line(self, genotype: Genotype, duplicate_split_point: bool = True) -> Genotype:
-        line_idx = random.randrange(genotype.no_of_lines)
+        line_idx = np.random.randint(genotype.no_of_lines)
         line = genotype.lines[line_idx]
 
         s = 1 if duplicate_split_point else 2
         e = len(line.stops) - 2
         if e < s: return genotype
-        stop_idx = np.random.randint(s, e)
+        stop_idx = np.random.randint(s, e + 1)
 
         new_line1 = Line(line.stops[:stop_idx + (1 if duplicate_split_point else 0)], self.best_paths)
         new_line2 = Line(line.stops[stop_idx:], self.best_paths)
