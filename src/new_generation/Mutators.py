@@ -7,7 +7,7 @@ import numpy as np
 from src.Genotype import Genotype
 from src.Line import Line
 from src import line_generation
-import generation_util
+import src.new_generation.generation_util as generation_util
 
 
 def get_sublist_borders(n: int) -> tuple[int, int]:

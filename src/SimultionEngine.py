@@ -43,7 +43,11 @@ class SimulationEngine:
         show_graph(self.G, population[0], i, show=report_show)
 
     def purge_empty(self, population: List[Genotype]) -> List[Genotype]:
-
+        """
+        Removes empty lines from all genotypes and then removes empty genotypes (with no lines)
+        :param population: population (potentially flawed)
+        :return: Valid population with no empty genotypes/lines without stops
+        """
         new_population = []
 
         for genotype in population:
