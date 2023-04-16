@@ -1,4 +1,5 @@
 from copy import deepcopy
+from operator import delitem
 from typing import MutableSequence, TypeVar
 from intervaltree import IntervalTree, Interval
 import numpy as np
@@ -40,9 +41,32 @@ class LineListLinearizer(MutableSequence):
         line: Line = interval.data
         line.stops[i - interval.begin] = val
 
+    def __delitem__(self, i: int) -> None:
+        raise NotImplementedError()
+
+    def insert(self, index: int, value: int) -> None:
+        raise NotImplementedError()
+
     def __len__(self) -> int:
         return self.tree.end() - self.tree.begin() + 1
 
     def stops(self) -> set[list[int]]:
         return {interval.data.stops for interval in self.tree.items()}
 
+
+if __name__ == "__main__":
+    def main():
+        from src import line_generation, graph_generation
+        G, bp = graph_generation.generate_city_graph(10)
+        lines = [line_generation.gen_random_line(G, bp, i + 3) for i in range(4)]
+
+        print(lines)
+        linearized = LineListLinearizer(lines)
+        print(linearized.stops())
+        print(linearized[2])
+        print(linearized[3])
+        print(linearized[4])
+        print(linearized[5])
+        print(len(linearized))
+
+    main()

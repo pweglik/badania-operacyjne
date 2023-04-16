@@ -3,8 +3,7 @@ import numpy as np
 
 import networkx as nx
 
-import line_generation as lg
-from params import GRAPH_SEED
+from src.params import GRAPH_SEED
 
 
 def generate_city_graph(n: int) -> Tuple[nx.Graph, Any]:

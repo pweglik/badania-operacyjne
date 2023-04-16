@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 
 from Genotype import Genotype
-from Line import Line
+from src.Line import Line
 
 
 def show_graph(G: nx.Graph, genotype: Genotype, gen_number: int = 0, show: bool = False):

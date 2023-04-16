@@ -1,4 +1,4 @@
-from Line import Line
+from src.Line import Line
 
 
 class Genotype:

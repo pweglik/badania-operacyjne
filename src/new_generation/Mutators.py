@@ -1,4 +1,5 @@
 from copy import deepcopy
+from dataclasses import replace
 import random
 
 from networkx import Graph
@@ -6,7 +7,7 @@ import numpy as np
 from src.Genotype import Genotype
 from src.Line import Line
 from src import line_generation
-import src.new_generation.generation_util
+import generation_util
 
 
 def get_sublist_borders(n: int) -> tuple[int, int]:
@@ -92,7 +93,7 @@ class GenotypeMutator:
         return new_genotype
 
     def merge_lines(self, genotype: Genotype, no_of_lines_to_merge: int = 2, mix_stops: bool = False) -> Genotype:
-        line_ids_to_mix = np.random.randint(0, genotype.no_of_lines, size=no_of_lines_to_merge)
+        line_ids_to_mix = np.random.choice(genotype.no_of_lines, size=no_of_lines_to_merge, replace=False)
 
         idxs = {line_id: 0 for line_id in line_ids_to_mix}
         new_lines = [line for i, line in enumerate(genotype.lines) if i not in idxs]

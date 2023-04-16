@@ -1,7 +1,7 @@
 import random
 from typing import Dict, List
 import networkx as nx
-from Line import Line
+from src.Line import Line
 
 
 def gen_random_line(

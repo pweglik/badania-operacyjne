@@ -4,12 +4,12 @@ import random
 from copy import deepcopy
 import networkx as nx
 
-import line_generation as lg
-from Genotype import Genotype
-from fitness import fitness
-from params import N, SEED, N_IN_POPULATION
-from graph_generation import generate_city_graph
-from SimultionEngine import SimulationEngine
+import src.line_generation as lg
+from src.Genotype import Genotype
+from src.fitness import fitness
+from src.params import N, SEED, N_IN_POPULATION
+from src.graph_generation import generate_city_graph
+from src.SimultionEngine import SimulationEngine
 from src.new_generation.Mutators import GenotypeMutator, LineMutator
 from src.new_generation.SpecimenCrossers import GenotypeCrosser
 
