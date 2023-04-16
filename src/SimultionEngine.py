@@ -17,6 +17,14 @@ class SimulationEngine:
             [List[Tuple[Genotype, float]], nx.Graph], List[Genotype]
         ],
     ):
+        """
+        Creates simulation
+        :param G: City graph
+        :param initial_population: First population
+        :param fitness_function: Calculates some metric for organism, result passed to survival_function
+        :param survival_function: Implements dying of the weakest organisms
+        :param new_generation_function: Implements mutations/crossing/etc.
+        """
         self.G = G
         self.initial_population = initial_population
         self.fitness_function = fitness_function
