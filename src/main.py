@@ -31,23 +31,30 @@ def new_generation_replace_random_line(
     new_generation_size: int,
     best_paths,
 ) -> List[Genotype]:
+
+    # extract organisms only (ignore fitness) from population_with_fitness
     new_generation: List[Genotype] = [
         organism_with_fitness[0] for organism_with_fitness in population_with_fitness
     ]
 
     counter = 0
     while len(new_generation) < new_generation_size:
+        # get organism (clone it, don't modify original) by
+        # looping over population_with_fitness with counter index
         organism: Genotype = deepcopy(
             population_with_fitness[counter % len(population_with_fitness)][0]
         )
 
-        line_to_remove = random.sample(organism.lines, 1)[0]
+        # (operating on clone)
+        # get random line and delete it
+        random_line = random.sample(organism.lines, 1)[0]
+        organism.lines.remove(random_line)
 
-        organism.lines.remove(line_to_remove)
-
+        # generate random line and add it to clone
+        # add clone itself to new generation
         organism.lines.append(lg.gen_random_line(G, best_paths, 5))
-
         new_generation.append(organism)
+
         counter += 1
 
     return new_generation
