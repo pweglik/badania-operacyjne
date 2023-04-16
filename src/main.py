@@ -7,7 +7,7 @@ import networkx as nx
 import src.line_generation as lg
 from src.Genotype import Genotype
 from src.fitness import fitness
-from src.params import N, SEED, N_IN_POPULATION, dprint
+from src.params import *
 from src.graph_generation import generate_city_graph
 from src.SimultionEngine import SimulationEngine
 from src.new_generation.Mutators import GenotypeMutator, LineMutator
@@ -85,19 +85,6 @@ def run_simulation(show=False):
 
     random.seed(SEED)
 
-    CHANCE_MERGE_SPECIMEN = 0.1
-
-    CHANCE_ROT_RIGHT = 0.1
-    CHANCE_ROT_CYCLE = 0.1
-    CHANCE_INVERT = 0.1
-
-    CHANCE_ERASE_LINE = 0.1
-    CHANCE_CREATE_LINE = 0.1
-    CHANCE_SPLIT = 0.1
-    CHANCE_MERGE = 0.1
-    CHANCE_CYCLE = 0.1
-
-
     def new_generation(
             population_with_fitness: List[Tuple[Genotype, float]],
             G: nx.Graph,
@@ -126,6 +113,8 @@ def run_simulation(show=False):
             organism: Genotype = deepcopy(
                 population_with_fitness[counter % len(population_with_fitness)][0]
             )
+
+            # print(counter % len(population_with_fitness), fitness(organism, G))
 
             # (operating on clone)
 
@@ -199,7 +188,8 @@ def run_simulation(show=False):
         ),
     )
 
-    sim_engine.run(1000, 100, report_show=show)
+    # sim_engine.run(50, 5, report_show=show)
+    sim_engine.run(1, 1, report_show=show)
 
 
 if __name__ == '__main__':

@@ -1,21 +1,7 @@
 from Genotype import Genotype
 import networkx as nx
 import numpy as np
-
-"""
-Hyperparameters
-
-R - hyperparamter of diminishing returns function.
-The function converges to e^R, as n->infinity
-
-alpha - cost of stopping on a bu stop
-
-beta - unit cost of a line
-"""
-R = 2
-alpha = 2
-beta = 10
-
+from params import alpha, beta, R
 
 def get_count_of_lines_at_bus_stop(organism: Genotype, G: nx.Graph) -> np.ndarray:
     """

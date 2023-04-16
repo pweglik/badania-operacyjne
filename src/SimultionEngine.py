@@ -35,10 +35,9 @@ class SimulationEngine:
         self.new_generation_function = new_generation_function
 
     def report(self, i: int, population: List[Genotype], report_show: bool = False):
-        print(f"Population {i}, fitness function: {self.fitness_function(population[0], self.G)}")
-
-        from collections import Counter
-        print(f"lines with X stops: {Counter([len(p.lines) for p in population])}")
+        print(f"Population {i:5}, "
+              f"best fitness function: {self.fitness_function(population[0], self.G):20.6f}, "
+              f"best lines stops count: {population[0].get_line_stops_count_summary()}")
 
         # save the best <new one> one to file
         show_graph(self.G, population[0], i, show=report_show)
@@ -76,7 +75,7 @@ class SimulationEngine:
 
         self.report(0, population, report_show)
 
-        for i in range(no_of_generations + 1):
+        for i in range(no_of_generations):
             dprint(f"1 lines with X stops: {Counter([len(p.lines) for p in population])}")
             population = self.purge_empty(population)
             dprint(f"2 lines with X stops: {Counter([len(p.lines) for p in population])}")
@@ -87,15 +86,31 @@ class SimulationEngine:
                 for organism in population
             ]
 
+            print(population_with_fitness[0][1])
+
+            population_with_fitness: List[Tuple[Genotype, float]] = [
+                (organism, self.fitness_function(organism, self.G))
+                for organism in population
+            ]
+
+            print(population_with_fitness[0][1])
+
+
             # applying survival function
             population_survived: List[Tuple[Genotype, float]] = self.survival_function(
                 population_with_fitness
             )
 
+            print("population_survived fitness", [item[1] for item in population_survived])
+
             dprint(f"3 lines with X stops: {Counter([len(p[0].lines) for p in population_survived])}")
 
             # generating new population from survived
             population = self.new_generation_function(population_survived, self.G)
+
+            print("new_generation fitness     ", [self.fitness_function(item, self.G) for item in population])
+            print()
+
 
             dprint(f"4 lines with X stops: {Counter([len(p.lines) for p in population])}\n\n")
 
