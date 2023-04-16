@@ -22,6 +22,10 @@ class Line:
     def __repr__(self) -> str:
         return str(self.stops)
 
+    @property
+    def stops_no(self) -> int:
+        return len(self.stops)
+
     @staticmethod
     def get_next_edge_style():
         color = Line.colors[Line.next_color]

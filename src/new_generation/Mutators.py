@@ -93,7 +93,8 @@ class GenotypeMutator:
         
         new_genotype = deepcopy(genotype)
         del new_genotype.lines[line_idx]
-        new_genotype.lines.extend([new_line1, new_line2])
+        if new_line1.stops_no > 0: new_genotype.lines.append(new_line1)
+        if new_line2.stops_no > 0: new_genotype.lines.append(new_line2)
         
         return new_genotype
 
@@ -105,12 +106,7 @@ class GenotypeMutator:
         new_stops = []
         while len(idxs) > 0:
             line_id = np.random.choice(list(idxs.keys()))
-            print('line_id:', line_id)
-            print('idxs:', idxs)
             while True:
-                print('idxs:', idxs)
-                print('idx:', idxs[line_id])
-                print('stops:', genotype.lines[line_id])
                 new_stops.append(genotype.lines[line_id].stops[idxs[line_id]])
                 idxs[line_id] += 1
 
