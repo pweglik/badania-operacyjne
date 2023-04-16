@@ -1,3 +1,5 @@
+from collections import Counter
+from copy import deepcopy
 from typing import Callable, List, Tuple
 import networkx as nx
 from Genotype import Genotype
@@ -31,6 +33,33 @@ class SimulationEngine:
         self.survival_function = survival_function
         self.new_generation_function = new_generation_function
 
+    def report(self, i: int, population: List[Genotype], report_show: bool = False):
+        print(f"Population {i}, fitness function: {self.fitness_function(population[0], self.G)}")
+
+        from collections import Counter
+        print(f"lines with X stops: {Counter([len(p.lines) for p in population])}")
+
+        # save the best <new one> one to file
+        show_graph(self.G, population[0], i, show=report_show)
+
+    def purge_empty(self, population: List[Genotype]) -> List[Genotype]:
+
+        new_population = []
+
+        for genotype in population:
+
+            genotype = deepcopy(genotype)
+
+            # non-empty lines
+            genotype.lines = list(filter(lambda line: len(line.stops) > 0, genotype.lines))
+
+            # non-empty genotype
+            if len(genotype.lines) > 0:
+                new_population.append(genotype)
+
+        return new_population
+
+
     def run(self, no_of_generations: int = 100, report_every_n: int = 10, report_show: bool = False):
         """
 
@@ -40,7 +69,13 @@ class SimulationEngine:
         """
         population: List[Genotype] = self.initial_population
 
+        self.report(0, population, report_show)
+
         for i in range(no_of_generations + 1):
+            print(f"1 lines with X stops: {Counter([len(p.lines) for p in population])}")
+            population = self.purge_empty(population)
+            print(f"2 lines with X stops: {Counter([len(p.lines) for p in population])}")
+
             # calculating fitness for all organisms
             population_with_fitness: List[Tuple[Genotype, float]] = [
                 (organism, self.fitness_function(organism, self.G))
@@ -52,14 +87,12 @@ class SimulationEngine:
                 population_with_fitness
             )
 
+            print(f"3 lines with X stops: {Counter([len(p[0].lines) for p in population_survived])}")
+
             # generating new population from survived
             population = self.new_generation_function(population_survived, self.G)
 
-            if i % report_every_n == 0:
-                print(f"Population {i}, fitness function: {self.fitness_function(population[0], self.G)}")
+            print(f"4 lines with X stops: {Counter([len(p.lines) for p in population])}\n\n")
 
-                from collections import Counter
-                print(f"lines with X stops: {Counter([len(p.lines) for p in population])}")
-
-                # save the best <new one> one to file
-                show_graph(self.G, population[0], i, show=report_show)
+            if (i+1) % report_every_n == 0:
+                self.report(i+1, population, report_show)
