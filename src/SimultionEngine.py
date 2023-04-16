@@ -31,11 +31,16 @@ class SimulationEngine:
         self.survival_function = survival_function
         self.new_generation_function = new_generation_function
 
-    def run(self, no_of_generations: int = 100, report_every_n: int = 10):
+    def run(self, no_of_generations: int = 100, report_every_n: int = 10, report_show: bool = False):
+        """
+
+        :param no_of_generations: run for X generation
+        :param report_every_n: every N, draw or save graph as picture
+        :param report_show: if <True> run plt.show(), otherwise plt.savefig(...)
+        """
         population: List[Genotype] = self.initial_population
 
         for i in range(no_of_generations + 1):
-            print(f"Population {i}")
             # calculating fitness for all organisms
             population_with_fitness: List[Tuple[Genotype, float]] = [
                 (organism, self.fitness_function(organism, self.G))
@@ -51,6 +56,10 @@ class SimulationEngine:
             population = self.new_generation_function(population_survived, self.G)
 
             if i % report_every_n == 0:
-                # save the best one to file
-                show_graph(self.G, population_survived[0][0], i)
-                print(self.fitness_function(population_survived[0][0], self.G))
+                print(f"Population {i}, fitness function: {self.fitness_function(population[0], self.G)}")
+
+                from collections import Counter
+                print(f"lines with X stops: {Counter([len(p.lines) for p in population])}")
+
+                # save the best <new one> one to file
+                show_graph(self.G, population[0], i, show=report_show)

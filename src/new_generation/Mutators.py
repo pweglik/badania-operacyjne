@@ -44,6 +44,7 @@ class LineMutator:
         return Line(new_stops, self.best_paths)
 
     def invert(self, line: Line) -> Line:
+        print(len(line.stops))
         start, end = get_sublist_borders(len(line.stops))
 
         if start <= end:
