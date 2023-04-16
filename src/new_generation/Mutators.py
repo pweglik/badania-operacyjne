@@ -1,6 +1,4 @@
 from copy import deepcopy
-from dataclasses import replace
-import random
 
 from networkx import Graph
 import numpy as np
@@ -10,16 +8,12 @@ from src import line_generation
 import src.new_generation.generation_util as generation_util
 
 
-def get_sublist_borders(n: int) -> tuple[int, int]:
-    return (random.randrange(n), random.randrange(n))
-
-
 class LineMutator:
     def __init__(self, best_paths) -> None:
         self.best_paths = best_paths
 
     def rotation_to_right(self, line: Line) -> Line:
-        start, end = get_sublist_borders(len(line.stops))
+        start, end = generation_util.get_sublist_borders(len(line.stops))
 
         idxs = []
         i = start
@@ -28,7 +22,7 @@ class LineMutator:
             i = (i+1) % len(line.stops)
         idxs.append(i)
 
-        shift = random.randrange(len(idxs))
+        shift = np.random.randint(len(idxs))
 
         new_stops = generation_util.shift_by_idxs(line.stops, idxs, shift)
 
@@ -45,7 +39,7 @@ class LineMutator:
         return Line(new_stops, self.best_paths)
 
     def invert(self, line: Line) -> Line:
-        start, end = get_sublist_borders(len(line.stops))
+        start, end = generation_util.get_sublist_borders(len(line.stops))
 
         if start <= end:
             new_stops = line.stops[:start] + line.stops[end:start-1:-1] + line.stops[end+1:]
@@ -72,7 +66,7 @@ class GenotypeMutator:
 
     def erase_line(self, genotype: Genotype) -> Genotype:
         new_genotype = deepcopy(genotype)
-        i = random.randrange(genotype.no_of_lines)
+        i = np.random.randint(genotype.no_of_lines)
         del new_genotype.lines[i]
 
         return new_genotype
@@ -83,18 +77,20 @@ class GenotypeMutator:
         return Genotype(genotype.lines + [new_line])
     
     def split_line(self, genotype: Genotype, duplicate_split_point: bool = True) -> Genotype:
-        line_idx = random.randrange(genotype.no_of_lines)
+        line_idx = np.random.randint(genotype.no_of_lines)
         line = genotype.lines[line_idx]
 
-        stop_idx = random.randrange(len(line.stops))
+        s = 1 if duplicate_split_point else 2
+        e = len(line.stops) - 2
+        if e < s: return genotype
+        stop_idx = np.random.randint(s, e + 1)
 
         new_line1 = Line(line.stops[:stop_idx + (1 if duplicate_split_point else 0)], self.best_paths)
         new_line2 = Line(line.stops[stop_idx:], self.best_paths)
         
         new_genotype = deepcopy(genotype)
         del new_genotype.lines[line_idx]
-        if new_line1.stops_no > 0: new_genotype.lines.append(new_line1)
-        if new_line2.stops_no > 0: new_genotype.lines.append(new_line2)
+        new_genotype.lines.extend([new_line1, new_line2])
 
         return new_genotype
 
