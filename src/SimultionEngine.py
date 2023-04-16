@@ -1,4 +1,4 @@
-from typing import Callable, List, Set, Tuple
+from typing import Callable, List, Tuple
 import networkx as nx
 from Genotype import Genotype
 from show_graph import show_graph

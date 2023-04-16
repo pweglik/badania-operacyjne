@@ -62,7 +62,7 @@ initial_population: List[Genotype] = []
 for _ in range(N_IN_POPULATION):
     lines = [lg.gen_random_line(G, best_paths) for _ in range(10)]
 
-    genotype = Genotype(len(lines), lines)
+    genotype = Genotype(lines)
 
     initial_population.append(genotype)
 
