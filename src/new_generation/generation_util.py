@@ -1,7 +1,7 @@
 from copy import deepcopy
-from operator import delitem
 from typing import MutableSequence, TypeVar
 from intervaltree import IntervalTree, Interval
+import random as rd
 import numpy as np
 
 from src.Line import Line
@@ -11,6 +11,8 @@ T = TypeVar("T", bound=MutableSequence)
 def create_index_cycle(idx: list[int], n: int):
     return np.random.choice(idx, size=n, replace=False)
 
+def get_sublist_borders(n: int) -> tuple[int, int]:
+    return (rd.randrange(n), rd.randrange(n))
 
 def shift_by_idxs(arr: T, idxs: list[int], shift: int) -> T:
     copied = deepcopy(arr)

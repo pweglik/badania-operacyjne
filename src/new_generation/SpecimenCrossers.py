@@ -30,4 +30,3 @@ class GenotypeCrosser:
 
         return Genotype(new_lines)
 
-
