@@ -2,7 +2,7 @@ import random as rd
 import numpy as np
 from src.Genotype import Genotype
 
-import src.new_generation.generation_util
+import src.new_generation.generation_util as generation_util
 from src.Line import Line
 
 
