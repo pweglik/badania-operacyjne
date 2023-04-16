@@ -4,6 +4,7 @@ from typing import Callable, List, Tuple
 import networkx as nx
 from Genotype import Genotype
 from show_graph import show_graph
+from src.params import dprint
 
 
 class SimulationEngine:
@@ -76,9 +77,9 @@ class SimulationEngine:
         self.report(0, population, report_show)
 
         for i in range(no_of_generations + 1):
-            print(f"1 lines with X stops: {Counter([len(p.lines) for p in population])}")
+            dprint(f"1 lines with X stops: {Counter([len(p.lines) for p in population])}")
             population = self.purge_empty(population)
-            print(f"2 lines with X stops: {Counter([len(p.lines) for p in population])}")
+            dprint(f"2 lines with X stops: {Counter([len(p.lines) for p in population])}")
 
             # calculating fitness for all organisms
             population_with_fitness: List[Tuple[Genotype, float]] = [
@@ -91,12 +92,12 @@ class SimulationEngine:
                 population_with_fitness
             )
 
-            print(f"3 lines with X stops: {Counter([len(p[0].lines) for p in population_survived])}")
+            dprint(f"3 lines with X stops: {Counter([len(p[0].lines) for p in population_survived])}")
 
             # generating new population from survived
             population = self.new_generation_function(population_survived, self.G)
 
-            print(f"4 lines with X stops: {Counter([len(p.lines) for p in population])}\n\n")
+            dprint(f"4 lines with X stops: {Counter([len(p.lines) for p in population])}\n\n")
 
             if (i+1) % report_every_n == 0:
                 self.report(i+1, population, report_show)
