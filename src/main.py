@@ -13,6 +13,7 @@ from src.SimultionEngine import SimulationEngine
 from src.new_generation.Mutators import GenotypeMutator, LineMutator
 from src.new_generation.SpecimenCrossers import GenotypeCrosser
 
+
 def n_best_survive(
     population_with_fitness: List[Tuple[Genotype, float]], n: int
 ) -> List[Tuple[Genotype, float]]:
@@ -29,7 +30,6 @@ def new_generation_replace_random_line(
     new_generation_size: int,
     best_paths,
 ) -> List[Genotype]:
-
     # extract organisms only (ignore fitness) from population_with_fitness
     new_generation: List[Genotype] = [
         organism_with_fitness[0] for organism_with_fitness in population_with_fitness
@@ -60,10 +60,7 @@ def new_generation_replace_random_line(
     return new_generation
 
 
-def create_initial_population(
-        G,
-        best_paths
-) -> List[Genotype]:
+def create_initial_population(G, best_paths) -> List[Genotype]:
     initial_population: List[Genotype] = []
 
     for _ in range(N_IN_POPULATION):
@@ -75,10 +72,11 @@ def create_initial_population(
 
     return initial_population
 
+
 def run_simulation(show=False):
     G, best_paths = generate_city_graph(N)
 
-    line_mutator = LineMutator(best_paths)
+    line_mutator = LineMutator(G, best_paths)
     genotype_mutator = GenotypeMutator(G, best_paths)
 
     genotype_crosser = GenotypeCrosser(best_paths)
@@ -86,15 +84,15 @@ def run_simulation(show=False):
     random.seed(SEED)
 
     def new_generation(
-            population_with_fitness: List[Tuple[Genotype, float]],
-            G: nx.Graph,
-            new_generation_size: int,
-            best_paths,
+        population_with_fitness: List[Tuple[Genotype, float]],
+        G: nx.Graph,
+        new_generation_size: int,
+        best_paths,
     ) -> List[Genotype]:
-
         # extract organisms only (ignore fitness) from population_with_fitness
         new_generation: List[Genotype] = [
-            organism_with_fitness[0] for organism_with_fitness in population_with_fitness
+            organism_with_fitness[0]
+            for organism_with_fitness in population_with_fitness
         ]
 
         if random.random() < CHANCE_MERGE_SPECIMEN:
@@ -103,7 +101,9 @@ def run_simulation(show=False):
             while idx1 == idx2:  # gen different
                 idx2 = random.randrange(len(new_generation))
 
-            g_new = genotype_crosser.merge_genotypes(new_generation[idx1], new_generation[idx2])
+            g_new = genotype_crosser.merge_genotypes(
+                new_generation[idx1], new_generation[idx2]
+            )
             new_generation.append(g_new)
 
         counter = 0
@@ -175,7 +175,6 @@ def run_simulation(show=False):
 
         return new_generation
 
-
     sim_engine = SimulationEngine(
         G,
         initial_population=create_initial_population(G, best_paths),
@@ -192,7 +191,7 @@ def run_simulation(show=False):
     sim_engine.run(1, 1, report_show=show)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     random.seed(SEED)
 
     # G, best_paths = generate_city_graph(N)

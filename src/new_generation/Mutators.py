@@ -9,7 +9,8 @@ import src.new_generation.generation_util as generation_util
 
 
 class LineMutator:
-    def __init__(self, best_paths) -> None:
+    def __init__(self, G: Graph, best_paths) -> None:
+        self.G = G
         self.best_paths = best_paths
 
     def rotation_to_right(self, line: Line) -> Line:
@@ -19,7 +20,7 @@ class LineMutator:
         i = start
         while i != end:
             idxs.append(i)
-            i = (i+1) % len(line.stops)
+            i = (i + 1) % len(line.stops)
         idxs.append(i)
 
         shift = np.random.randint(len(idxs))
@@ -30,8 +31,7 @@ class LineMutator:
 
     def cycle_rotation(self, line: Line) -> Line:
         idxs = generation_util.create_index_cycle(
-                list(range(len(line.stops))), 
-                np.random.randint(0, len(line.stops) // 2 + 1)
+            list(range(len(line.stops))), np.random.randint(0, len(line.stops) // 2 + 1)
         )
 
         new_stops = generation_util.shift_by_idxs(line.stops, list(idxs), 1)
@@ -42,14 +42,22 @@ class LineMutator:
         start, end = generation_util.get_sublist_borders(len(line.stops))
 
         if start <= end:
-            new_stops = line.stops[:start] + line.stops[end:start-1:-1] + line.stops[end+1:]
+            new_stops = (
+                line.stops[:start]
+                + line.stops[end : start - 1 : -1]
+                + line.stops[end + 1 :]
+            )
         else:
             new_stops = []
-            taken_range = line.stops[start:] + line.stops[:end+1]
+            taken_range = line.stops[start:] + line.stops[: end + 1]
             inversed_range = list(reversed(taken_range))
 
-            no_of_elems_to_take_first = len(line.stops)-start
-            new_stops = inversed_range[no_of_elems_to_take_first:] + line.stops[end+1:start] + inversed_range[:no_of_elems_to_take_first]
+            no_of_elems_to_take_first = len(line.stops) - start
+            new_stops = (
+                inversed_range[no_of_elems_to_take_first:]
+                + line.stops[end + 1 : start]
+                + inversed_range[:no_of_elems_to_take_first]
+            )
 
         return Line(new_stops, self.best_paths)
 
@@ -57,6 +65,17 @@ class LineMutator:
         idx = np.random.choice(len(line.stops) - no_of_stops_to_erase, replace=False)
         new_stops = np.array(line.stops)[idx]
         return Line(new_stops, self.best_paths)
+
+    def add_stops(self, line: Line, no: int = 1, mix: bool = False) -> Line:
+        current_stops = set(line.stops)
+        not_used_stops = set(self.G.nodes.keys() - current_stops)
+        stops_to_add = list(
+            np.random.choice(list(not_used_stops), size=no, replace=False)
+        )
+
+        # idx = np.random.choice(line.stops_no, no, replace=True)
+
+        return Line(line.stops + stops_to_add, self.best_paths)
 
 
 class GenotypeMutator:
@@ -75,27 +94,37 @@ class GenotypeMutator:
         new_line = line_generation.gen_random_line(self.graph, self.best_paths)
 
         return Genotype(genotype.lines + [new_line])
-    
-    def split_line(self, genotype: Genotype, duplicate_split_point: bool = True) -> Genotype:
+
+    def split_line(
+        self, genotype: Genotype, duplicate_split_point: bool = True
+    ) -> Genotype:
         line_idx = np.random.randint(genotype.no_of_lines)
         line = genotype.lines[line_idx]
 
         s = 1 if duplicate_split_point else 2
         e = len(line.stops) - 2
-        if e < s: return genotype
+        if e < s:
+            return genotype
         stop_idx = np.random.randint(s, e + 1)
 
-        new_line1 = Line(line.stops[:stop_idx + (1 if duplicate_split_point else 0)], self.best_paths)
+        new_line1 = Line(
+            line.stops[: stop_idx + (1 if duplicate_split_point else 0)],
+            self.best_paths,
+        )
         new_line2 = Line(line.stops[stop_idx:], self.best_paths)
-        
+
         new_genotype = deepcopy(genotype)
         del new_genotype.lines[line_idx]
         new_genotype.lines.extend([new_line1, new_line2])
 
         return new_genotype
 
-    def merge_lines(self, genotype: Genotype, no_of_lines_to_merge: int = 2, mix_stops: bool = False) -> Genotype:
-        line_ids_to_mix = np.random.choice(genotype.no_of_lines, size=no_of_lines_to_merge, replace=False)
+    def merge_lines(
+        self, genotype: Genotype, no_of_lines_to_merge: int = 2, mix_stops: bool = False
+    ) -> Genotype:
+        line_ids_to_mix = np.random.choice(
+            genotype.no_of_lines, size=no_of_lines_to_merge, replace=False
+        )
 
         idxs = {line_id: 0 for line_id in line_ids_to_mix}
         new_lines = [line for i, line in enumerate(genotype.lines) if i not in idxs]
@@ -113,14 +142,13 @@ class GenotypeMutator:
                     break
 
         new_lines.append(Line(new_stops, self.best_paths))
-        
+
         return Genotype(new_lines)
 
     def cycle_stops_shift(self, genotype: Genotype) -> Genotype:
         stops = generation_util.LineListLinearizer(genotype.lines)
         idxs = generation_util.create_index_cycle(
-                list(range(len(stops))), 
-                np.random.randint(0, len(stops) // 2 + 1)
+            list(range(len(stops))), np.random.randint(0, len(stops) // 2 + 1)
         )
 
         new_stops = generation_util.shift_by_idxs(stops, list(idxs), 1)
@@ -130,16 +158,18 @@ class GenotypeMutator:
 
 
 if __name__ == "__main__":
+
     def main():
         # advanced unit tests
-        line_mutator = LineMutator([[]])
+        import networkx as nx
+
+        line_mutator = LineMutator(nx.empty_graph(), [[]])
 
         class LineMock(Line):
             def __init__(self, stops: list[int]):
                 self.stops = stops
 
-
-        line = LineMock([0,1,2,3,4,5,6])
+        line = LineMock([0, 1, 2, 3, 4, 5, 6])
         print(line.stops)
         # print(line_mutator.rotation_to_right(line).stops)
         print(line_mutator.invert(line).stops)
