@@ -1,28 +1,51 @@
+% !TeX spellcheck = pl_PL
 \documentclass[12pt,a4paper,openright]{mwrep}
+%\documentclass[12pt,a4paper,openright]{article}
 
-\usepackage{lmodern}
-\usepackage[T1]{polski}
+% Przemkowe importy co nie działają
+%\usepackage{lmodern}
+%\usepackage[T1]{polski}
+%
+%\usepackage[a4paper,
+%            tmargin=2cm,
+%            bmargin=2cm,
+%            lmargin=2cm,
+%            rmargin=2cm,
+%            bindingoffset=0cm]{geometry}
+%
+%\usepackage{tocloft}
+%\usepackage{hyperref}
+%
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage{siunitx}
+%
+%\usepackage{listings}
+%
+%\usepackage{graphicx}
+%\usepackage{subfig}
+%\usepackage{float}
+%\usepackage{booktabs}
 
-\usepackage[a4paper,
-            tmargin=2cm,
-            bmargin=2cm,
-            lmargin=2cm,
-            rmargin=2cm,
-            bindingoffset=0cm]{geometry}
-
-\usepackage{tocloft}
-\usepackage{hyperref}
-
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{siunitx}
-
-\usepackage{listings}
-
-\usepackage{graphicx}
-\usepackage{subfig}
-\usepackage{float}
-\usepackage{booktabs}
+% moje działają
+\usepackage{amssymb} % symbol kąta
+\usepackage[polish]{babel} % polskie nazwy
+\usepackage[T1]{fontenc} % polskie znaki
+\usepackage[margin=1.0in]{geometry} % marginesy
+\usepackage[utf8]{inputenc}
+\usepackage{listingsutf8} % bloki kodu
+\usepackage{color} % kolory
+\usepackage{indentfirst} % wcięcie w pierwszej linii paragrafu
+\usepackage{graphicx} % obrazy
+\usepackage{float} % dla image [H]
+\usepackage{amsmath,amsthm,amssymb,mathtools} % matematyka dowód
+\usepackage{changepage} % matematyka dowód
+\usepackage{siunitx} % wyrównanie do kropki
+\usepackage{makecell} % wyrównania nagłówków
+%\usepackage{enumitem} % wyrównania nagłówków
+\usepackage{tikz} % zbocza
+\usetikzlibrary{decorations.markings}
+\usepackage{hyperref} % bez obwódek wokół linków
 
 \hypersetup{
     colorlinks,
@@ -48,8 +71,69 @@ Projekt\\
 
 \maketitle
 
-\chapter{Chapter 1}
+\chapter{Model matematyczny}
 
-Some text
+\begin{enumerate}
+	\item Przystanki mają jakąś ilość punktów w zależności od gęstości zaludnienia i ciekawych punktów
+	\begin{itemize}
+		\item Dla każdego przystanku obliczyć wartość ludzi jako % TODO function
+		\item Głównym punktom w Krakowie (D17 itp) nadać wartość punktową (jakoś)
+		\item Dla każdego przystanku wyliczyć wartość obiektową tak jak i wartość ludzi
+	\end{itemize}
+	\item Rozkładamy linie komunikacyjne po mieście tak, by maksymalizować sumę zebranych punktów przez wszystkie linie
+	\item Wprowadzamy koszt dla linii jest jednostkowy + koszt ścieżki w grafie po której jedzie
+	\item Punkty dzielą się między linie w następujący sposób (1 linia - 100\%, 2 linie - 66\% każda, 3 linie - każda po 50\% etc.) Fajnie jakby to zbiegało do jakieś liczby, może np. do 2?
+	\item Maksymalizujemy sumę punktów zebranych przez wszystkie linie
+\end{enumerate}
+
+\subsection{Dane}
+	\begin{enumerate}
+		\item $n$ - liczba linii
+		\item $m$ - liczba przystanków
+	\end{enumerate}
+
+\subsubsection{Graf}
+
+	\begin{enumerate}
+		\item Wierzchołki to skrzyżowania (0 punktów) + istniejące przystanki (punkty wg wzoru z pkt 1 - “ile ludzi chce jechać z niego” i pobliskie atrakcje/ważne miejsca)
+		\item $p(j)$ - surowa wartość punktowa przystanku
+		\begin{itemize}
+			\item $p(j) = \sum_{i=0}^{n-1} \frac{w_{j, i}}{f(d_j, i)}$ gdzie $w_{j, i}$ to wartość obiektu (np. liczba mieszkańców bloku) a $d_{j,i}$ to odległość tego bloku od przystanku, f – funkcja skalująca
+			\item Funkcja liczona dla danego przystanku $j$
+		\end{itemize}
+		\item Krawędzie to ulice między skrzyżowaniami rozdzielone przez przystanki
+		\item Koszt krawędzi to odległość między punktami
+	\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+\subsection{Szukane}
+	$x_{i,j}$ - czy linia $i$ zatrzymuje się na przystanku $j$, gdzie:
+	\begin{enumerate}
+		\item $i \in \left[ 0, n-1 \right]$
+		\item $j \in \left[ 0, m-1 \right]$
+	\end{enumerate}
+
+\subsection{Hiperparametry}
+	\begin{enumerate}
+		\item $\alpha$ - koszt zatrzymania się na przystanku,
+		\item $\beta$ - koszt nowej linii,
+		\item $R$ - hiper parametr zbiegania.
+	\end{enumerate}
+
+
+
+$l_j = \sum_{i=0}^{n-1} x_{i, j}$\\
+$p_{i, j} = \frac{p_j \cdot (1+\frac{R}{l_j})^l_j}{l_j}$ -- ile punktów linia $i$ uzyskuje z przystanku $j$
+
+f(x) = \sum{i=0}{n-1} \sum{j=0}{m-1} xi,j * (pi,j-a)-Si-b
+
 
 \end{document}
