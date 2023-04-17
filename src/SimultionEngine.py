@@ -102,9 +102,9 @@ class SimulationEngine:
                 population_with_fitness
             )
 
-            print(
-                "population_survived fitness", [item[1] for item in population_survived]
-            )
+            # print(
+            #     "population_survived fitness", [item[1] for item in population_survived]
+            # )
 
             dprint(
                 f"3 lines with X stops: {Counter([len(p[0].lines) for p in population_survived])}"
@@ -113,11 +113,11 @@ class SimulationEngine:
             # generating new population from survived
             population = self.new_generation_function(population_survived, self.G)
 
-            print(
-                "new_generation fitness     ",
-                [self.fitness_function(item, self.G) for item in population],
-            )
-            print()
+            # print(
+            #     "new_generation fitness     ",
+            #     [self.fitness_function(item, self.G) for item in population],
+            # )
+            # print()
 
             dprint(
                 f"4 lines with X stops: {Counter([len(p.lines) for p in population])}\n\n"
