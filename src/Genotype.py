@@ -1,8 +1,10 @@
-from typing import List
 from Line import Line
 
 
 class Genotype:
-    def __init__(self, no_of_lines: int, lines: List[Line]):
-        self.no_of_lines = no_of_lines
+    def __init__(self, lines: list[Line]):
         self.lines = lines
+
+    @property
+    def no_of_lines(self) -> int:
+        return len(self.lines)
