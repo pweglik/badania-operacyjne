@@ -13,11 +13,13 @@ The function converges to e^R, as n->infinity
 alpha - cost of stopping on a bus stop
 
 beta - unit cost of a line
+
+delta - cost of empty bus stop
 """
 R = 2
-alpha = 0.1
-beta = 0.3
-
+alpha = 0.05
+beta = 0.8
+delta = 0.7
 
 # simulation params
 CHANCE_MERGE_SPECIMEN = 0.9

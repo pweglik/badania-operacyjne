@@ -68,7 +68,7 @@ if __name__ == "__main__":
         from common import line_generation
 
         G, bp = generate_city_graph(10)
-        lines = [line_generation.gen_random_line(G, bp, i + 3) for i in range(4)]
+        lines = [line_generation.gen_random_line(G, bp) for i in range(4)]
 
         print("lines", lines)
 

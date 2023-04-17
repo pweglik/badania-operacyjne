@@ -27,7 +27,7 @@ def new_generation_replace_random_line(
 
         organism.lines.remove(line_to_remove)
 
-        organism.lines.append(lg.gen_random_line(G, best_paths, 5))
+        organism.lines.append(lg.gen_random_line(G, best_paths))
 
         new_generation.append(organism)
         counter += 1
