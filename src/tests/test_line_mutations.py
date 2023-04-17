@@ -15,7 +15,7 @@ class LineTest(unittest.TestCase):
         random.seed(0)
 
         self.G, self.best_paths = generate_city_graph(8)
-        self.line_mutator = LineMutator(self.best_paths)
+        self.line_mutator = LineMutator(self.G, self.best_paths)
 
     def test_line_rotation_to_right(self):
         l1 = gen_random_line(self.G, self.best_paths)
