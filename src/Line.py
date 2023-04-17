@@ -1,12 +1,9 @@
-from typing import List
-
-
 class Line:
     next_id = 0
     next_color = 0
     colors = ["red", "green", "yellow", "purple", "orange", "olive"]
 
-    def __init__(self, stops: List[int], best_paths):
+    def __init__(self, stops: list[int], best_paths):
         self.id = Line.get_next_id()
         self.stops = stops  # ordered list of stops
         self.edges = []

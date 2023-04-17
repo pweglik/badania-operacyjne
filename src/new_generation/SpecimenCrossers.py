@@ -1,9 +1,9 @@
 import random as rd
 import numpy as np
-from src.Genotype import Genotype
+from Genotype import Genotype
 
-from src.new_generation import generation_util
-from src.Line import Line
+from new_generation import generation_util
+from Line import Line
 
 
 class GenotypeCrosser:
@@ -21,12 +21,10 @@ class GenotypeCrosser:
 
         stops = generation_util.LineListLinearizer(genotype.lines)
         idxs = generation_util.create_index_cycle(
-                list(range(len(stops))), 
-                np.random.randint(0, len(stops) // 2 + 1)
+            list(range(len(stops))), np.random.randint(0, len(stops) // 2 + 1)
         )
 
         new_stops = generation_util.shift_by_idxs(stops, list(idxs), 1)
         new_lines = [Line(stops, self.best_paths) for stops in new_stops.stops()]
 
         return Genotype(new_lines)
-

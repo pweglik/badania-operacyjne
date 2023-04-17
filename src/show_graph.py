@@ -1,5 +1,4 @@
 import math
-from typing import Dict, List, Tuple
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -9,12 +8,14 @@ from Genotype import Genotype
 from Line import Line
 
 
-def show_graph(G: nx.Graph, genotype: Genotype, gen_number: int = 0, show: bool = False):
+def show_graph(
+    G: nx.Graph, genotype: Genotype, gen_number: int = 0, show: bool = False
+):
     pos = nx.drawing.layout.spring_layout(G, seed=0)
     nx.drawing.nx_pylab.draw_networkx(G, pos, node_color="gray")
 
-    edges_lines: Dict[Tuple[int, int], List[Line]] = defaultdict(list)
-    node_sizes: Dict[Tuple[int], int] = defaultdict(int)
+    edges_lines: dict[tuple[int, int], list[Line]] = defaultdict(list)
+    node_sizes: dict[tuple[int], int] = defaultdict(int)
 
     for i, line in enumerate(genotype.lines):
         edges = line.edges
@@ -29,12 +30,6 @@ def show_graph(G: nx.Graph, genotype: Genotype, gen_number: int = 0, show: bool 
             nx.drawing.nx_pylab.draw_networkx_edges(
                 G, pos, edgelist=[(u, v)], edge_color=line.edge_color, width=w
             )
-
-        label = ", ".join(map(lambda x: str(x.id), lines))
-
-        nx.drawing.nx_pylab.draw_networkx_edge_labels(
-            G, pos, edge_labels={(u, v): label}, font_size=8
-        )
 
     node_colors = list(map(math.sqrt, node_sizes.values()))
     if len(node_colors) > 0:

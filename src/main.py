@@ -1,21 +1,35 @@
-from typing import List, Tuple
 import random
 
 from copy import deepcopy
 import networkx as nx
 
-import src.line_generation as lg
-from src.Genotype import Genotype
-from src.fitness import fitness
-from src.params import *
-from src.graph_generation import generate_city_graph
-from src.SimultionEngine import SimulationEngine
-from src.new_generation.Mutators import GenotypeMutator, LineMutator
-from src.new_generation.SpecimenCrossers import GenotypeCrosser
+import line_generation as lg
+from Genotype import Genotype
+from fitness import fitness
+from params import (
+    CHANCE_CREATE_LINE,
+    CHANCE_CYCLE,
+    CHANCE_ERASE_LINE,
+    CHANCE_INVERT,
+    CHANCE_MERGE,
+    CHANCE_MERGE_SPECIMEN,
+    CHANCE_ROT_CYCLE,
+    CHANCE_ROT_RIGHT,
+    CHANCE_SPLIT,
+    N,
+    N_IN_POPULATION,
+    SEED,
+    dprint,
+)
+from graph_generation import generate_city_graph
+from SimultionEngine import SimulationEngine
+from new_generation.Mutators import GenotypeMutator, LineMutator
+from new_generation.SpecimenCrossers import GenotypeCrosser
+
 
 def n_best_survive(
-    population_with_fitness: List[Tuple[Genotype, float]], n: int
-) -> List[Tuple[Genotype, float]]:
+    population_with_fitness: list[tuple[Genotype, float]], n: int
+) -> list[tuple[Genotype, float]]:
     sorted_generation = sorted(
         population_with_fitness, key=lambda item: item[1], reverse=True
     )
@@ -24,14 +38,13 @@ def n_best_survive(
 
 
 def new_generation_replace_random_line(
-    population_with_fitness: List[Tuple[Genotype, float]],
+    population_with_fitness: list[tuple[Genotype, float]],
     G: nx.Graph,
     new_generation_size: int,
     best_paths,
-) -> List[Genotype]:
-
+) -> list[Genotype]:
     # extract organisms only (ignore fitness) from population_with_fitness
-    new_generation: List[Genotype] = [
+    new_generation: list[Genotype] = [
         organism_with_fitness[0] for organism_with_fitness in population_with_fitness
     ]
 
@@ -60,11 +73,8 @@ def new_generation_replace_random_line(
     return new_generation
 
 
-def create_initial_population(
-        G,
-        best_paths
-) -> List[Genotype]:
-    initial_population: List[Genotype] = []
+def create_initial_population(G, best_paths) -> list[Genotype]:
+    initial_population: list[Genotype] = []
 
     for _ in range(N_IN_POPULATION):
         lines = [lg.gen_random_line(G, best_paths) for _ in range(10)]
@@ -74,6 +84,7 @@ def create_initial_population(
         initial_population.append(genotype)
 
     return initial_population
+
 
 def run_simulation(show=False):
     G, best_paths = generate_city_graph(N)
@@ -86,15 +97,15 @@ def run_simulation(show=False):
     random.seed(SEED)
 
     def new_generation(
-            population_with_fitness: List[Tuple[Genotype, float]],
-            G: nx.Graph,
-            new_generation_size: int,
-            best_paths,
-    ) -> List[Genotype]:
-
+        population_with_fitness: list[tuple[Genotype, float]],
+        G: nx.Graph,
+        new_generation_size: int,
+        best_paths,
+    ) -> list[Genotype]:
         # extract organisms only (ignore fitness) from population_with_fitness
-        new_generation: List[Genotype] = [
-            organism_with_fitness[0] for organism_with_fitness in population_with_fitness
+        new_generation: list[Genotype] = [
+            organism_with_fitness[0]
+            for organism_with_fitness in population_with_fitness
         ]
 
         if random.random() < CHANCE_MERGE_SPECIMEN:
@@ -103,7 +114,9 @@ def run_simulation(show=False):
             while idx1 == idx2:  # gen different
                 idx2 = random.randrange(len(new_generation))
 
-            g_new = genotype_crosser.merge_genotypes(new_generation[idx1], new_generation[idx2])
+            g_new = genotype_crosser.merge_genotypes(
+                new_generation[idx1], new_generation[idx2]
+            )
             new_generation.append(g_new)
 
         counter = 0
@@ -175,7 +188,6 @@ def run_simulation(show=False):
 
         return new_generation
 
-
     sim_engine = SimulationEngine(
         G,
         initial_population=create_initial_population(G, best_paths),
@@ -188,11 +200,10 @@ def run_simulation(show=False):
         ),
     )
 
-    # sim_engine.run(50, 5, report_show=show)
-    sim_engine.run(1, 1, report_show=show)
+    sim_engine.run(100, 10, report_show=show)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     random.seed(SEED)
 
     # G, best_paths = generate_city_graph(N)

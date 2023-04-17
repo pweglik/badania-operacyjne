@@ -1,6 +1,6 @@
 from collections import Counter
 
-from src.Line import Line
+from Line import Line
 
 
 class Genotype:
@@ -10,7 +10,6 @@ class Genotype:
     @property
     def no_of_lines(self) -> int:
         return len(self.lines)
-
 
     def get_line_stops_count_summary(self):
         return Counter([len(line.stops) for line in self.lines])
