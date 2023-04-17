@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import MutableSequence, TypeVar
+from typing import Any, MutableSequence, TypeVar
 from intervaltree import IntervalTree, Interval
 import random as rd
 import numpy as np
@@ -8,19 +8,23 @@ from src.Line import Line
 
 T = TypeVar("T", bound=MutableSequence)
 
+
 def create_index_cycle(idx: list[int], n: int):
     return np.random.choice(idx, size=n, replace=False)
 
+
 def get_sublist_borders(n: int) -> tuple[int, int]:
     return (rd.randrange(n), rd.randrange(n))
+
 
 def shift_by_idxs(arr: T, idxs: list[int], shift: int) -> T:
     copied = deepcopy(arr)
 
     for i in range(len(idxs)):
-        copied[idxs[i]] = arr[idxs[i-shift]]
+        copied[idxs[i]] = arr[idxs[i - shift]]
 
     return copied
+
 
 class LineListLinearizer(MutableSequence):
     def __init__(self, lines: list[Line]) -> None:
@@ -32,19 +36,19 @@ class LineListLinearizer(MutableSequence):
 
         self.tree = IntervalTree(index_intervals)
 
-    def __getitem__(self, i: int) -> int:
+    def __getitem__(self, i: int) -> int:  # type: ignore
         interval = self.tree.at(i).pop()
         line: Line = interval.data
 
         return line.stops[i - interval.begin]
 
-    def __setitem__(self, i: int, val: int) -> None:
+    def __setitem__(self, i: int, val: int) -> None:  # type: ignore
         # assumes i is already in the existing range
         interval = self.tree.at(i).pop()
         line: Line = interval.data
         line.stops[i - interval.begin] = val
 
-    def __delitem__(self, i: int) -> None:
+    def __delitem__(self, i: int) -> None:  # type: ignore
         raise NotImplementedError()
 
     def insert(self, index: int, value: int) -> None:
@@ -58,15 +62,17 @@ class LineListLinearizer(MutableSequence):
 
 
 if __name__ == "__main__":
+
     def main():
         from src import line_generation, graph_generation
+
         G, bp = graph_generation.generate_city_graph(10)
         lines = [line_generation.gen_random_line(G, bp, i + 3) for i in range(4)]
 
-        print('lines', lines)
+        print("lines", lines)
 
         linearized = LineListLinearizer(lines)
-        print('stops', linearized.stops())
+        print("stops", linearized.stops())
         print(linearized[1])
         print(linearized[2])
         print(linearized[3])

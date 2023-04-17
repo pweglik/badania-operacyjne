@@ -1,11 +1,10 @@
 import random
-from typing import Dict, List
 import networkx as nx
-from src.Line import Line
+from Line import Line
 
 
 def gen_random_line(
-    G: nx.Graph, best_paths: Dict[int, Dict[int, List[int]]], length: int = 5
+    G: nx.Graph, best_paths: dict[int, dict[int, list[int]]], length: int = 5
 ) -> Line:
     vertices = random.sample(list(G.nodes), length)
 

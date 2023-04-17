@@ -2,10 +2,10 @@ from copy import deepcopy
 
 from networkx import Graph
 import numpy as np
-from src.Genotype import Genotype
-from src.Line import Line
+from Genotype import Genotype
+from Line import Line
 from src import line_generation
-import src.new_generation.generation_util as generation_util
+import new_generation.generation_util as generation_util
 
 
 class LineMutator:
