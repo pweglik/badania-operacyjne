@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import Optional
 
 from networkx import Graph
 import numpy as np
@@ -11,8 +12,9 @@ import new_generation.generation_util as generation_util
 class LineMutator:
     def __init__(self, best_paths) -> None:
         self.best_paths = best_paths
+        self.mutations = [self.rotation_to_right, self.cycle_rotation, self.invert]
 
-    def rotation_to_right(self, line: Line) -> Line:
+    def rotation_to_right(self, line: Line, shift: Optional[int] = None) -> Line:
         start, end = generation_util.get_sublist_borders(len(line.stops))
 
         idxs = []
@@ -22,7 +24,8 @@ class LineMutator:
             i = (i + 1) % len(line.stops)
         idxs.append(i)
 
-        shift = np.random.randint(len(idxs))
+        if shift is None:
+            shift = np.random.randint(len(idxs))
 
         new_stops = generation_util.shift_by_idxs(line.stops, idxs, shift)
 
