@@ -1,6 +1,6 @@
 from collections import Counter
 from copy import deepcopy
-from typing import Callable
+from typing import Callable, Optional
 import networkx as nx
 from Genotype import Genotype
 from show_graph import show_graph
@@ -33,6 +33,7 @@ class SimulationEngine:
         self.fitness_function = fitness_function
         self.survival_function = survival_function
         self.new_generation_function = new_generation_function
+        self.latest_generation: Optional[list[Genotype]] = None
 
     def report(self, i: int, population: list[Genotype], report_show: bool = False):
         print(
@@ -101,6 +102,7 @@ class SimulationEngine:
             population_survived: list[tuple[Genotype, float]] = self.survival_function(
                 population_with_fitness
             )
+            self.latest_generation = population
 
             # print(
             #     "population_survived fitness", [item[1] for item in population_survived]
