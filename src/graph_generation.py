@@ -1,13 +1,12 @@
-from typing import Tuple, Any
+from typing import Any
 import numpy as np
 
 import networkx as nx
 
-import line_generation as lg
-from params import GRAPH_SEED
+from common.params import GRAPH_SEED, POINTS_MULTIPLIER
 
 
-def generate_city_graph(n: int) -> Tuple[nx.Graph, Any]:
+def generate_city_graph(n: int) -> tuple[nx.Graph, Any]:
     rng = np.random.default_rng(GRAPH_SEED)
 
     G = nx.generators.geometric.geographical_threshold_graph(
@@ -34,8 +33,8 @@ def generate_city_graph(n: int) -> Tuple[nx.Graph, Any]:
 
     # mockup for tests, this should be
     # set manually or be derived from population density
-    points = rng.random(G.number_of_nodes()) * 10
-    G.graph["points"] = points
+    points = rng.random(G.number_of_nodes())
+    G.graph["points"] = points * POINTS_MULTIPLIER
 
     best_paths = dict(nx.all_pairs_shortest_path(G))
 

@@ -6,9 +6,9 @@ TODO
 Genetic algorithm solving public transportation problem
 
 ## Setup
-Install pre-commit
+Install requirements
 ```
-pip install pre-commit
+pip install -r requirements.txt
 ```
 
 Install hooks

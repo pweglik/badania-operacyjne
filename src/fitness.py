@@ -1,20 +1,8 @@
-from Genotype import Genotype
+import math
+from common.Genotype import Genotype
 import networkx as nx
 import numpy as np
-
-"""
-Hyperparameters
-
-R - hyperparamter of diminishing returns function.
-The function converges to e^R, as n->infinity
-
-alpha - cost of stopping on a bu stop
-
-beta - unit cost of a line
-"""
-R = 2
-alpha = 2
-beta = 10
+from common.params import alpha, beta, delta, R
 
 
 def get_count_of_lines_at_bus_stop(organism: Genotype, G: nx.Graph) -> np.ndarray:
@@ -36,12 +24,15 @@ def get_bus_stops_points(organism: Genotype, G: nx.Graph) -> np.ndarray:
     """
     lines_stopping_count = get_count_of_lines_at_bus_stop(organism, G)
 
-    G.graph["points"][np.where(lines_stopping_count == 0)] = 0
-    lines_stopping_count[np.where(lines_stopping_count == 0)] = 1
+    empty_bus_stops_index = np.where(lines_stopping_count == 0)
+
+    lines_stopping_count[empty_bus_stops_index] = 1
 
     bus_stop_points: np.ndarray = G.graph["points"] * np.power(
         (1 + R / lines_stopping_count), lines_stopping_count
     )
+
+    bus_stop_points[empty_bus_stops_index] = -delta
 
     return bus_stop_points
 
@@ -64,8 +55,12 @@ def get_lines_cost(organism: Genotype, G: nx.Graph) -> float:
     """
     cost = 0
     for line in organism.lines:
+        line_cost = 0
         for edge in line.edges:
-            cost += G[edge[0]][edge[1]]["weight"]
+            line_cost += G[edge[0]][edge[1]]["weight"]
+
+        if len(line.edges) != 0:
+            cost += line_cost * (np.log(len(line.edges)) / 2 + 1)
 
     return cost
 

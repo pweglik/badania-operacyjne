@@ -1,20 +1,27 @@
 import math
-from typing import Dict, List, Tuple
 
 import networkx as nx
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
-from Genotype import Genotype
-from Line import Line
+from common.Genotype import Genotype
+from common.Line import Line
 
 
-def show_graph(G: nx.Graph, genotype: Genotype, gen_number: int = 0):
+def show_graph(
+    G: nx.Graph,
+    genotype: Genotype,
+    gen_number: int = 0,
+    show: bool = False,
+    is_small: bool = False,
+):
+    if is_small:
+        plt.figure(figsize=(4, 3), dpi=60)
     pos = nx.drawing.layout.spring_layout(G, seed=0)
     nx.drawing.nx_pylab.draw_networkx(G, pos, node_color="gray")
 
-    edges_lines: Dict[Tuple[int, int], List[Line]] = defaultdict(list)
-    node_sizes: Dict[Tuple[int], int] = defaultdict(int)
+    edges_lines: dict[tuple[int, int], list[Line]] = defaultdict(list)
+    node_sizes: dict[tuple[int], int] = defaultdict(int)
 
     for i, line in enumerate(genotype.lines):
         edges = line.edges
@@ -30,26 +37,24 @@ def show_graph(G: nx.Graph, genotype: Genotype, gen_number: int = 0):
                 G, pos, edgelist=[(u, v)], edge_color=line.edge_color, width=w
             )
 
-        label = ", ".join(map(lambda x: str(x.id), lines))
-
-        nx.drawing.nx_pylab.draw_networkx_edge_labels(
-            G, pos, edge_labels={(u, v): label}, font_size=8
+    node_colors = list(map(math.sqrt, node_sizes.values()))
+    if len(node_colors) > 0:
+        v_max = max(node_colors)
+        nx.drawing.nx_pylab.draw_networkx_nodes(
+            G,
+            pos,
+            nodelist=node_sizes.keys(),
+            node_color=node_colors,
+            vmin=0,
+            vmax=v_max + 1,
+            cmap=plt.cm.Greens,
         )
 
-    node_colors = list(map(math.sqrt, node_sizes.values()))
-    v_max = max(node_colors)
-    nx.drawing.nx_pylab.draw_networkx_nodes(
-        G,
-        pos,
-        nodelist=node_sizes.keys(),
-        node_color=node_colors,
-        vmin=0,
-        vmax=v_max + 1,
-        cmap=plt.cm.Greens,
-    )
-    # plt.show()
-    plt.savefig(f"../results/gen_{gen_number}.svg")
-    plt.clf()
+    if show:
+        plt.show()
+    else:
+        plt.savefig(f"../results/gen_{gen_number}.svg")
+        plt.clf()
 
 
 if __name__ == "__main__":
@@ -60,7 +65,7 @@ if __name__ == "__main__":
     l1 = Line(verticies, best_paths)
     l2 = Line([2, 3, 4, 5, 6, 7, 8], best_paths)
     l3 = Line([4, 5, 6], best_paths)
-    g = Genotype(set([l1, l2]))
+    g = Genotype(2, set([l1, l2]))
 
     G1.add_nodes_from([2, 3, 7, 8])
     G1.add_edges_from([(2, 3), (3, 4), (6, 7), (7, 8)])

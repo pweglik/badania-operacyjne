@@ -1,3 +1,5 @@
 networkx==3.1
 numpy==1.23.5
 intervaltree
+pre-commit
+matplotlib
