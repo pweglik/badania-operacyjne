@@ -4,7 +4,8 @@ from intervaltree import IntervalTree, Interval
 import random as rd
 import numpy as np
 
-from src.Line import Line
+from common.Line import Line
+from graph_generation import generate_city_graph
 
 T = TypeVar("T", bound=MutableSequence)
 
@@ -64,9 +65,9 @@ class LineListLinearizer(MutableSequence):
 if __name__ == "__main__":
 
     def main():
-        from src import line_generation, graph_generation
+        from common import line_generation
 
-        G, bp = graph_generation.generate_city_graph(10)
+        G, bp = generate_city_graph(10)
         lines = [line_generation.gen_random_line(G, bp, i + 3) for i in range(4)]
 
         print("lines", lines)

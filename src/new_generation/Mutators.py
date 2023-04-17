@@ -3,10 +3,10 @@ from typing import Optional
 
 from networkx import Graph
 import numpy as np
-from Genotype import Genotype
-from Line import Line
-from src import line_generation
-import new_generation.generation_util as generation_util
+from common.Genotype import Genotype
+from common.Line import Line
+from common import line_generation
+import generation_util as generation_util
 
 
 class LineMutator:

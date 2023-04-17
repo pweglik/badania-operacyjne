@@ -1,9 +1,9 @@
 import random as rd
 import numpy as np
-from Genotype import Genotype
+from common.Genotype import Genotype
 
-from new_generation import generation_util
-from Line import Line
+import generation_util
+from common.Line import Line
 
 
 class GenotypeCrosser:

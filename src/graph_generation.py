@@ -3,7 +3,7 @@ import numpy as np
 
 import networkx as nx
 
-from params import GRAPH_SEED, POINTS_MULTIPLIER
+from common.params import GRAPH_SEED, POINTS_MULTIPLIER
 
 
 def generate_city_graph(n: int) -> tuple[nx.Graph, Any]:

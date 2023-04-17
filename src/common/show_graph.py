@@ -4,8 +4,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
-from Genotype import Genotype
-from Line import Line
+from common.Genotype import Genotype
+from common.Line import Line
 
 
 def show_graph(

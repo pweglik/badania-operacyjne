@@ -1,6 +1,6 @@
 import random
 import networkx as nx
-from Line import Line
+from common.Line import Line
 
 
 def gen_random_line(

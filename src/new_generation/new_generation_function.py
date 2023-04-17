@@ -1,12 +1,21 @@
 import random
 from copy import deepcopy
 
-import networkx as nx
-
-from src.Genotype import Genotype
-from src.new_generation.Mutators import LineMutator, GenotypeMutator
-from src.new_generation.SpecimenCrossers import GenotypeCrosser
-from src.params import *
+from common.Genotype import Genotype
+from Mutators import LineMutator, GenotypeMutator
+from SpecimenCrossers import GenotypeCrosser
+from common.params import (
+    CHANCE_CREATE_LINE,
+    CHANCE_CYCLE,
+    CHANCE_ERASE_LINE,
+    CHANCE_INVERT,
+    CHANCE_MERGE,
+    CHANCE_MERGE_SPECIMEN,
+    CHANCE_ROT_CYCLE,
+    CHANCE_ROT_RIGHT,
+    CHANCE_SPLIT,
+    dprint,
+)
 
 
 def new_generation_random(

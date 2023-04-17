@@ -1,8 +1,8 @@
 import math
-from Genotype import Genotype
+from common.Genotype import Genotype
 import networkx as nx
 import numpy as np
-from params import alpha, beta, R
+from common.params import alpha, beta, R
 
 
 def get_count_of_lines_at_bus_stop(organism: Genotype, G: nx.Graph) -> np.ndarray:

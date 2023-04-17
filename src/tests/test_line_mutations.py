@@ -4,7 +4,7 @@ import random
 import numpy as np
 
 from graph_generation import generate_city_graph
-from line_generation import gen_random_line
+from common.line_generation import gen_random_line
 from new_generation.Mutators import LineMutator
 
 

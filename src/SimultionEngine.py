@@ -2,9 +2,9 @@ from collections import Counter
 from copy import deepcopy
 from typing import Callable
 import networkx as nx
-from Genotype import Genotype
-from show_graph import show_graph
-from params import dprint
+from common.Genotype import Genotype
+from common.show_graph import show_graph
+from common.params import dprint
 
 
 class SimulationEngine:
@@ -83,13 +83,7 @@ class SimulationEngine:
         self.report(0, population, report_show)
 
         for i in range(no_of_generations):
-            dprint(
-                f"1 lines with X stops: {Counter([len(p.lines) for p in population])}"
-            )
             population = self.purge_empty(population)
-            dprint(
-                f"2 lines with X stops: {Counter([len(p.lines) for p in population])}"
-            )
 
             # calculating fitness for all organisms
             population_with_fitness: list[tuple[Genotype, float]] = [
@@ -102,26 +96,8 @@ class SimulationEngine:
                 population_with_fitness
             )
 
-            # print(
-            #     "population_survived fitness", [item[1] for item in population_survived]
-            # )
-
-            dprint(
-                f"3 lines with X stops: {Counter([len(p[0].lines) for p in population_survived])}"
-            )
-
             # generating new population from survived
             population = self.new_generation_function(population_survived, self.G)
-
-            # print(
-            #     "new_generation fitness     ",
-            #     [self.fitness_function(item, self.G) for item in population],
-            # )
-            # print()
-
-            dprint(
-                f"4 lines with X stops: {Counter([len(p.lines) for p in population])}\n\n"
-            )
 
             if (i + 1) % report_every_n == 0:
                 self.report(i + 1, population, report_show)

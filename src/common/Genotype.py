@@ -1,6 +1,6 @@
 from collections import Counter
 
-from Line import Line
+from common.Line import Line
 
 
 class Genotype:
