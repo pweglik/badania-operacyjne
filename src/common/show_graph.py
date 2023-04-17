@@ -9,8 +9,14 @@ from common.Line import Line
 
 
 def show_graph(
-    G: nx.Graph, genotype: Genotype, gen_number: int = 0, show: bool = False
+    G: nx.Graph,
+    genotype: Genotype,
+    gen_number: int = 0,
+    show: bool = False,
+    is_small: bool = False,
 ):
+    if is_small:
+        plt.figure(figsize=(4, 3), dpi=60)
     pos = nx.drawing.layout.spring_layout(G, seed=0)
     nx.drawing.nx_pylab.draw_networkx(G, pos, node_color="gray")
 
