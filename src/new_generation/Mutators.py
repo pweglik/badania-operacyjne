@@ -10,7 +10,8 @@ import new_generation.generation_util as generation_util
 
 
 class LineMutator:
-    def __init__(self, best_paths) -> None:
+    def __init__(self, G: Graph, best_paths) -> None:
+        self.G = G
         self.best_paths = best_paths
         self.mutations = [self.rotation_to_right, self.cycle_rotation, self.invert]
 
@@ -67,6 +68,17 @@ class LineMutator:
         idx = np.random.choice(len(line.stops) - no_of_stops_to_erase, replace=False)
         new_stops = np.array(line.stops)[idx]
         return Line(new_stops, self.best_paths)
+
+    def add_stops(self, line: Line, no: int = 1, mix: bool = False) -> Line:
+        current_stops = set(line.stops)
+        not_used_stops = set(self.G.nodes.keys() - current_stops)
+        stops_to_add = list(
+            np.random.choice(list(not_used_stops), size=no, replace=False)
+        )
+
+        # idx = np.random.choice(line.stops_no, no, replace=True)
+
+        return Line(line.stops + stops_to_add, self.best_paths)
 
 
 class GenotypeMutator:
@@ -152,7 +164,9 @@ if __name__ == "__main__":
 
     def main():
         # advanced unit tests
-        line_mutator = LineMutator([[]])
+        import networkx as nx
+
+        line_mutator = LineMutator(nx.empty_graph(), [[]])
 
         class LineMock(Line):
             def __init__(self, stops: list[int]):
