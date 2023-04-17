@@ -3,6 +3,7 @@ import networkx as nx
 import numpy as np
 from params import alpha, beta, R
 
+
 def get_count_of_lines_at_bus_stop(organism: Genotype, G: nx.Graph) -> np.ndarray:
     """
     Returns number of lines stopping at each bus stop as numpy array
@@ -22,12 +23,13 @@ def get_bus_stops_points(organism: Genotype, G: nx.Graph) -> np.ndarray:
     """
     lines_stopping_count = get_count_of_lines_at_bus_stop(organism, G)
 
-    G.graph["points"][np.where(lines_stopping_count == 0)] = 0
     lines_stopping_count[np.where(lines_stopping_count == 0)] = 1
 
     bus_stop_points: np.ndarray = G.graph["points"] * np.power(
         (1 + R / lines_stopping_count), lines_stopping_count
     )
+
+    bus_stop_points[np.where(lines_stopping_count == 0)] = 0
 
     return bus_stop_points
 
