@@ -18,7 +18,7 @@ delta - cost of empty bus stop
 """
 R = 2
 alpha = 0.05
-beta = 0.8
+beta = 0.6
 delta = 0.7
 
 # simulation params

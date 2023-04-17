@@ -40,6 +40,7 @@ class SimulationEngine:
             f"Population {i:5}, "
             f"best fitness function: {self.fitness_function(population[0], self.G):20.6f}, "
             f"best lines stops count: {population[0].get_line_stops_count_summary()}"
+            f"no of lines: {len(population[0].lines)}"
         )
 
         # save the best <new one> one to file
@@ -102,4 +103,4 @@ class SimulationEngine:
             population = self.new_generation_function(population_survived, self.G)
 
             if (i + 1) % report_every_n == 0:
-                self.report(i + 1, population, report_show)
+                self.report(i + 1, self.latest_generation, report_show)
