@@ -77,7 +77,7 @@ def create_initial_population(G, best_paths) -> list[Genotype]:
 def run_simulation(
     G, best_paths, no_of_generations: int, report_every_n: int, report_show: bool
 ):
-    line_mutator = LineMutator(best_paths)
+    line_mutator = LineMutator(G, best_paths)
     genotype_mutator = GenotypeMutator(G, best_paths)
     genotype_crosser = GenotypeCrosser(best_paths)
 
