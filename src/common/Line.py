@@ -1,3 +1,6 @@
+from functools import cached_property
+
+
 class Line:
     next_id = 0
     next_color = 0
@@ -6,22 +9,27 @@ class Line:
     def __init__(self, stops: list[int], best_paths):
         self.id = Line.get_next_id()
         self.stops = stops  # ordered list of stops
-        self.edges = []
         self.edge_color, self.edge_style = Line.get_next_edge_style()
+        self.best_paths = best_paths
 
-        for i in range(len(stops) - 1):
-            best_path = best_paths[self.stops[i]][self.stops[i + 1]]
+    @cached_property
+    def edges(self) -> list[tuple[int, int]]:
+        edges = []
+        for i in range(len(self.stops) - 1):
+            best_path = self.best_paths[self.stops[i]][self.stops[i + 1]]
             for j in range(len(best_path) - 1):
                 v = best_path[j]
                 u = best_path[j + 1]
-                self.edges.append((v, u))
+                edges.append((v, u))
 
-    def __repr__(self) -> str:
-        return str(self.stops)
+        return edges
 
     @property
     def stops_no(self) -> int:
         return len(self.stops)
+
+    def __repr__(self) -> str:
+        return str(self.stops)
 
     @staticmethod
     def get_next_edge_style():

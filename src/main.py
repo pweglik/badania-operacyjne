@@ -10,6 +10,7 @@ from SimultionEngine import SimulationEngine
 from new_generation.Mutators import GenotypeMutator, LineMutator
 from new_generation.SpecimenCrossers import GenotypeCrosser
 from common.params import N_IN_POPULATION, SEED, N
+from src.new_generation.Sanitizers import BasicSanitizer
 from survival import n_best_survive
 
 
@@ -34,6 +35,7 @@ def run_simulation(
             genotype_mutator,
             genotype_crosser,
         ),
+        population_sanitizer=BasicSanitizer(best_paths),
     )
 
     sim_engine.run(no_of_generations, report_every_n, report_show=report_show)

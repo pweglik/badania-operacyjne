@@ -1,10 +1,9 @@
-from collections import Counter
-from copy import deepcopy
 from typing import Callable, Optional
 import networkx as nx
 from common.Genotype import Genotype
 from common.show_graph import show_graph
 from common.params import dprint
+from src.new_generation.Sanitizers import Sanitizer
 
 
 class SimulationEngine:
@@ -19,6 +18,7 @@ class SimulationEngine:
         new_generation_function: Callable[
             [list[tuple[Genotype, float]], nx.Graph], list[Genotype]
         ],
+        population_sanitizer: Sanitizer,
     ):
         """
         Creates simulation
@@ -34,6 +34,7 @@ class SimulationEngine:
         self.survival_function = survival_function
         self.new_generation_function = new_generation_function
         self.latest_generation: Optional[list[Genotype]] = None
+        self.population_sanitizer = population_sanitizer
 
     def report(self, i: int, population: list[Genotype], report_show: bool = False):
         print(
@@ -46,27 +47,17 @@ class SimulationEngine:
         # save the best <new one> one to file
         show_graph(self.G, population[0], i, show=report_show)
 
-    def purge_empty(self, population: list[Genotype]) -> list[Genotype]:
+    def sanitize_population(self, population: list[Genotype]) -> list[Genotype]:
         """
-        Removes empty lines from all genotypes and then removes empty genotypes (with no lines)
+        Performs sanitization of the given population according to the self.population_sanitizer
         :param population: population (potentially flawed)
         :return: Valid population with no empty genotypes/lines without stops
         """
-        new_population = []
-
-        for genotype in population:
-            genotype = deepcopy(genotype)
-
-            # non-empty lines
-            genotype.lines = list(
-                filter(lambda line: len(line.stops) > 0, genotype.lines)
-            )
-
-            # non-empty genotype
-            if len(genotype.lines) > 0:
-                new_population.append(genotype)
-
-        return new_population
+        return [
+            genotype
+            for genotype in map(self.population_sanitizer.sanitizeGenotype, population)
+            if genotype is not None
+        ]
 
     def run(
         self,
@@ -85,7 +76,7 @@ class SimulationEngine:
         self.report(0, population, report_show)
 
         for i in range(no_of_generations):
-            population = self.purge_empty(population)
+            population = self.sanitize_population(population)
 
             # calculating fitness for all organisms
             population_with_fitness: list[tuple[Genotype, float]] = [
