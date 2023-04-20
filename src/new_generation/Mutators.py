@@ -3,10 +3,10 @@ from typing import Optional
 
 from networkx import Graph
 import numpy as np
-from common.Genotype import Genotype
-from common.Line import Line
-from common import line_generation
-import generation_util as generation_util
+from src.common.Genotype import Genotype
+from src.common.Line import Line
+from src.common import line_generation
+from src.new_generation import generation_util
 
 
 class LineMutator:
@@ -132,10 +132,13 @@ class GenotypeMutator:
         idxs = {line_id: 0 for line_id in line_ids_to_mix}
         new_lines = [line for i, line in enumerate(genotype.lines) if i not in idxs]
         new_stops = []
+        new_stops_set: set[int] = set()
         while len(idxs) > 0:
             line_id = np.random.choice(list(idxs.keys()))
             while True:
-                new_stops.append(genotype.lines[line_id].stops[idxs[line_id]])
+                stop = genotype.lines[line_id].stops[idxs[line_id]]
+                if stop not in new_stops_set:
+                    new_stops.append(stop)
                 idxs[line_id] += 1
 
                 if idxs[line_id] >= len(genotype.lines[line_id].stops):

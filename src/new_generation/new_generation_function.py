@@ -1,10 +1,10 @@
 import random
 from copy import deepcopy
 
-from common.Genotype import Genotype
-from Mutators import LineMutator, GenotypeMutator
-from SpecimenCrossers import GenotypeCrosser
-from common.params import (
+from src.common.Genotype import Genotype
+from src.new_generation.Mutators import LineMutator, GenotypeMutator
+from src.new_generation.SpecimenCrossers import GenotypeCrosser
+from src.common.params import (
     CHANCE_CREATE_LINE,
     CHANCE_CYCLE,
     CHANCE_ERASE_LINE,
