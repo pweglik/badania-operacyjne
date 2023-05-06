@@ -7,12 +7,9 @@ from src.common.Genotype import Genotype
 from src.common.Line import Line
 from src.common import line_generation
 from src.new_generation import generation_util
-from src.new_generation.Sanitizers import BasicSanitizer, Sanitizer
 
 
 class LineMutator:
-    sanitizer: Sanitizer = BasicSanitizer([])
-
     def __init__(self, G: Graph, best_paths) -> None:
         self.G = G
         self.best_paths = best_paths
