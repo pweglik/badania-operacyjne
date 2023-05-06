@@ -3,6 +3,7 @@ from typing import Optional
 
 from networkx import Graph
 import numpy as np
+import networkx as nx
 from src.common.Genotype import Genotype
 from src.common.Line import Line
 from src.common import line_generation
@@ -10,13 +11,25 @@ from src.new_generation import generation_util
 
 
 class LineMutator:
-    def __init__(self, G: Graph, best_paths) -> None:
+    def __init__(self, G: Graph, all_stops: list[int], best_paths) -> None:
         self.G = G
         self.best_paths = best_paths
-        self.mutations = [self.rotation_to_right, self.cycle_rotation, self.invert]
+        self.all_stops = all_stops
+        self.distances = dict(nx.all_pairs_shortest_path_length(self.G))
+        self.sorted_distances = {
+            stop: sorted(self.distances[stop].items(), key=lambda x: x[1])
+            for stop in all_stops
+        }
 
-    def rotation_to_right(self, line: Line, shift: Optional[int] = None) -> Line:
-        start, end = generation_util.get_sublist_borders(len(line.stops))
+    def rotation_to_right(
+        self,
+        line: Line,
+        shift: Optional[int] = None,
+        list_lenght_from_normal_distribution: bool = False,
+    ) -> Line:
+        start, end = generation_util.get_sublist_borders(
+            len(line.stops), use_normal=list_lenght_from_normal_distribution
+        )
 
         idxs = []
         i = start
@@ -41,8 +54,12 @@ class LineMutator:
 
         return Line(new_stops, self.best_paths)
 
-    def invert(self, line: Line) -> Line:
-        start, end = generation_util.get_sublist_borders(len(line.stops))
+    def invert(
+        self, line: Line, list_length_from_normal_distribution: bool = False
+    ) -> Line:
+        start, end = generation_util.get_sublist_borders(
+            len(line.stops), use_normal=list_length_from_normal_distribution
+        )
 
         if start <= end:
             new_stops = (
@@ -70,15 +87,50 @@ class LineMutator:
         return Line(new_stops, self.best_paths)
 
     def add_stops(self, line: Line, no: int = 1, mix: bool = False) -> Line:
-        current_stops = set(line.stops)
-        not_used_stops = set(self.G.nodes.keys() - current_stops)
-        stops_to_add = list(
-            np.random.choice(list(not_used_stops), size=no, replace=False)
+        used_stops_set = set(line.stops)
+        not_used_stops = list(self.G.nodes.keys() - used_stops_set)
+        stops_to_add = list(np.random.choice(not_used_stops, size=no, replace=False))
+
+        if not mix:
+            return Line(line.stops + stops_to_add, self.best_paths)
+
+        current_stops = list(used_stops_set)
+        idxs = np.random.choice(
+            [0] * len(current_stops) + [1] * no, len(current_stops) + no, replace=False
+        )
+        i = [0, 0]
+        stops = [current_stops, not_used_stops]
+        new_stops = []
+        for stops_i in idxs:
+            stop = stops[stops_i][i[stops_i]]
+            new_stops.append(stop)
+            i[stops_i] += 1
+
+        return Line(new_stops, self.best_paths)
+
+    def replace_stops(
+        self, line: Line, no_to_replace: int, proximity_based: bool = True
+    ) -> Line:
+        stops = np.array(line.stops)
+        stops_to_replace_idxs = np.random.choice(
+            line.stops_no, size=no_to_replace, replace=False
         )
 
-        # idx = np.random.choice(line.stops_no, no, replace=True)
+        if not proximity_based:
+            stops[stops_to_replace_idxs] = np.random.choice(
+                self.all_stops, no_to_replace, replace=False
+            )
+            return Line(list(stops), self.best_paths)
 
-        return Line(line.stops + stops_to_add, self.best_paths)
+        stops_to_replace = stops[stops_to_replace_idxs]
+        idxs = np.random.exponential(scale=0.5, size=no_to_replace)
+        choosen_neighbours = [
+            self.sorted_distances[stop][idx]
+            for stop, idx in zip(stops_to_replace, idxs)
+        ]
+        stops[stops_to_replace_idxs] = choosen_neighbours
+
+        return Line(list(stops), self.best_paths)
 
 
 class GenotypeMutator:
@@ -161,23 +213,3 @@ class GenotypeMutator:
         new_lines = [Line(stops, self.best_paths) for stops in new_stops.stops()]
 
         return Genotype(new_lines)
-
-
-if __name__ == "__main__":
-
-    def main():
-        # advanced unit tests
-        import networkx as nx
-
-        line_mutator = LineMutator(nx.empty_graph(), [[]])
-
-        class LineMock(Line):
-            def __init__(self, stops: list[int]):
-                self.stops = stops
-
-        line = LineMock([0, 1, 2, 3, 4, 5, 6])
-        print(line.stops)
-        # print(line_mutator.rotation_to_right(line).stops)
-        print(line_mutator.invert(line).stops)
-
-    main()
