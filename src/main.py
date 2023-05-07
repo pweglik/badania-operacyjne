@@ -25,7 +25,7 @@ def run_simulation(
 ):
     line_mutator = LineMutator(G, all_stops, best_paths)
     genotype_mutator = GenotypeMutator(G, best_paths)
-    genotype_crosser = GenotypeCrosser(best_paths)
+    genotype_crosser = GenotypeCrosser(G, best_paths)
 
     sim_engine = SimulationEngine(
         G,
