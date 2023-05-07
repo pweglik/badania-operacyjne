@@ -86,16 +86,16 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 \subsection{Założenia}
 
 \begin{enumerate}
-	\item Przystanki mają jakąś ilość punktów w zależności od gęstości zaludnienia i ciekawych punktów
+	\item Przystankom przypisujemy ilość punktów w zależności od gęstości zaludnienia w pobliżu oraz ciekawych punktów (teatr, park itp.).
 	\begin{itemize}
-		\item Dla każdego przystanku obliczyć wartość ludzi jako % TODO function
-		\item Głównym punktom w Krakowie (D17 itp) nadać wartość punktową (jakoś)
-		\item Dla każdego przystanku wyliczyć wartość obiektową tak jak i wartość ludzi
+		\item Dla każdego przystanku obliczamy liczbę ludzi w pobliżu,
+		\item Głównym punktom w Krakowie (np. D17, teatry, itp.) nadajemy wartość punktową,
+		\item Dla każdego przystanku sumujemy powyższe wartości.
 	\end{itemize}
-	\item Rozkładamy linie komunikacyjne po mieście tak, by maksymalizować sumę zebranych punktów przez wszystkie linie
-	\item Wprowadzamy koszt dla linii jest jednostkowy + koszt ścieżki w grafie po której jedzie
-	\item Punkty dzielą się między linie w następujący sposób (1 linia - 100\%, 2 linie - 66\% każda, 3 linie - każda po 50\% etc.) Fajnie jakby to zbiegało do jakieś liczby, może np. do 2?
-	\item Maksymalizujemy sumę punktów zebranych przez wszystkie linie
+	\item Rozkładamy linie komunikacyjne po mieście tak, by maksymalizować sumę zebranych punktów przez wszystkie linie.
+	\item Wprowadzamy koszt dla linii: koszt ścieżki w grafie, po której jedzie + koszt utworzenia nowej linii.
+	\item Linie przebiegające przez jeden przystanek dzielą się punktami,
+	\item Maksymalizujemy sumę punktów zebranych przez wszystkie linie.
 \end{enumerate}
 
 \subsection{Dane}
@@ -107,14 +107,15 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 \subsubsection{Graf}
 
 	\begin{enumerate}
-		\item Wierzchołki to skrzyżowania (0 punktów) + istniejące przystanki (punkty wg wzoru z pkt 1 - “ile ludzi chce jechać z niego” i pobliskie atrakcje/ważne miejsca)
-		\item $p(j)$ - surowa wartość punktowa przystanku
+		\item Wierzchołki istniejące przystanki z przypisanymi punktami,
+		\item $p(j)$ - wartość punktowa przystanku:
 		\begin{itemize}
-			\item $p(j) = \sum_{i=0}^{n-1} \frac{w_{j, i}}{f(d_j, i)}$ gdzie $w_{j, i}$ to wartość obiektu (np. liczba mieszkańców bloku) a $d_{j,i}$ to odległość tego bloku od przystanku, f – funkcja skalująca
+            \item  W początkowej wersji liczba ta jest określona z góry,
+			\item $p(j) = \sum_{i=0}^{n-1} \frac{w_{j, i}}{f(d_j, i)}$ gdzie $w_{j, i}$ to wartość obiektu (np. liczba mieszkańców w pobliżu) a $d_{j,i}$ to odległość tego bloku od przystanku, f – funkcja skalująca.
 			\item Funkcja liczona dla danego przystanku $j$
 		\end{itemize}
-		\item Krawędzie to ulice między skrzyżowaniami rozdzielone przez przystanki
-		\item Koszt krawędzi to odległość między punktami
+		\item Krawędzie to połączenia między przystankami.
+		\item Koszt krawędzi to odległości między przystankami.
 	\end{enumerate}
 
 
@@ -152,19 +153,83 @@ $f(x) = \sum_{i=0}^{n-1} \sum_{j=0}^{m-1} x_{i,j} * (p_{i,j}-\alpha)-S_{i}-\beta
 
 \chapter{Opis algorytmów}
 
+\section{Reprezentacja środowiska}
+\subsection{Reprezentacja mapy}
+Mapa z przystankami jest reprezentowana jako ważony graf z biblioteki \lstinline{NetworkX}.
+
+\subsection{Reprezentacja genotypu}
+Genotyp składa się z listy linii autobusowych:
+\begin{lstlisting}[language=Python]
+class Genotype:
+    def __init__(self, lines: list[Line]):
+        self.lines = lines
+\end{lstlisting}
+
+\subsection{Reprezentacja linii}
+Linia posiada następujące parametry:
+\begin{enumerate}
+    \item \lstinline{id} - id linii,
+    \item \lstinline{stops} - przystanki, na których się zatrzymuje,
+    \item \lstinline{edges} - wszystkie krawędzie, przez które linia przejeżdża,
+    \item \lstinline{edge_color} - kolor linii; do reprezentacji graficznej,
+    \item \lstinline{edge_style} - styl krawędzi linii; do reprezentacji graficznej,
+\end{enumerate}
+
+
+\begin{lstlisting}[language=Python]
+class Line:
+    def __init__(self, stops: list[int], best_paths):
+        self.id = Line.get_next_id()
+        self.stops = stops  # ordered list of stops
+        self.edges = []
+        self.edge_color = [...]
+        self.edge_style = [...]
+\end{lstlisting}
+
+\section{Symulacja}
+
+
 \section{Mutacja}
 
 \subsection{LineMutator}
+Tworzy nowe mutacje dla danej linii.
+
+Możliwe mutacje:
+
+\begin{enumerate}
+    \item \lstinline{rotation_to_right}
+    \item \lstinline{cycle_rotation}
+    \item \lstinline{invert} - odwraca kolejność przystanków, pomiędzy losowymi indeksami \lstinline{start} oraz \lstinline{end},
+    \item \lstinline{erase_stops} - losowo usuwa zadaną liczbę przystanków z linii,
+    \item \lstinline{add_stops} - losowo dodaje zadaną liczbę przystanków, spośród tych, które w linii nie występują.
+\end{enumerate}
 
 \subsection{GenotypeMutator}
 
-\section{Krzyżowanie}
+Możliwe mutacje:
 
+\begin{enumerate}
+    \item \lstinline{erase_line} - tworzy nowy genotyp, usuwając losową linię,
+    \item \lstinline{create_line} - tworzy nowy genotyp, dodając losowo wygenerowaną linię,
+    \item \lstinline{split_line} - tworzy nowy genotyp, rozdzielając losową, losową linię dwie różne.
+    \item \lstinline{merge_lines} - tworzy nowy genotyp, łącząc w losowej kolejności zadaną liczbę losowych linii,
+    \item \lstinline{cycle_stops_shift} - ???
+\end{enumerate}
+
+\section{Krzyżowanie}
+\subsection{GenotypeCrosser}
+
+\begin{enumerate}
+    \item \lstinline{merge_genotypes} - tworzy nowy genotyp, łącząc losową liczbę losowych linii z dwóch danych genotypów,
+    \item \lstinline{cycle_stops_shift} - ???
+\end{enumerate}
 
 \chapter{Aplikacja}
 
 \chapter{Eksperymenty}
 
-\chapter{Podsumomwanie}
+\chapter{Podsumowanie}
+
+Problem generowania linii autobusowych jest bardzo skomplikowany. W celu jego rozwiązania, przydatne są algorytmy genetyczne. Z odpowiednią liczbą nowych generacji jesteśmy w stanie osiągnąć ciekawe wyniki. Nie są one jednak w pełni satysfakcjonujące.
 
 \end{document}
