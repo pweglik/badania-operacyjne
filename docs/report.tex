@@ -64,14 +64,26 @@ Badania operacyjne\\
 Projekt\\
 }
 
-\author{\\Jakub Kos\\Norbert Morawski
+\author{\\Jakub Kosmydel\\Norbert Morawski
 \\Bartłomiej Wiśniewski\\Przemysław Węglik}
 
 \date{\today}
 
 \maketitle
 
-\chapter{Model matematyczny}
+\chapter{Wstęp}
+Celem naszego projektu jest znalezienie optymalnych tras linii dla autobusów, aby maksymalizować liczbę pasażerów, przy minimalnej liczbie linii autobusowych. Aby to osiągnąć, wykorzystywane są algorytmy genetyczne -  algorytmy przeszukujące przestrzeń rozwiązań, które opierają się na procesie działania mechanizmu dziedziczenia biologicznego.
+
+W systemie założono, że pozycje oraz popularność przystanków są z góry ustalone. Stosowanie algorytmów genetycznych pozwoliło na wygenerowanie zestawu najlepszych połączeń autobusowych, które można skonfigurować dla lepszego wykorzystania zasobów oraz zwiększenie korzyści z transportu publicznego dla pasażerów.
+
+\chapter{Opis zagadnienia}
+
+\section{Sformułowanie problemu}
+Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywającej dany obszar miejski, który już posiada sieć przystanków autobusowych. Linie te, powinny mieć możliwość obsłużenia jak największej liczby pasażerów, tworząc jak najmniej postojów oraz zatrzymując się na jak najmniejszej liczbie przystanków.
+
+\section{Model matematyczny}
+
+\subsection{Założenia}
 
 \begin{enumerate}
 	\item Przystanki mają jakąś ilość punktów w zależności od gęstości zaludnienia i ciekawych punktów
@@ -133,7 +145,26 @@ Projekt\\
 $l_j = \sum_{i=0}^{n-1} x_{i, j}$\\
 $p_{i, j} = \frac{p_j \cdot (1+\frac{R}{l_j})^l_j}{l_j}$ -- ile punktów linia $i$ uzyskuje z przystanku $j$
 
-f(x) = \sum{i=0}{n-1} \sum{j=0}{m-1} xi,j * (pi,j-a)-Si-b
+$S_{i}$ -- długość ścieżki linii $i$ w grafie
 
+$f(x) = \sum_{i=0}^{n-1} \sum_{j=0}^{m-1} x_{i,j} * (p_{i,j}-\alpha)-S_{i}-\beta$
+
+
+\chapter{Opis algorytmów}
+
+\section{Mutacja}
+
+\subsection{LineMutator}
+
+\subsection{GenotypeMutator}
+
+\section{Krzyżowanie}
+
+
+\chapter{Aplikacja}
+
+\chapter{Eksperymenty}
+
+\chapter{Podsumomwanie}
 
 \end{document}
