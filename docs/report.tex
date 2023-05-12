@@ -107,7 +107,7 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 \subsubsection{Graf}
 
 	\begin{enumerate}
-		\item Wierzchołki istniejące przystanki z przypisanymi punktami,
+		\item Wierzchołki to istniejące przystanki z przypisanymi punktami,
 		\item $p(j)$ - wartość punktowa przystanku:
 		\begin{itemize}
             \item  W początkowej wersji liczba ta jest określona z góry,
@@ -142,13 +142,18 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 	\end{enumerate}
 
 
+\begin{align*}
+	l_j &= \sum_{i=0}^{n-1} x_{i, j}&\text{liczba linii zatrzymujących się na przystanku $j$}\\
+	p_{i, j} &= \frac{p_j \cdot (1+\frac{R}{l_j})^{l_j}}{l_j} \xrightarrow{} \frac{e^R}{l_j} &\text{ile punktów linia $i$ uzyskuje z przystanku $j$}\\
+	S_{i}&&\text{długość ścieżki linii $i$ w grafie}\\
+	f(x) &= \sum_{i=0}^{n-1} \left[ \sum_{j=0}^{m-1} \left[ x_{i,j} \cdot (p_{i,j}-\alpha) \right]-S_{i}-\beta \right]&\text{funkcja kosztu}
+\end{align*}
+% TODO update cost function (delta parameter), fix p_i,j
 
-$l_j = \sum_{i=0}^{n-1} x_{i, j}$\\
-$p_{i, j} = \frac{p_j \cdot (1+\frac{R}{l_j})^l_j}{l_j}$ -- ile punktów linia $i$ uzyskuje z przystanku $j$
 
-$S_{i}$ -- długość ścieżki linii $i$ w grafie
 
-$f(x) = \sum_{i=0}^{n-1} \sum_{j=0}^{m-1} x_{i,j} * (p_{i,j}-\alpha)-S_{i}-\beta$
+
+
 
 
 \chapter{Opis algorytmów}
