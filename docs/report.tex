@@ -189,9 +189,13 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 \subsection{Funkcja kosztu}
 \begin{align*}
 	l_j &= \sum_{i=0}^{n-1} x_{i, j}&\text{liczba linii zatrzymujących się na przystanku $j$}\\
-	p_{i, j} &= \frac{p_j \cdot (1+\frac{R}{l_j})^{l_j}}{l_j} \xrightarrow{} \frac{e^R}{l_j} &\text{ile punktów linia $i$ uzyskuje z przystanku $j$}\\
+	q_j &= \frac{p_j \cdot (1+\frac{R}{l_j})^{l_j}}{l_j} \xrightarrow{} \frac{e^R}{l_j} &\text{ile punktów każda linia uzyskuje z przystanku $j$}\\
 	S_{i}&&\text{długość ścieżki linii $i$ w grafie}\\
-	f(x) &= \sum_{i=0}^{n-1} \left[ \sum_{j=0}^{m-1} \left[ x_{i,j} \cdot (p_{i,j}-\alpha) \right]-S_{i}-\beta \right]&\text{funkcja kosztu}
+	cost_{j} &= \begin{cases}
+		\sum_{i=0}^{n-1} x_{i,j} \cdot (q_j-\alpha) & l_j > 0\\
+		-\Delta & l_j = 0\\
+	\end{cases} & \text{penalizacja nieodwiedzonych przystanków}\\
+	f(x) &= \sum_{j=0}^{m-1} cost_{j} - \sum_{i=0}^{n-1} \left[ S_{i}-\beta \right] &\text{funkcja kosztu}\\
 \end{align*}
 % TODO update cost function (delta parameter), fix p_i,j
 
