@@ -46,6 +46,20 @@
 \usepackage{tikz} % zbocza
 \usetikzlibrary{decorations.markings}
 \usepackage{hyperref} % bez obwódek wokół linków
+\usepackage{algorithm}
+\usepackage{algpseudocode} % pseudokod
+
+% algorytmy po polsku
+\floatname{algorithm}{Algorytm}
+\floatname{required}{W}
+\renewcommand{\listalgorithmname}{Spis algorytmów}
+%cmds
+\algnewcommand\algorithmicto{\textbf{to}}
+\algnewcommand\algorithmicand{\textbf{and }}
+\algnewcommand\algorithmicor{\textbf{or }}
+\algnewcommand\algorithmictrue{\textbf{true}}
+\algnewcommand\algorithmicfalse{\textbf{false}}
+\algdef{S}[FOR]{ForTo}[3]{\algorithmicfor \  $ #1 \gets #2 $ \algorithmicto \ $ #3 $ \algorithmicdo}
 
 \hypersetup{
     colorlinks,
@@ -54,6 +68,17 @@
     linkcolor=black,
     urlcolor=black
 }
+
+% obrazek {nazwa.png}{opis}
+\graphicspath{ {img} }
+\newcommand{\imgcustomsize}[3]{
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=#3\textwidth]{#1}
+		\caption{#2}
+	\end{figure}
+}
+\newcommand{\img}[2]{\imgcustomsize{#1}{#2}{0.8}}
 
 \newtheorem{definition}{Def}
 
@@ -141,7 +166,7 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 		\item $R$ - hiper parametr zbiegania.
 	\end{enumerate}
 
-
+\subsection{Funkcja kosztu}
 \begin{align*}
 	l_j &= \sum_{i=0}^{n-1} x_{i, j}&\text{liczba linii zatrzymujących się na przystanku $j$}\\
 	p_{i, j} &= \frac{p_j \cdot (1+\frac{R}{l_j})^{l_j}}{l_j} \xrightarrow{} \frac{e^R}{l_j} &\text{ile punktów linia $i$ uzyskuje z przystanku $j$}\\
@@ -157,8 +182,11 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 
 
 \chapter{Opis algorytmów}
+Nasz problem rozwiązywaliśmy algorytmami genetycznymi.
 
 \section{Reprezentacja środowiska}
+Jak już zostało wspomniane, zajmowaliśmy się problemem optymalizacji istniejącej sieci komunikacyjnej, bez tworzenia nowych połączeń.
+
 \subsection{Reprezentacja mapy}
 Mapa z przystankami jest reprezentowana jako ważony graf z biblioteki \lstinline{NetworkX}.
 
@@ -191,10 +219,46 @@ class Line:
         self.edge_style = [...]
 \end{lstlisting}
 
-\section{Symulacja}
+\section{Rozwiązanie początkowe}
+Na początku, chcąc się skupić na realizacji algorytmu, wygenerowaliśmy losowo sieć połączeń. Powstała ona przez wygenerowanie N punktów na płaszczyźnie, a następnie połączeniu ich między sobą z pewnym prawdopodobieństwem. Dawało to całkiem dobre rezultaty:
+\img{map_seed_46}{Przykładowa wygenerowana mapa}
 
+\section{Symulacja}
+    \begin{algorithm}[H]
+		\caption{Symulacja}
+		\begin{algorithmic}[1]
+			\Function{Symuluj}{liczba\_pokoleń, x}
+			\State populacja = \Call {populacja\_początkowa}{ }
+			\State \Call {zapisz\_populację}{ }
+			\ForTo{i}{0}{\text{liczba\_pokoleń} - 1}
+				\State populacja = \Call{usuń\_puste}{populacja}
+				\State populacja\_dopasowanie = \Call{fitness}{populacja}
+
+				\State populacja = \Call{funkcja\_przetrwania}{populacja, populacja\_dopasowanie}
+				\State populacja\_nowa = \Call{nowa\_populacja}{populacja} \Comment{Tutaj zachodzą mutacje i krzyżowania}
+
+				Co x epok:
+					\State \Call {zapisz\_populację}{ }
+			\EndFor
+			\EndFunction
+		\end{algorithmic}
+	\end{algorithm}
+
+	Powyżej przedstawiony został podstawowy silnik symulacji. W każdej epoce wykonuje on następujące kluczowe czynności:
+	\begin{itemize}
+		\item Usuwa niedopuszczalne rozwiązania (linie bez przystanków, organizmy bez linii),
+		\item Oblicza funkcję dopasowania,
+		\item Uruchamia funkcję przetrwania, która likwiduje wybrane osobniki,
+		\item Uruchamia funkcję nowej populacji, która dokonuje mutacji i krzyżowań.
+	\end{itemize}
+
+	Na tym poziomie nie definiujemy co dana funkcja robi. Zostało to zrobione poniżej.
+
+\section{Selekcja}
+Została przez nas zaimplementowana najprostsza funkcja zostawiająca 1/5 najlepszych osobników.
 
 \section{Mutacja}
+% TODO describe all mutations
 
 \subsection{LineMutator}
 Tworzy nowe mutacje dla danej linii.
@@ -222,6 +286,8 @@ Możliwe mutacje:
 \end{enumerate}
 
 \section{Krzyżowanie}
+% TODO describe all crossers
+
 \subsection{GenotypeCrosser}
 
 \begin{enumerate}
