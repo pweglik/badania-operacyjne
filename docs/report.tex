@@ -80,6 +80,25 @@
 }
 \newcommand{\img}[2]{\imgcustomsize{#1}{#2}{0.8}}
 
+% dwa obrazki
+% \imgsidebyside{1}{opis 1}{2}{opis 2}
+\newcommand{\imgsidebyside}[4]{
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{.45\textwidth}
+			\centering
+			\includegraphics[width=1\linewidth]{#1}
+			\caption{#2}
+		\end{minipage}%
+		\hfill
+		\begin{minipage}{.45\textwidth}
+			\centering
+			\includegraphics[width=1\linewidth]{#3}
+			\caption{#4}
+		\end{minipage}
+	\end{figure}
+}
+
 \newtheorem{definition}{Def}
 
 \begin{document}
@@ -95,6 +114,7 @@ Projekt\\
 \date{\today}
 
 \maketitle
+\tableofcontents
 
 \chapter{Wstęp}
 Celem naszego projektu jest znalezienie optymalnych tras linii dla autobusów, aby maksymalizować liczbę pasażerów, przy minimalnej liczbie linii autobusowych. Aby to osiągnąć, wykorzystywane są algorytmy genetyczne -  algorytmy przeszukujące przestrzeń rozwiązań, które opierają się na procesie działania mechanizmu dziedziczenia biologicznego.
@@ -298,6 +318,17 @@ Możliwe mutacje:
 \chapter{Aplikacja}
 
 \chapter{Eksperymenty}
+
+\section{Eksperyment z losowym stosowaniem mutacji i krzyżowań}
+\imgsidebyside{test1/0}{Populacja 0\\ dopasowanie $-121.46$}{test1/3}{Populacja 3\\ dopasowanie $1.71$}
+\imgsidebyside{test1/5}{Populacja 5\\ dopasowanie $11.08$}{test1/10}{Populacja 10\\ dopasowanie $14.40$}
+Jak widzimy, już po 10 epokach sieć połączeń znacznie się wyklarowała. Funkcja dopasowania wzrosła znacząco od generacji 0 do 10.
+
+\imgsidebyside{test1/20}{Populacja 20\\ dopasowanie $17.18$}{test1/100}{Populacja 100\\ dopasowanie $24.64$}
+Sieć pokryła jeszcze więcej przystanków. Tempo wzrostu funkcji dopasowania zmalało.
+
+\imgcustomsize{test1/plot}{Wykres funkcji dopasowania}{0.6}
+Jak widać, rzeczywiście tempo dopasowywania się modelu znacznie spada w poźniejszych etapach symulacji.
 
 \chapter{Podsumowanie}
 
