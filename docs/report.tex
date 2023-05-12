@@ -290,11 +290,12 @@ Tworzy nowe mutacje dla danej linii.
 Możliwe mutacje:
 
 \begin{enumerate}
-    \item \lstinline{rotation_to_right}
-    \item \lstinline{cycle_rotation}
+  \item \lstinline{rotation_to_right} - losuje spójny ciąg przystanków w lini i przesuwa je o zadaną (lub losową) liczbę pozycji
+    \item \lstinline{cycle_rotation} - losuje pozycje przystanków w lini i przesuwa obecne na tych pozycjach przystanki o jedną pozycję w ramach wylosowanych pozycji
     \item \lstinline{invert} - odwraca kolejność przystanków, pomiędzy losowymi indeksami \lstinline{start} oraz \lstinline{end},
     \item \lstinline{erase_stops} - losowo usuwa zadaną liczbę przystanków z linii,
-    \item \lstinline{add_stops} - losowo dodaje zadaną liczbę przystanków, spośród tych, które w linii nie występują.
+    \item \lstinline{add_stops} - losowo dodaje zadaną liczbę przystanków, spośród tych, które w linii nie występują
+    \item \lstinline{replace_stops} - losowo zmienia zadaną liczbę przystanków z lini na inne. Nowe przystanki są wybierane z rozkładu jednostajnego lub wykładniczego gdzie przystanki bliższe do obecnego są bardziej prawdopodobne
 \end{enumerate}
 
 \subsection{GenotypeMutator}
@@ -302,11 +303,11 @@ Możliwe mutacje:
 Możliwe mutacje:
 
 \begin{enumerate}
-    \item \lstinline{erase_line} - tworzy nowy genotyp, usuwając losową linię,
-    \item \lstinline{create_line} - tworzy nowy genotyp, dodając losowo wygenerowaną linię,
-    \item \lstinline{split_line} - tworzy nowy genotyp, rozdzielając losową, losową linię dwie różne.
-    \item \lstinline{merge_lines} - tworzy nowy genotyp, łącząc w losowej kolejności zadaną liczbę losowych linii,
-    \item \lstinline{cycle_stops_shift} - ???
+  	\item \lstinline{erase_line(G)} - tworzy nowy genotyp, usuwając losową linię,
+    \item \lstinline{create_line(G)} - tworzy nowy genotyp, dodając losowo wygenerowaną linię,
+    \item \lstinline{split_line(G)} - tworzy nowy genotyp, rozdzielając losową, losową linię dwie różne.
+    \item \lstinline{merge_lines(G)} - tworzy nowy genotyp, łącząc zadaną liczbę losowych linii. W zależności od wartości parametru line mogą być łączone całościowo lub na poziomie pojedyńczych przystanków
+    \item \lstinline{cycle_stops_shift(G)} - tworzy nowy genotyp, ustawiając ciągi przystanków z lini obok siebie i wykonując \lstinline{cycle_rotation} na takim ciągu przystanków
 \end{enumerate}
 
 \section{Krzyżowanie}
@@ -315,8 +316,9 @@ Możliwe mutacje:
 \subsection{GenotypeCrosser}
 
 \begin{enumerate}
-    \item \lstinline{merge_genotypes} - tworzy nowy genotyp, łącząc losową liczbę losowych linii z dwóch danych genotypów,
-    \item \lstinline{cycle_stops_shift} - ???
+  	\item \lstinline{merge_genotypes(G1, G2)} - tworzy nowy genotyp poprzez wybranie losowych lini z genotypów G1 i G2
+  	\item \lstinline{cycle_stops_shift(G1, G2)} - najpierw wykonuje \lstinline{merge_genotypes(G1, G2)}, a następnie \lstinline{GenotypeMutator.cycle_stops_shift(G)}
+  	\item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z lini z G1 i G2 na połowy i jedną z połów każdej lini łączy z połową lini z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten w którym dystans pomiędzy połączonymi przystankami jest minimalny
 \end{enumerate}
 
 \chapter{Aplikacja}
