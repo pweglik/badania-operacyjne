@@ -279,7 +279,11 @@ Na początku, chcąc się skupić na realizacji algorytmu, wygenerowaliśmy los
 	Na tym poziomie nie definiujemy co dana funkcja robi. Zostało to zrobione poniżej.
 
 \section{Selekcja}
-Została przez nas zaimplementowana najprostsza funkcja zostawiająca 1/5 najlepszych osobników.
+Wypróbowaliśmy wielu różnych metod selekcji nowych osobników:
+\begin{enumerate}
+    \item \lstinline{n_best_survive(n)} - pozostawia daną liczbę $n$ najlepszych osobników,
+    \item \lstinline{n_best_and_m_random_survive(n, m)} - pozostawia $n$ najlepszych osobników, oraz $m$ losowych spośród pozostałych,
+\end{enumerate}
 
 \section{Mutacja}
 % TODO describe all mutations

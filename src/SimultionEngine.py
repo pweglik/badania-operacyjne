@@ -73,7 +73,9 @@ class SimulationEngine:
         """
         population: list[Genotype] = self.initial_population
 
-        self.report(0, population, report_show)
+        if report_every_n != 0:
+            self.report(0, population, report_show)
+
         fitness_values = []
 
         for i in range(no_of_generations):
