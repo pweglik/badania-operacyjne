@@ -24,7 +24,7 @@ def n_best_survive(
     population_with_fitness: list[tuple[Genotype, float]],
     n: int,
 ) -> list[tuple[Genotype, float]]:
-    return list(_partition(population_with_fitness, [n - 1])[:n])
+    return list(_partition(population_with_fitness, [n])[:n])
 
 
 def n_best_and_m_worst_survive(
@@ -33,7 +33,7 @@ def n_best_and_m_worst_survive(
     m: int,
 ) -> list[tuple[Genotype, float]]:
     tail_idx = max(n, len(population_with_fitness) - m)
-    partitioned = _partition(population_with_fitness, [n - 1, tail_idx - 1])
+    partitioned = _partition(population_with_fitness, [n, tail_idx - 1])
 
     return list(np.concatenate(partitioned[:n], partitioned[tail_idx:]))
 
@@ -129,9 +129,7 @@ def exponentional_survival_with_protection(
     best_protected = min(best_protected, len(population_with_fitness))
     tail_idx = max(best_protected, len(population_with_fitness) - worst_protected)
     worst_protected = len(population_with_fitness) - tail_idx
-    partitioned = _partition(
-        population_with_fitness, [best_protected - 1, tail_idx - 1]
-    )
+    partitioned = _partition(population_with_fitness, [best_protected, tail_idx - 1])
 
     return _exponentional_delegate(
         partitioned[best_protected:tail_idx],
