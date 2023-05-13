@@ -6,7 +6,7 @@ from multiprocessing import Process, Queue
 from time import perf_counter
 from typing import Tuple
 
-from Sanitizers import BasicSanitizer
+from new_generation.Sanitizers import BasicSanitizer
 from SimultionEngine import SimulationEngine
 from common.params import N, SEED
 from common.params import N_IN_POPULATION
