@@ -281,8 +281,11 @@ Na początku, chcąc się skupić na realizacji algorytmu, wygenerowaliśmy los
 \section{Selekcja}
 Wypróbowaliśmy wielu różnych metod selekcji nowych osobników:
 \begin{enumerate}
-    \item \lstinline{n_best_survive(n)} - pozostawia daną liczbę $n$ najlepszych osobników,
-    \item \lstinline{n_best_and_m_random_survive(n, m)} - pozostawia $n$ najlepszych osobników, oraz $m$ losowych spośród pozostałych,
+    \item \lstinline{n\_best\_survive(n)} - pozostawia daną liczbę $n$ najlepszych osobników,
+    \item \lstinline{n\_best\_and\_m\_random\_survive(n, m)} - pozostawia $n$ najlepszych osobników, oraz $m$ losowych spośród pozostałych,
+    \item \lstinline{n\_best\_and\_m\_worst\_survive(n, m)} - pozostawia $n$ najlepszych i $m$ najgorszych osobników,
+    \item \lstinline{exponentional\_survival(n, lambda)} - pozostawia $n$ osobników w sposób losowy, ale zależny od uzystanej wartości $fitness$ i zgodny z rozkładem wykładniczym parametryzowanym przez $lambda$,
+    \item \lstinline{exponentional\_survival\_with\_protection(best\_protected, worst\_protected, lambda)} - działa jak $exponentional\_survival(lambda, n)$, ale gwarantuje przeżycie $best\_protected$ najlepszym i $worst\_protected$ najgorszym osobnikom,
 \end{enumerate}
 
 \section{Mutacja}
