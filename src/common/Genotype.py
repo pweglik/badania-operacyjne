@@ -13,3 +13,6 @@ class Genotype:
 
     def get_line_stops_count_summary(self):
         return Counter([len(line.stops) for line in self.lines])
+
+    def __repr__(self):
+        return str(self.lines)

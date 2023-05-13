@@ -1,14 +1,18 @@
 # import from dirs below
 import sys
+from datetime import time
+from time import perf_counter
+from typing import Tuple
 
 sys.path.insert(0, ".")
 sys.path.insert(0, ".")
 sys.path.insert(0, "./new_generation")
 
 import itertools
-import os
-from concurrent.futures import ThreadPoolExecutor
+
 import random
+from multiprocessing import Process, Queue
+import os
 
 from common.params import N, SEED
 
@@ -22,123 +26,134 @@ from common.params import N_IN_POPULATION
 from fitness import fitness
 from initial_population import create_initial_population
 from new_generation.new_generation_function import new_generation_random
-from survival import n_best_survive
+from survival import n_best_survive, n_best_and_m_random_survive
 
 random.seed(SEED)
 
+VERBOSE = True
 
-def custom_grid_search(GridSearchParams, cv=5, parallel_units=1, **model_params):
-    def process_param_set(args):
-        (params,) = args
+SURVIVAL_FUNCTIONS = [
+    lambda population: n_best_survive(population, N_IN_POPULATION // 4),
+    lambda population: n_best_survive(population, N_IN_POPULATION // 8),
+    lambda population: n_best_and_m_random_survive(
+        population, N_IN_POPULATION // 4, N_IN_POPULATION // 10
+    ),
+    lambda population: n_best_and_m_random_survive(
+        population, N_IN_POPULATION // 4, N_IN_POPULATION // 20
+    ),
+    lambda population: n_best_and_m_random_survive(
+        population, N_IN_POPULATION // 3, N_IN_POPULATION // 10
+    ),
+]
 
-        G = model_params["G"]
-        best_paths = model_params["best_paths"]
-        line_mutator = model_params["line_mutator"]
-        genotype_mutator = model_params["genotype_mutator"]
-        genotype_crosser = model_params["genotype_crosser"]
 
-        sim_engine = SimulationEngine(
-            G,
-            initial_population=create_initial_population(G, best_paths),
-            fitness_function=fitness,
-            survival_function=lambda population: n_best_survive(
-                population, N_IN_POPULATION // params["survival_rate"]
-            ),
-            new_generation_function=lambda population, graph: new_generation_random(
-                population,
-                N_IN_POPULATION,
-                line_mutator,
-                genotype_mutator,
-                genotype_crosser,
-            ),
-        )
+def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
+    """
+    Process params from tasks queue and put results in results queue
+    :param tasks: Tasks to be processed
+    :param results: Results of the tasks
+    :param G: Our city
+    :param best_paths: Best paths in our city
+    """
+    while not tasks.empty():
+        params = tasks.get()
 
-        fitness_values = sim_engine.run(params["epochs"], 0, report_show=False)
-        best_fitness = fitness_values[-1]
+        if VERBOSE:
+            print(os.getpid(), "Starting", params)
 
-        return params, best_fitness
+        survival_function = SURVIVAL_FUNCTIONS[params["survival_functions"]]
 
-    # Initialize variables to store the results
-    results = []
-    Keys = GridSearchParams.keys()
-    max_score = -sys.maxsize
-    best_params = {}
-    ParamSets = [
-        dict(zip(Keys, values))
-        for values in itertools.product(*GridSearchParams.values())
-    ]
+        line_mutator = LineMutator(G, best_paths)
+        genotype_mutator = GenotypeMutator(G, best_paths)
+        genotype_crosser = GenotypeCrosser(best_paths)
 
-    # Check the number of parallel units
-    if parallel_units == -1:
-        parallel_units = os.cpu_count()
-    elif parallel_units > os.cpu_count():
-        raise RuntimeError(f"Maksimum CPU: {os.cpu_count()}")
+        fitness_sum = 0
 
-    print("Parallel Units:", parallel_units)
+        time_start = perf_counter()
+        for initial_population in INITIAL_POPULATIONS:
+            sim_engine = SimulationEngine(
+                G,
+                initial_population=initial_population,
+                fitness_function=fitness,
+                survival_function=survival_function,
+                new_generation_function=lambda population, graph: new_generation_random(
+                    population,
+                    N_IN_POPULATION,
+                    line_mutator,
+                    genotype_mutator,
+                    genotype_crosser,
+                ),
+            )
+            fitness_values = sim_engine.run(params["epochs"], 0, report_show=False)
+            best_fitness = fitness_values[-1]
+            fitness_sum += best_fitness
+        run_time = perf_counter() - time_start
 
-    # Start the thread pool executor
-    try:
-        with ThreadPoolExecutor(max_workers=parallel_units) as executor:
-            for params in ParamSets:
-                total_score = 0
-                futures = []
+        average_best_fitness = fitness_sum / len(INITIAL_POPULATIONS)
 
-                print("started", params)
+        if VERBOSE:
+            print(
+                os.getpid(), "Done", params, average_best_fitness, f"in {run_time:.2f}s"
+            )
+        results.put((params, average_best_fitness))
 
-                for _ in range(cv):
-                    future = executor.submit(process_param_set, (params,))
-                    futures.append(future)
-
-                for future in futures:
-                    _, error = future.result()
-                    total_score += error
-
-                avg_error = total_score / cv
-
-                print("finished", params, "average result", avg_error)
-
-                results.append((params, avg_error))
-                print("avg_error", avg_error, "max_score", max_score)
-                if avg_error > max_score:
-                    max_score = avg_error
-                    best_params = params
-
-    except KeyboardInterrupt:
-        print("Stopping...")
-        executor.shutdown(wait=False)
-
-    return results, best_params, max_score
+    print(f"Done {os.getpid()}")
 
 
 if __name__ == "__main__":
+    # Setup of the city
+    G, best_paths = generate_city_graph(N)
+
     # Parameters
+    INITIAL_POPULATIONS = [create_initial_population(G, best_paths) for _ in range(3)]
+
     grid_search_params = {
-        "survival_rate": range(1, 2, 1),
-        "epochs": [10],
+        "survival_functions": range(len(SURVIVAL_FUNCTIONS)),
+        "epochs": [100, 500, 1000],
     }
 
-    G, best_paths = generate_city_graph(N)
-    #
-    line_mutator = LineMutator(G, best_paths)
-    genotype_mutator = GenotypeMutator(G, best_paths)
-    genotype_crosser = GenotypeCrosser(best_paths)
+    # Setup of the grid search
+    parallel_units = 1
+    cpu_count = os.cpu_count()
+    if cpu_count is not None:
+        parallel_units = cpu_count - 1
 
-    # Searching Best Parameters
-    results, best_params, error = custom_grid_search(
-        grid_search_params,
-        cv=5,
-        parallel_units=-1,
-        G=G,
-        best_paths=best_paths,
-        line_mutator=line_mutator,
-        genotype_mutator=genotype_mutator,
-        genotype_crosser=genotype_crosser,
-    )
+    params_keys = grid_search_params.keys()
+    queue: Queue[dict] = Queue()
+    results: Queue[Tuple[dict, float]] = Queue()
+
+    for values in itertools.product(*grid_search_params.values()):
+        queue.put(dict(zip(params_keys, values)))
+
+    processes = [
+        Process(
+            target=process_params,
+            args=(queue, results, G, best_paths, INITIAL_POPULATIONS),
+        )
+        for _ in range(parallel_units)
+    ]
+
+    # Start grid search
+    for i in range(parallel_units):
+        processes[i].start()
+
+    # Wait for grid search to finish
+    for p in processes:
+        p.join()
 
     # Print results
     print("Results:")
-    for res in results:
-        print(res)
+    results_list = []
+    while not results.empty():
+        results_list.append(results.get())
 
-    print("Best Parameters:", best_params)
-    print("Error:", error)
+    sorted(results_list, key=lambda x: x[1])
+
+    print("Best Parameters:", results_list[0][0])
+    print("Best Fitness:", results_list[0][1])
+
+    print("Best Initial population:")
+    print(INITIAL_POPULATIONS[results_list[0][0]["initial_population"]])
+
+    print("Best Epochs:")
+    print(results_list[0][0]["epochs"])

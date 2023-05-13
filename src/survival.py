@@ -1,3 +1,4 @@
+from random import random, choices
 from typing import Callable
 from common.Genotype import Genotype
 import numpy as np
@@ -13,11 +14,13 @@ def _partition(
     population_with_fitness: list[tuple[Genotype, float]],
     kths: list[int],
 ) -> np.ndarray:
-    partitioned = np.empty(len(population_with_fitness), dtype=object)
+    kths = -np.array(kths)
+    partitioned = np.empty_like(population_with_fitness, dtype=object)
     partitioned[:] = population_with_fitness
-    partitioned.partition(kths)
 
-    return partitioned
+    partitioned = partitioned[partitioned[:, 1].argpartition(kth=kths)]
+
+    return np.flip(partitioned, axis=0)
 
 
 def n_best_survive(
@@ -25,6 +28,17 @@ def n_best_survive(
     n: int,
 ) -> list[tuple[Genotype, float]]:
     return list(_partition(population_with_fitness, [n])[:n])
+
+
+def n_best_and_m_random_survive(
+    population_with_fitness: list[tuple[Genotype, float]], n: int, m: int
+) -> list[tuple[Genotype, float]]:
+    if n + m > len(population_with_fitness):
+        raise ValueError("n + m > len(population_with_fitness)")
+
+    partitioned = list(_partition(population_with_fitness, [n])[:n])
+
+    return partitioned[:n] + choices(partitioned[n:], k=m)
 
 
 def n_best_and_m_worst_survive(
