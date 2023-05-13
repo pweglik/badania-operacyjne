@@ -13,7 +13,13 @@ class LineMutator:
     def __init__(self, G: Graph, best_paths) -> None:
         self.G = G
         self.best_paths = best_paths
-        self.mutations = [self.rotation_to_right, self.cycle_rotation, self.invert]
+        self.mutations = [
+            self.rotation_to_right,
+            self.cycle_rotation,
+            self.invert,
+            self.swap_every_nth,
+            self.swap_random,
+        ]
 
     def rotation_to_right(self, line: Line, shift: Optional[int] = None) -> Line:
         start, end = generation_util.get_sublist_borders(len(line.stops))
@@ -70,7 +76,7 @@ class LineMutator:
         return Line(new_stops, self.best_paths)
 
     def add_stops(self, line: Line, no: int = 1, mix: bool = False) -> Line:
-        current_stops = set(line.stops)
+        current_stops = set(line.gstops)
         not_used_stops = set(self.G.nodes.keys() - current_stops)
         stops_to_add = list(
             np.random.choice(list(not_used_stops), size=no, replace=False)
@@ -79,6 +85,25 @@ class LineMutator:
         # idx = np.random.choice(line.stops_no, no, replace=True)
 
         return Line(line.stops + stops_to_add, self.best_paths)
+
+    def swap_every_nth(self, line: Line, n: Optional[int] = None) -> Line:
+        start, end = generation_util.get_sublist_borders(len(line.stops))
+        if n is None:
+            n = 1
+
+        new_stops = line.stops.copy()
+        for i in range(start, end, n + 1):
+            new_stops[i], new_stops[i + n] = new_stops[i + n], new_stops[i]
+
+        return Line(new_stops, self.best_paths)
+
+    def swap_random(self, line: Line) -> Line:
+        N = len(line.stops)
+        idx1 = np.random.randint(0, N)
+        idx2 = np.random.randint(0, N)
+        new_stops = line.stops.copy()
+        new_stops[idx1], new_stops[idx2] = new_stops[idx2], new_stops[idx1]
+        return Line(new_stops, self.best_paths)
 
 
 class GenotypeMutator:
@@ -175,6 +200,8 @@ if __name__ == "__main__":
         line = LineMock([0, 1, 2, 3, 4, 5, 6])
         print(line.stops)
         # print(line_mutator.rotation_to_right(line).stops)
-        print(line_mutator.invert(line).stops)
+        # print(line_mutator.invert(line).stops)
+        # print(line_mutator.swap_random(line).stops)
+        print(line_mutator.swap_every_nth(line).stops)
 
     main()
