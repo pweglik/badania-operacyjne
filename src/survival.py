@@ -12,13 +12,12 @@ def _exp_pdf_for_range(i: np.ndarray, n: int, lamb: float) -> np.ndarray:
 
 def _partition(
     population_with_fitness: list[tuple[Genotype, float]],
-    kths: list[int],
+    kth: list[int],
 ) -> np.ndarray:
-    kths = -np.array(kths)
     partitioned = np.empty_like(population_with_fitness, dtype=object)
     partitioned[:] = population_with_fitness
 
-    partitioned = partitioned[partitioned[:, 1].argpartition(kth=kths)]
+    partitioned = partitioned[partitioned[:, 1].argpartition(kth=-np.array(kth))]
 
     return np.flip(partitioned, axis=0)
 
