@@ -38,7 +38,7 @@ def n_best_and_m_random_survive(
 
     partitioned = list(_partition(population_with_fitness, [n])[:n])
 
-    return partitioned[:n] + choices(partitioned[n:], k=m)
+    return partitioned[:n] + choices(partitioned[m:], k=m)
 
 
 def n_best_and_m_worst_survive(

@@ -118,6 +118,8 @@ if __name__ == "__main__":
     if cpu_count is not None:
         parallel_units = cpu_count - 1
 
+    print("Parallel units:", parallel_units)
+
     params_keys = grid_search_params.keys()
     queue: "Queue[dict]" = Queue()
     results: "Queue[Tuple[dict, float]]" = Queue()
