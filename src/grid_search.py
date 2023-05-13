@@ -1,30 +1,19 @@
 # import from dirs below
-import sys
-from datetime import time
+import itertools
+import os
+import random
+from multiprocessing import Process, Queue
 from time import perf_counter
 from typing import Tuple
 
-sys.path.insert(0, ".")
-sys.path.insert(0, ".")
-sys.path.insert(0, "./new_generation")
-
-import itertools
-
-import random
-from multiprocessing import Process, Queue
-import os
-
-from common.params import N, SEED
-
-from graph_generation import generate_city_graph
-
-from new_generation.Mutators import LineMutator, GenotypeMutator
-from new_generation.SpecimenCrossers import GenotypeCrosser
-
 from SimultionEngine import SimulationEngine
+from common.params import N, SEED
 from common.params import N_IN_POPULATION
 from fitness import fitness
+from graph_generation import generate_city_graph
 from initial_population import create_initial_population
+from new_generation.Mutators import LineMutator, GenotypeMutator
+from new_generation.SpecimenCrossers import GenotypeCrosser
 from new_generation.new_generation_function import new_generation_random
 from survival import n_best_survive, n_best_and_m_random_survive
 
@@ -33,16 +22,25 @@ random.seed(SEED)
 VERBOSE = True
 
 SURVIVAL_FUNCTIONS = [
-    lambda population: n_best_survive(population, N_IN_POPULATION // 4),
-    lambda population: n_best_survive(population, N_IN_POPULATION // 8),
-    lambda population: n_best_and_m_random_survive(
-        population, N_IN_POPULATION // 4, N_IN_POPULATION // 10
+    (
+        "(1/4)_best_survive",
+        lambda population: n_best_survive(population, N_IN_POPULATION // 4),
     ),
-    lambda population: n_best_and_m_random_survive(
-        population, N_IN_POPULATION // 4, N_IN_POPULATION // 20
+    (
+        "(1/8)_best_survive",
+        lambda population: n_best_survive(population, N_IN_POPULATION // 8),
     ),
-    lambda population: n_best_and_m_random_survive(
-        population, N_IN_POPULATION // 3, N_IN_POPULATION // 10
+    (
+        "(1/4)_best_and_(1/10)_random_survive",
+        lambda population: n_best_and_m_random_survive(
+            population, N_IN_POPULATION // 4, N_IN_POPULATION // 10
+        ),
+    ),
+    (
+        "(1/4)_best_and_(1/20)_random_survive",
+        lambda population: n_best_and_m_random_survive(
+            population, N_IN_POPULATION // 4, N_IN_POPULATION // 20
+        ),
     ),
 ]
 
@@ -61,7 +59,7 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
         if VERBOSE:
             print(os.getpid(), "Starting", params)
 
-        survival_function = SURVIVAL_FUNCTIONS[params["survival_functions"]]
+        survival_function = SURVIVAL_FUNCTIONS[params["survival_functions"]][1]
 
         line_mutator = LineMutator(G, best_paths)
         genotype_mutator = GenotypeMutator(G, best_paths)
@@ -101,61 +99,66 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
 
 
 if __name__ == "__main__":
-    # Setup of the city
-    G, best_paths = generate_city_graph(N)
 
-    # Parameters
-    INITIAL_POPULATIONS = [create_initial_population(G, best_paths) for _ in range(3)]
+    def main() -> None:
+        # Setup of the city
+        G, best_paths = generate_city_graph(N)
 
-    grid_search_params = {
-        "survival_functions": range(len(SURVIVAL_FUNCTIONS)),
-        "epochs": [100, 500, 1000],
-    }
+        # Parameters
+        INITIAL_POPULATIONS = [
+            create_initial_population(G, best_paths) for _ in range(3)
+        ]
 
-    # Setup of the grid search
-    parallel_units = 1
-    cpu_count = os.cpu_count()
-    if cpu_count is not None:
-        parallel_units = cpu_count - 1
+        grid_search_params = {
+            "survival_functions": range(len(SURVIVAL_FUNCTIONS)),
+            "epochs": [100],
+        }
 
-    print("Parallel units:", parallel_units)
+        # Setup of the grid search
+        parallel_units = 1
+        cpu_count = os.cpu_count()
+        if cpu_count is not None:
+            parallel_units = cpu_count - 1
 
-    params_keys = grid_search_params.keys()
-    queue: "Queue[dict]" = Queue()
-    results: "Queue[Tuple[dict, float]]" = Queue()
+        print("Parallel units:", parallel_units)
 
-    for values in itertools.product(*grid_search_params.values()):
-        queue.put(dict(zip(params_keys, values)))
+        params_keys = grid_search_params.keys()
+        queue: "Queue[dict]" = Queue()
+        results: "Queue[Tuple[dict, float]]" = Queue()
 
-    processes = [
-        Process(
-            target=process_params,
-            args=(queue, results, G, best_paths, INITIAL_POPULATIONS),
-        )
-        for _ in range(parallel_units)
-    ]
+        for values in itertools.product(*grid_search_params.values()):
+            queue.put(dict(zip(params_keys, values)))
 
-    # Start grid search
-    for i in range(parallel_units):
-        processes[i].start()
+        processes = [
+            Process(
+                target=process_params,
+                args=(queue, results, G, best_paths, INITIAL_POPULATIONS),
+            )
+            for _ in range(parallel_units)
+        ]
 
-    # Wait for grid search to finish
-    for p in processes:
-        p.join()
+        # Start grid search
+        for i in range(parallel_units):
+            processes[i].start()
 
-    # Print results
-    print("Results:")
-    results_list = []
-    while not results.empty():
-        results_list.append(results.get())
+        # Wait for grid search to finish
+        for p in processes:
+            p.join()
 
-    sorted(results_list, key=lambda x: x[1])
+        # Print results
+        print("Results:")
+        results_list = []
+        while not results.empty():
+            results_list.append(results.get())
 
-    print("Best Parameters:", results_list[0][0])
-    print("Best Fitness:", results_list[0][1])
+        sorted(results_list, key=lambda x: x[1])
 
-    print("Best Initial population:")
-    print(INITIAL_POPULATIONS[results_list[0][0]["initial_population"]])
+        print(f"Best parameters: \t{results_list[0][0]}")
+        print(f"Best fitness: \t{results_list[0][1]:.2f}")
 
-    print("Best Epochs:")
-    print(results_list[0][0]["epochs"])
+        print("Best survival function:")
+        print(SURVIVAL_FUNCTIONS[results_list[0][0]["survival_functions"]][0])
+
+        print(f"Best epochs: \t{results_list[0][0]['epochs']}")
+
+    main()
