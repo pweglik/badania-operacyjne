@@ -119,8 +119,8 @@ if __name__ == "__main__":
         parallel_units = cpu_count - 1
 
     params_keys = grid_search_params.keys()
-    queue: Queue[dict] = Queue()
-    results: Queue[Tuple[dict, float]] = Queue()
+    queue: "Queue[dict]" = Queue()
+    results: "Queue[Tuple[dict, float]]" = Queue()
 
     for values in itertools.product(*grid_search_params.values()):
         queue.put(dict(zip(params_keys, values)))
