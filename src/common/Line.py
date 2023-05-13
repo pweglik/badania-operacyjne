@@ -1,3 +1,4 @@
+from copy import deepcopy
 from functools import cached_property
 
 
@@ -35,6 +36,9 @@ class Line:
 
     def __repr__(self) -> str:
         return str(self.stops)
+
+    def __deepcopy__(self, _):
+        return Line(deepcopy(self.stops), self.best_paths)
 
     @staticmethod
     def get_next_edge_style():

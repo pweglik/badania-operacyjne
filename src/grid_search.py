@@ -6,6 +6,7 @@ from multiprocessing import Process, Queue
 from time import perf_counter
 from typing import Tuple
 
+from new_generation.Sanitizers import BasicSanitizer
 from SimultionEngine import SimulationEngine
 from common.params import N, SEED
 from common.params import N_IN_POPULATION
@@ -61,9 +62,11 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
 
         survival_function = SURVIVAL_FUNCTIONS[params["survival_functions"]][1]
 
-        line_mutator = LineMutator(G, best_paths)
+        all_stops = list(G.nodes)
+
+        line_mutator = LineMutator(G, all_stops, best_paths)
         genotype_mutator = GenotypeMutator(G, best_paths)
-        genotype_crosser = GenotypeCrosser(best_paths)
+        genotype_crosser = GenotypeCrosser(G, best_paths)
 
         fitness_sum = 0
 
@@ -81,6 +84,7 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
                     genotype_mutator,
                     genotype_crosser,
                 ),
+                population_sanitizer=BasicSanitizer(best_paths),
             )
             fitness_values = sim_engine.run(params["epochs"], 0, report_show=False)
             best_fitness = fitness_values[-1]

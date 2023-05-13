@@ -62,6 +62,16 @@ class LineListLinearizer(MutableSequence):
     def __len__(self) -> int:
         return self.tree.end() - self.tree.begin()
 
+    def __copy__(self):
+        new_linealizer = LineListLinearizer([])
+        new_linealizer.tree = self.tree.copy()
+        return new_linealizer
+
+    def __deepcopy__(self, _):
+        new_linealizer = LineListLinearizer([])
+        new_linealizer.tree = deepcopy(self.tree)
+        return new_linealizer
+
     def stops(self) -> list[list[int]]:
         return [interval.data.stops for interval in self.tree.items()]
 
