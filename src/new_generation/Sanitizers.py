@@ -78,6 +78,19 @@ class BasicSanitizer(Sanitizer):
         return Genotype(new_lines)
 
 
+class RejectingSanitizer(Sanitizer):
+    def __init__(self, criterium_sanitizer: Sanitizer) -> None:
+        self.delegate = criterium_sanitizer
+
+    def sanitizeLine(self, line: Line) -> Optional[Line]:
+        return line if self.delegate.sanitizeLine(line) == line else None
+
+    def sanitizeGenotype(self, genotype: Genotype) -> Optional[Genotype]:
+        return (
+            genotype if self.delegate.sanitizeGenotype(genotype) == genotype else None
+        )
+
+
 if __name__ == "__main__":
     sanitizer = BasicSanitizer([])
 

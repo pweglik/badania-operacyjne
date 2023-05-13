@@ -28,6 +28,11 @@ class Line:
     def stops_no(self) -> int:
         return len(self.stops)
 
+    def __eq__(self, __value: object) -> bool:
+        if type(__value) != Line:
+            return False
+        return self.stops == __value.stops
+
     def __repr__(self) -> str:
         return str(self.stops)
 
