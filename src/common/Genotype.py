@@ -20,3 +20,6 @@ class Genotype:
         return all(line in __value.lines for line in self.lines) and all(
             line in self.lines for line in __value.lines
         )
+
+    def __repr__(self):
+        return str(self.lines)

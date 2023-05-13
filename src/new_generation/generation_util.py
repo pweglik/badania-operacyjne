@@ -14,7 +14,11 @@ def create_index_cycle(idx: list[int], n: int):
     return np.random.choice(idx, size=n, replace=False)
 
 
-def get_sublist_borders(n: int) -> tuple[int, int]:
+def get_sublist_borders(n: int, use_normal: bool = False) -> tuple[int, int]:
+    if use_normal:
+        p = rd.randrange(n)
+        q = int((n / 3) * abs(np.random.randn(1)[0])) + p
+        return (p, q % n)
     return (rd.randrange(n), rd.randrange(n))
 
 

@@ -73,7 +73,10 @@ class SimulationEngine:
         """
         population: list[Genotype] = self.initial_population
 
-        self.report(0, population, report_show)
+        if report_every_n != 0:
+            self.report(0, population, report_show)
+
+        fitness_values = []
 
         for i in range(no_of_generations):
             population = self.sanitize_population(population)
@@ -89,9 +92,14 @@ class SimulationEngine:
                 population_with_fitness
             )
             self.latest_generation = population
+            fitness_values.append(
+                self.fitness_function(self.latest_generation[0], self.G)
+            )
 
             # generating new population from survived
             population = self.new_generation_function(population_survived, self.G)
 
-            if (i + 1) % report_every_n == 0:
+            if report_every_n != 0 and (i + 1) % report_every_n == 0:
                 self.report(i + 1, self.latest_generation, report_show)
+
+        return fitness_values

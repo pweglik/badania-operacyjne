@@ -1,28 +1,65 @@
+% !TeX spellcheck = pl_PL
 \documentclass[12pt,a4paper,openright]{mwrep}
+%\documentclass[12pt,a4paper,openright]{article}
 
-\usepackage{lmodern}
-\usepackage[T1]{polski}
+% Przemkowe importy co nie działają
+%\usepackage{lmodern}
+%\usepackage[T1]{polski}
+%
+%\usepackage[a4paper,
+%            tmargin=2cm,
+%            bmargin=2cm,
+%            lmargin=2cm,
+%            rmargin=2cm,
+%            bindingoffset=0cm]{geometry}
+%
+%\usepackage{tocloft}
+%\usepackage{hyperref}
+%
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage{siunitx}
+%
+%\usepackage{listings}
+%
+%\usepackage{graphicx}
+%\usepackage{subfig}
+%\usepackage{float}
+%\usepackage{booktabs}
 
-\usepackage[a4paper,
-            tmargin=2cm,
-            bmargin=2cm,
-            lmargin=2cm,
-            rmargin=2cm,
-            bindingoffset=0cm]{geometry}
+% moje działają
+\usepackage{amssymb} % symbol kąta
+\usepackage[polish]{babel} % polskie nazwy
+\usepackage[T1]{fontenc} % polskie znaki
+\usepackage[margin=1.0in]{geometry} % marginesy
+\usepackage[utf8]{inputenc}
+\usepackage{listingsutf8} % bloki kodu
+\usepackage{color} % kolory
+\usepackage{indentfirst} % wcięcie w pierwszej linii paragrafu
+\usepackage{graphicx} % obrazy
+\usepackage{float} % dla image [H]
+\usepackage{amsmath,amsthm,amssymb,mathtools} % matematyka dowód
+\usepackage{changepage} % matematyka dowód
+\usepackage{siunitx} % wyrównanie do kropki
+\usepackage{makecell} % wyrównania nagłówków
+%\usepackage{enumitem} % wyrównania nagłówków
+\usepackage{tikz} % zbocza
+\usetikzlibrary{decorations.markings}
+\usepackage{hyperref} % bez obwódek wokół linków
+\usepackage{algorithm}
+\usepackage{algpseudocode} % pseudokod
 
-\usepackage{tocloft}
-\usepackage{hyperref}
-
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{siunitx}
-
-\usepackage{listings}
-
-\usepackage{graphicx}
-\usepackage{subfig}
-\usepackage{float}
-\usepackage{booktabs}
+% algorytmy po polsku
+\floatname{algorithm}{Algorytm}
+\floatname{required}{W}
+\renewcommand{\listalgorithmname}{Spis algorytmów}
+%cmds
+\algnewcommand\algorithmicto{\textbf{to}}
+\algnewcommand\algorithmicand{\textbf{and }}
+\algnewcommand\algorithmicor{\textbf{or }}
+\algnewcommand\algorithmictrue{\textbf{true}}
+\algnewcommand\algorithmicfalse{\textbf{false}}
+\algdef{S}[FOR]{ForTo}[3]{\algorithmicfor \  $ #1 \gets #2 $ \algorithmicto \ $ #3 $ \algorithmicdo}
 
 \hypersetup{
     colorlinks,
@@ -30,6 +67,36 @@
     filecolor=black,
     linkcolor=black,
     urlcolor=black
+}
+
+% obrazek {nazwa.png}{opis}
+\graphicspath{ {img} }
+\newcommand{\imgcustomsize}[3]{
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=#3\textwidth]{#1}
+		\caption{#2}
+	\end{figure}
+}
+\newcommand{\img}[2]{\imgcustomsize{#1}{#2}{0.8}}
+
+% dwa obrazki
+% \imgsidebyside{1}{opis 1}{2}{opis 2}
+\newcommand{\imgsidebyside}[4]{
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{.45\textwidth}
+			\centering
+			\includegraphics[width=1\linewidth]{#1}
+			\caption{#2}
+		\end{minipage}%
+		\hfill
+		\begin{minipage}{.45\textwidth}
+			\centering
+			\includegraphics[width=1\linewidth]{#3}
+			\caption{#4}
+		\end{minipage}
+	\end{figure}
 }
 
 \newtheorem{definition}{Def}
@@ -41,15 +108,240 @@ Badania operacyjne\\
 Projekt\\
 }
 
-\author{\\Jakub Kos\\Norbert Morawski
+\author{\\Jakub Kosmydel\\Norbert Morawski
 \\Bartłomiej Wiśniewski\\Przemysław Węglik}
 
 \date{\today}
 
 \maketitle
+\tableofcontents
 
-\chapter{Chapter 1}
+\chapter{Wstęp}
+Celem naszego projektu jest znalezienie optymalnych tras linii dla autobusów, aby maksymalizować liczbę pasażerów, przy minimalnej liczbie linii autobusowych. Aby to osiągnąć, wykorzystywane są algorytmy genetyczne -  algorytmy przeszukujące przestrzeń rozwiązań, które opierają się na procesie działania mechanizmu dziedziczenia biologicznego.
 
-Some text
+W systemie założono, że pozycje oraz popularność przystanków są z góry ustalone. Stosowanie algorytmów genetycznych pozwoliło na wygenerowanie zestawu najlepszych połączeń autobusowych, które można skonfigurować dla lepszego wykorzystania zasobów oraz zwiększenie korzyści z transportu publicznego dla pasażerów.
+
+\chapter{Opis zagadnienia}
+
+\section{Sformułowanie problemu}
+Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywającej dany obszar miejski, który już posiada sieć przystanków autobusowych. Linie te, powinny mieć możliwość obsłużenia jak największej liczby pasażerów, tworząc jak najmniej postojów oraz zatrzymując się na jak najmniejszej liczbie przystanków.
+
+\section{Model matematyczny}
+
+\subsection{Założenia}
+
+\begin{enumerate}
+	\item Przystankom przypisujemy ilość punktów w zależności od gęstości zaludnienia w pobliżu oraz ciekawych punktów (teatr, park itp.).
+	\begin{itemize}
+		\item Dla każdego przystanku obliczamy liczbę ludzi w pobliżu,
+		\item Głównym punktom w Krakowie (np. D17, teatry, itp.) nadajemy wartość punktową,
+		\item Dla każdego przystanku sumujemy powyższe wartości.
+	\end{itemize}
+	\item Rozkładamy linie komunikacyjne po mieście tak, by maksymalizować sumę zebranych punktów przez wszystkie linie.
+	\item Wprowadzamy koszt dla linii: koszt ścieżki w grafie, po której jedzie + koszt utworzenia nowej linii.
+	\item Linie przebiegające przez jeden przystanek dzielą się punktami,
+	\item Maksymalizujemy sumę punktów zebranych przez wszystkie linie.
+\end{enumerate}
+
+\subsection{Dane}
+	\begin{enumerate}
+		\item $n$ - liczba linii
+		\item $m$ - liczba przystanków
+	\end{enumerate}
+
+\subsubsection{Graf}
+
+	\begin{enumerate}
+		\item Wierzchołki to istniejące przystanki z przypisanymi punktami,
+		\item $p(j)$ - wartość punktowa przystanku:
+		\begin{itemize}
+            \item  W początkowej wersji liczba ta jest określona z góry,
+			\item $p(j) = \sum_{i=0}^{n-1} \frac{w_{j, i}}{f(d_j, i)}$ gdzie $w_{j, i}$ to wartość obiektu (np. liczba mieszkańców w pobliżu) a $d_{j,i}$ to odległość tego bloku od przystanku, f – funkcja skalująca.
+			\item Funkcja liczona dla danego przystanku $j$
+		\end{itemize}
+		\item Krawędzie to połączenia między przystankami.
+		\item Koszt krawędzi to odległości między przystankami.
+	\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+\subsection{Szukane}
+	$x_{i,j}$ - czy linia $i$ zatrzymuje się na przystanku $j$, gdzie:
+	\begin{enumerate}
+		\item $i \in \left[ 0, n-1 \right]$
+		\item $j \in \left[ 0, m-1 \right]$
+	\end{enumerate}
+
+\subsection{Hiperparametry}
+	\begin{enumerate}
+		\item $\alpha$ - koszt zatrzymania się na przystanku,
+		\item $\beta$ - koszt nowej linii,
+		\item $R$ - hiper parametr zbiegania.
+	\end{enumerate}
+
+\subsection{Funkcja kosztu}
+\begin{align*}
+	l_j &= \sum_{i=0}^{n-1} x_{i, j}&\text{liczba linii zatrzymujących się na przystanku $j$}\\
+	q_j &= \frac{p_j \cdot (1+\frac{R}{l_j})^{l_j}}{l_j} \xrightarrow{} \frac{e^R}{l_j} &\text{ile punktów każda linia uzyskuje z przystanku $j$}\\
+	S_{i}&&\text{długość ścieżki linii $i$ w grafie}\\
+	cost_{j} &= \begin{cases}
+		\sum_{i=0}^{n-1} x_{i,j} \cdot (q_j-\alpha) & l_j > 0\\
+		-\Delta & l_j = 0\\
+	\end{cases} & \text{penalizacja nieodwiedzonych przystanków}\\
+	f(x) &= \sum_{j=0}^{m-1} cost_{j} - \sum_{i=0}^{n-1} \left[ S_{i}-\beta \right] &\text{funkcja kosztu}\\
+\end{align*}
+% TODO update cost function (delta parameter), fix p_i,j
+
+
+
+
+
+
+
+\chapter{Opis algorytmów}
+Nasz problem rozwiązywaliśmy algorytmami genetycznymi.
+
+\section{Reprezentacja środowiska}
+Jak już zostało wspomniane, zajmowaliśmy się problemem optymalizacji istniejącej sieci komunikacyjnej, bez tworzenia nowych połączeń.
+
+\subsection{Reprezentacja mapy}
+Mapa z przystankami jest reprezentowana jako ważony graf z biblioteki \lstinline{NetworkX}.
+
+\subsection{Reprezentacja genotypu}
+Genotyp składa się z listy linii autobusowych:
+\begin{lstlisting}[language=Python]
+class Genotype:
+    def __init__(self, lines: list[Line]):
+        self.lines = lines
+\end{lstlisting}
+
+\subsection{Reprezentacja linii}
+Linia posiada następujące parametry:
+\begin{enumerate}
+    \item \lstinline{id} - id linii,
+    \item \lstinline{stops} - przystanki, na których się zatrzymuje,
+    \item \lstinline{edges} - wszystkie krawędzie, przez które linia przejeżdża,
+    \item \lstinline{edge_color} - kolor linii; do reprezentacji graficznej,
+    \item \lstinline{edge_style} - styl krawędzi linii; do reprezentacji graficznej,
+\end{enumerate}
+
+
+\begin{lstlisting}[language=Python]
+class Line:
+    def __init__(self, stops: list[int], best_paths):
+        self.id = Line.get_next_id()
+        self.stops = stops  # ordered list of stops
+        self.edges = []
+        self.edge_color = [...]
+        self.edge_style = [...]
+\end{lstlisting}
+
+\section{Rozwiązanie początkowe}
+Na początku, chcąc się skupić na realizacji algorytmu, wygenerowaliśmy losowo sieć połączeń. Powstała ona przez wygenerowanie N punktów na płaszczyźnie, a następnie połączeniu ich między sobą z pewnym prawdopodobieństwem. Dawało to całkiem dobre rezultaty:
+\img{map_seed_46}{Przykładowa wygenerowana mapa}
+
+\section{Symulacja}
+    \begin{algorithm}[H]
+		\caption{Symulacja}
+		\begin{algorithmic}[1]
+			\Function{Symuluj}{liczba\_pokoleń, x}
+			\State populacja = \Call {populacja\_początkowa}{ }
+			\State \Call {zapisz\_populację}{ }
+			\ForTo{i}{0}{\text{liczba\_pokoleń} - 1}
+				\State populacja = \Call{usuń\_puste}{populacja}
+				\State populacja\_dopasowanie = \Call{fitness}{populacja}
+
+				\State populacja = \Call{funkcja\_przetrwania}{populacja, populacja\_dopasowanie}
+				\State populacja\_nowa = \Call{nowa\_populacja}{populacja} \Comment{Tutaj zachodzą mutacje i krzyżowania}
+
+				Co x epok:
+					\State \Call {zapisz\_populację}{ }
+			\EndFor
+			\EndFunction
+		\end{algorithmic}
+	\end{algorithm}
+
+	Powyżej przedstawiony został podstawowy silnik symulacji. W każdej epoce wykonuje on następujące kluczowe czynności:
+	\begin{itemize}
+		\item Usuwa niedopuszczalne rozwiązania (linie bez przystanków, organizmy bez linii),
+		\item Oblicza funkcję dopasowania,
+		\item Uruchamia funkcję przetrwania, która likwiduje wybrane osobniki,
+		\item Uruchamia funkcję nowej populacji, która dokonuje mutacji i krzyżowań.
+	\end{itemize}
+
+	Na tym poziomie nie definiujemy co dana funkcja robi. Zostało to zrobione poniżej.
+
+\section{Selekcja}
+Wypróbowaliśmy wielu różnych metod selekcji nowych osobników:
+\begin{enumerate}
+    \item \lstinline{n_best_survive(n)} - pozostawia daną liczbę $n$ najlepszych osobników,
+    \item \lstinline{n_best_and_m_random_survive(n, m)} - pozostawia $n$ najlepszych osobników, oraz $m$ losowych spośród pozostałych,
+\end{enumerate}
+
+\section{Mutacja}
+% TODO describe all mutations
+
+\subsection{LineMutator}
+Tworzy nowe mutacje dla danej linii.
+
+Możliwe mutacje:
+
+\begin{enumerate}
+  \item \lstinline{rotation_to_right} - losuje spójny ciąg przystanków w lini i przesuwa je o zadaną (lub losową) liczbę pozycji
+    \item \lstinline{cycle_rotation} - losuje pozycje przystanków w lini i przesuwa obecne na tych pozycjach przystanki o jedną pozycję w ramach wylosowanych pozycji
+    \item \lstinline{invert} - odwraca kolejność przystanków, pomiędzy losowymi indeksami \lstinline{start} oraz \lstinline{end},
+    \item \lstinline{erase_stops} - losowo usuwa zadaną liczbę przystanków z linii,
+    \item \lstinline{add_stops} - losowo dodaje zadaną liczbę przystanków, spośród tych, które w linii nie występują
+    \item \lstinline{replace_stops} - losowo zmienia zadaną liczbę przystanków z lini na inne. Nowe przystanki są wybierane z rozkładu jednostajnego lub wykładniczego gdzie przystanki bliższe do obecnego są bardziej prawdopodobne
+\end{enumerate}
+
+\subsection{GenotypeMutator}
+
+Możliwe mutacje:
+
+\begin{enumerate}
+  	\item \lstinline{erase_line(G)} - tworzy nowy genotyp, usuwając losową linię,
+    \item \lstinline{create_line(G)} - tworzy nowy genotyp, dodając losowo wygenerowaną linię,
+    \item \lstinline{split_line(G)} - tworzy nowy genotyp, rozdzielając losową, losową linię dwie różne.
+    \item \lstinline{merge_lines(G)} - tworzy nowy genotyp, łącząc zadaną liczbę losowych linii. W zależności od wartości parametru line mogą być łączone całościowo lub na poziomie pojedyńczych przystanków
+    \item \lstinline{cycle_stops_shift(G)} - tworzy nowy genotyp, ustawiając ciągi przystanków z lini obok siebie i wykonując \lstinline{cycle_rotation} na takim ciągu przystanków
+\end{enumerate}
+
+\section{Krzyżowanie}
+% TODO describe all crossers
+
+\subsection{GenotypeCrosser}
+
+\begin{enumerate}
+  	\item \lstinline{merge_genotypes(G1, G2)} - tworzy nowy genotyp poprzez wybranie losowych lini z genotypów G1 i G2
+  	\item \lstinline{cycle_stops_shift(G1, G2)} - najpierw wykonuje \lstinline{merge_genotypes(G1, G2)}, a następnie \lstinline{GenotypeMutator.cycle_stops_shift(G)}
+  	\item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z lini z G1 i G2 na połowy i jedną z połów każdej lini łączy z połową lini z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten w którym dystans pomiędzy połączonymi przystankami jest minimalny
+\end{enumerate}
+
+\chapter{Aplikacja}
+
+\chapter{Eksperymenty}
+
+\section{Eksperyment z losowym stosowaniem mutacji i krzyżowań}
+\imgsidebyside{test1/0}{Populacja 0\\ dopasowanie $-121.46$}{test1/3}{Populacja 3\\ dopasowanie $1.71$}
+\imgsidebyside{test1/5}{Populacja 5\\ dopasowanie $11.08$}{test1/10}{Populacja 10\\ dopasowanie $14.40$}
+Jak widzimy, już po 10 epokach sieć połączeń znacznie się wyklarowała. Funkcja dopasowania wzrosła znacząco od generacji 0 do 10.
+
+\imgsidebyside{test1/20}{Populacja 20\\ dopasowanie $17.18$}{test1/100}{Populacja 100\\ dopasowanie $24.64$}
+Sieć pokryła jeszcze więcej przystanków. Tempo wzrostu funkcji dopasowania zmalało.
+
+\imgcustomsize{test1/plot}{Wykres funkcji dopasowania}{0.6}
+Jak widać, rzeczywiście tempo dopasowywania się modelu znacznie spada w poźniejszych etapach symulacji.
+
+\chapter{Podsumowanie}
+
+Problem generowania linii autobusowych jest bardzo skomplikowany. W celu jego rozwiązania, przydatne są algorytmy genetyczne. Z odpowiednią liczbą nowych generacji jesteśmy w stanie osiągnąć ciekawe wyniki. Nie są one jednak w pełni satysfakcjonujące.
 
 \end{document}
