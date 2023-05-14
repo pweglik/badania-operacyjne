@@ -83,7 +83,7 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
         genotype_crosser = GenotypeCrosser(G, best_paths)
         sanitizer = BasicSanitizer(best_paths)
         new_generation_params = NewGenerationRandomParams(
-            CHANCE_CREATE_LINE,
+            params["chance_create_line"],
             CHANCE_CYCLE,
             CHANCE_ERASE_LINE,
             CHANCE_INVERT,
@@ -141,9 +141,19 @@ if __name__ == "__main__":
             create_initial_population(G, best_paths) for _ in range(3)
         ]
 
+        # (0 to 10) / 10 = 0.0 to 1.0
+        use_reduced = True
+        zero_to_one: list[float] = [x / 10 for x in range(11)]
+        zero_to_one_reduced: list[float] = [0.2, 0.5, 0.8]
+
+        float_param_list: list[float] = (
+            zero_to_one_reduced if use_reduced else zero_to_one
+        )
+
         grid_search_params = {
             "survival_functions": range(len(SURVIVAL_FUNCTIONS)),
             "epochs": [100],
+            "chance_create_line": float_param_list,
         }
 
         # Setup of the grid search
