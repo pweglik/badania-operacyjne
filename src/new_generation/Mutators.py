@@ -85,6 +85,7 @@ class LineMutator:
         return Line(new_stops, self.best_paths)
 
     def erase_stops(self, line: Line, no_of_stops_to_erase: int = 1) -> Line:
+        no_of_stops_to_erase = min(no_of_stops_to_erase, line.stops_no)
         idx = np.random.choice(len(line.stops) - no_of_stops_to_erase, replace=False)
         new_stops = np.array(line.stops)[idx]
         return Line(new_stops, self.best_paths)

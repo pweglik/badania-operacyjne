@@ -1,7 +1,7 @@
 import random
 from dataclasses import dataclass
 
-from Sanitizers import Sanitizer
+from new_generation.Sanitizers import Sanitizer
 from src.common.Genotype import Genotype
 from src.new_generation.Mutators import LineMutator, GenotypeMutator
 from src.new_generation.SpecimenCrossers import GenotypeCrosser
@@ -12,15 +12,26 @@ from src.common.params import (
 
 @dataclass
 class NewGenerationRandomParams:
+    chance_rot_cycle: float
+    chance_rot_right: float
+    chance_invert: float
+    chance_erase_stop: float
+    chance_add_stop: float
+    chance_add_stop_mix: float
+    chance_replace_stops: float
+    chance_replace_stops_proximity: float
+
     chance_create_line: float
     chance_cycle: float
     chance_erase_line: float
-    chance_invert: float
     chance_merge: float
-    chance_merge_specimen: float
-    chance_rot_cycle: float
-    chance_rot_right: float
+    chance_merge_mix: float
     chance_split: float
+    cycle_stops_shift: float
+
+    chance_merge_specimen: float
+    chance_cycle_stops_shift: float
+    chance_line_based_merge: float
 
 
 def new_generation_random(
@@ -42,6 +53,18 @@ def new_generation_random(
         if random.random() < params.chance_merge_specimen:
             # cross 2 random genotypes
             g_new = genotype_crosser.merge_genotypes(*random.sample(new_generation, 2))
+
+            new_generation.append(g_new)
+        if random.random() < params.chance_cycle_stops_shift:
+            # cross 2 random genotypes
+            g_new = genotype_crosser.cycle_stops_shift(
+                *random.sample(new_generation, 2)
+            )
+
+            new_generation.append(g_new)
+        if random.random() < params.chance_line_based_merge:
+            # cross 2 random genotypes
+            g_new = genotype_crosser.line_based_merge(*random.sample(new_generation, 2))
 
             new_generation.append(g_new)
 
@@ -70,6 +93,26 @@ def new_generation_random(
                 organism, sanitizer, line_mutator.invert
             )
             # dprint("INVERT", len(random_line.stops))
+        if random.random() < params.chance_erase_stop:
+            organism = LineMutator.mutate_one_line_out_of_organism(
+                organism, sanitizer, line_mutator.erase_stops
+            )
+        if random.random() < params.chance_replace_stops:
+            organism = LineMutator.mutate_one_line_out_of_organism(
+                organism, sanitizer, line_mutator.replace_stops, proximity_based=False
+            )
+        if random.random() < params.chance_replace_stops_proximity:
+            organism = LineMutator.mutate_one_line_out_of_organism(
+                organism, sanitizer, line_mutator.replace_stops, proximity_based=True
+            )
+        if random.random() < params.chance_add_stop:
+            organism = LineMutator.mutate_one_line_out_of_organism(
+                organism, sanitizer, line_mutator.add_stops, mix=False
+            )
+        if random.random() < params.chance_add_stop_mix:
+            organism = LineMutator.mutate_one_line_out_of_organism(
+                organism, sanitizer, line_mutator.add_stops, mix=True
+            )
 
         # run genotype mutators
 

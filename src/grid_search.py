@@ -108,15 +108,24 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
         genotype_crosser = GenotypeCrosser(G, best_paths)
         sanitizer = BasicSanitizer(best_paths)
         new_generation_params = NewGenerationRandomParams(
+            params["chance_rot_cycle"],
+            params["chance_rot_right"],
+            params["chance_invert"],
+            params["chance_erase_stop"],
+            params["chance_add_stop"],
+            params["chance_add_stop_mix"],
+            params["chance_replace_stops"],
+            params["chance_replace_stops_proximity"],
             params["chance_create_line"],
             params["chance_cycle"],
             params["chance_erase_line"],
-            params["chance_invert"],
             params["chance_merge"],
-            params["chance_merge_specimen"],
-            params["chance_rot_cycle"],
-            params["chance_rot_right"],
+            params["chance_merge_mix"],
             params["chance_split"],
+            params["cycle_stops_shift"],
+            params["chance_merge_specimen"],
+            params["chance_cycle_stops_shift"],
+            params["chance_line_based_merge"],
         )
 
         fitness_sum = 0
@@ -168,8 +177,8 @@ if __name__ == "__main__":
         ]
 
         use_reduced = True
-        zero_to_one: list[float] = [0.2, 0.5, 0.8]
-        zero_to_one_reduced: list[float] = [0.2, 0.8]
+        zero_to_one: list[float] = [0.0, 0.2, 0.5, 0.8]
+        zero_to_one_reduced: list[float] = [0.0, 0.2, 0.8]
 
         float_param_list: list[float] = (
             zero_to_one_reduced if use_reduced else zero_to_one
@@ -178,15 +187,24 @@ if __name__ == "__main__":
         grid_search_params = {
             "survival_functions": range(len(SURVIVAL_FUNCTIONS)),
             "epochs": [100],
+            "chance_rot_cycle": float_param_list,
+            "chance_rot_right": float_param_list,
+            "chance_invert": float_param_list,
+            "chance_erase_stop": float_param_list,
+            "chance_add_stop": float_param_list,
+            "chance_add_stop_mix": float_param_list,
+            "chance_replace_stops": float_param_list,
+            "chance_replace_stops_proximity": float_param_list,
             "chance_create_line": float_param_list,
             "chance_cycle": float_param_list,
             "chance_erase_line": float_param_list,
-            "chance_invert": float_param_list,
             "chance_merge": float_param_list,
-            "chance_merge_specimen": float_param_list,
-            "chance_rot_cycle": float_param_list,
-            "chance_rot_right": float_param_list,
+            "chance_merge_mix": float_param_list,
             "chance_split": float_param_list,
+            "cycle_stops_shift": float_param_list,
+            "chance_merge_specimen": float_param_list,
+            "chance_cycle_stops_shift": float_param_list,
+            "chance_line_based_merge": float_param_list,
         }
 
         # Setup of the grid search
