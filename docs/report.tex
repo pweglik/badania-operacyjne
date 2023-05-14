@@ -331,8 +331,9 @@ Możliwe mutacje:
 \chapter{Aplikacja}
 
 \chapter{Eksperymenty}
+Na naszym algorytmie przeprowadziliśmy szereg eksperymentów.
 
-\section{Eksperyment z losowym stosowaniem mutacji i krzyżowań}
+\section{Eksperymenty proste}
 \imgsidebyside{test1/0}{Populacja 0\\ dopasowanie $-121.46$}{test1/3}{Populacja 3\\ dopasowanie $1.71$}
 \imgsidebyside{test1/5}{Populacja 5\\ dopasowanie $11.08$}{test1/10}{Populacja 10\\ dopasowanie $14.40$}
 Jak widzimy, już po 10 epokach sieć połączeń znacznie się wyklarowała. Funkcja dopasowania wzrosła znacząco od generacji 0 do 10.
@@ -342,6 +343,45 @@ Sieć pokryła jeszcze więcej przystanków. Tempo wzrostu funkcji dopasowania z
 
 \imgcustomsize{test1/plot}{Wykres funkcji dopasowania}{0.6}
 Jak widać, rzeczywiście tempo dopasowywania się modelu znacznie spada w poźniejszych etapach symulacji.
+
+\section{Przeszukiwanie siatki hiper-parametrów}
+
+Pierwszy eksperyment obejmował wszystkie funkcje przetrwania. Pozostałe parametry były dobierane jako 0.2 lub 0.8.
+
+\img{gs1/all}{Rozkład funkcji dopasowania dla pierwszego przeszukiwania siatki hiper-parametrów}
+
+\imgsidebyside{gs1/1}{Rozkład dopasowania względem hiper-parametru}{gs1/2}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs1/3}{Rozkład dopasowania względem hiper-parametru}{gs1/4}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs1/5}{Rozkład dopasowania względem hiper-parametru}{gs1/6}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs1/7}{Rozkład dopasowania względem hiper-parametru}{gs1/8}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs1/9}{Rozkład dopasowania względem hiper-parametru}{gs1/10}{Rozkład dopasowania względem hiper-parametru}
+
+Jak widać niektóre rozkłady są lewoskośne, więc dalsze eksperymenty zawęziliśmy do wartości dla tych rozkładów. Jeżeli był to rozkład z parametrem 0.8 to wartości w dalszych eksperymentach to 0.5, 0.75, 0.9; dla parametru o wartości 0.2: 0.1, 0.25, 0.5. Dla rozkładów symetrycznych przyjęliśmy stałą wartość 0.5 (oprócz \lstinline|chance_merge_specimen| -- tutaj zostawiono duży rozrzut). Dalej zostały wykorzystane funkcje przetrwania 0 i 1.
+
+Teraz przestrzeń parametrów wygląda następująco:
+\lstinputlisting{lst/hp2}
+
+\img{gs2/all}{Rozkład funkcji dopasowania dla pierwszego przeszukiwania siatki hiper-parametrów -- zawężona przestrzeń parametrów}
+
+Minimum wzrosło z 18.25 do 27.16, idziemy w dobrą stronę! Ale maksimum wzrosło tylko o 0.2.
+
+\imgsidebyside{gs2/1}{Rozkład dopasowania względem hiper-parametru}{gs2/2}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs2/3}{Rozkład dopasowania względem hiper-parametru}{gs2/4}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs2/5}{Rozkład dopasowania względem hiper-parametru}{gs2/6}{Rozkład dopasowania względem hiper-parametru}
+\imgcustomsize{gs2/7}{Rozkład dopasowania względem hiper-parametru}{0.5}
+
+Największy rozrzut powoduje funkcja dopasowania. Zdecydowanie lepiej radzi sobie 1 (przeżywa tylko 1/8 najlepszych osobników, w opcji 0 przeżywa aż 1/4). Najlepsze parametry z wykresów odczytano jako (najbardziej lewoskośny/najwięcej przypadków po prawej/najmniej po lewej):
+\lstinputlisting{lst/hp3}
+
+Maksymalne dopasowanie (35.77) osiągnięto dla
+\lstinputlisting{lst/hp3_max}
+
+Jedyna różnica w \lstinline|chance_erase_line|. Na wykresie niebieski(=0.1) i pomarańczowy(=0.25) prawie się pokrywają.
+
+Dla najlepszych parametrów graf miasta prezentuje się następująco:
+\imgsidebyside{best_params_hp3}{Epoka 100, dopasowanie 34.90}{best_params_hp3_1000}{Epoka 1000, dopasowanie 41.96}
+
+Nadal widoczne są patologiczne sytuacje. Np wierzchołki 19 i 23 są połączone tylko między sobą.
 
 \chapter{Podsumowanie}
 
