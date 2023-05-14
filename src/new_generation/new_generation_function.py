@@ -52,25 +52,24 @@ def new_generation_random(
         ][0]
 
         # run line mutators
-        # get random line, remove it, run line mutator on it, add it back
-        random_line = random.sample(organism.lines, 1)[0]
-        organism.lines.remove(random_line)
 
         if random.random() < params.chance_rot_right:
-            random_line = line_mutator.rotation_to_right(random_line)
-            dprint("ROT RIGHT", len(random_line.stops))
+            organism = LineMutator.mutate_one_line_out_of_organism(
+                organism, sanitizer, line_mutator.rotation_to_right
+            )
+            # dprint("ROT RIGHT", len(random_line.stops))
 
         if random.random() < params.chance_rot_cycle:
-            random_line = line_mutator.cycle_rotation(random_line)
-            dprint("ROT CYCLE", len(random_line.stops))
+            organism = LineMutator.mutate_one_line_out_of_organism(
+                organism, sanitizer, line_mutator.cycle_rotation
+            )
+            # dprint("ROT CYCLE", len(random_line.stops))
 
         if random.random() < params.chance_invert:
-            random_line = line_mutator.invert(random_line)
-            dprint("INVERT", len(random_line.stops))
-
-        random_line = sanitizer.sanitizeLine(random_line)
-        if random_line is not None:
-            organism.lines.append(random_line)
+            organism = LineMutator.mutate_one_line_out_of_organism(
+                organism, sanitizer, line_mutator.invert
+            )
+            # dprint("INVERT", len(random_line.stops))
 
         # run genotype mutators
 
