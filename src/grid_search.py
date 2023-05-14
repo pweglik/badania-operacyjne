@@ -4,7 +4,7 @@ import os
 import random
 from multiprocessing import Process, Queue
 from time import perf_counter
-from typing import Tuple
+from typing import Tuple, Optional
 
 from typing import IO
 
@@ -62,20 +62,27 @@ SURVIVAL_FUNCTIONS = [
 ]
 
 
-def save_headers(f: IO[str], params_keys: list[str]):
-    for key in params_keys:
-        f.write(key + ",")
-    f.write("fitness")
-    f.write("\n")
+class ResultSaver:
+    def __init__(self, filepath: str, params_keys: list[str]):
+        self.filepath: str = filepath
+        self.params_keys: list[str] = params_keys
+
+    def save_headers(self):
+        with open(self.filepath, "w") as f:
+            for key in self.params_keys:
+                f.write(key + ",")
+            f.write("fitness")
+            f.write("\n")
+
+    def save_results(self, params_values: dict, fitness: float):
+        with open(self.filepath, "a") as f:
+            for key in self.params_keys:
+                f.write(str(params_values[key]) + ",")
+            f.write(str(fitness))
+            f.write("\n")
 
 
-def save_results(
-    f: IO[str], params_keys: list[str], params_values: dict, fitness: float
-):
-    for key in params_keys:
-        f.write(str(params_values[key]) + ",")
-    f.write(str(fitness))
-    f.write("\n")
+saver: Optional[ResultSaver] = None
 
 
 def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
@@ -144,6 +151,7 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
                 os.getpid(), "Done", params, average_best_fitness, f"in {run_time:.2f}s"
             )
         results.put((params, average_best_fitness))
+        saver.save_results(params, average_best_fitness)
 
     print(f"Done {os.getpid()}")
 
@@ -209,8 +217,9 @@ if __name__ == "__main__":
         ]
 
         # open results file and save headers
-        f = open("results/gridsearch.csv", "w")
-        save_headers(f, params_keys)
+        global saver
+        saver = ResultSaver("results/gridsearch.csv", params_keys)
+        saver.save_headers()
 
         # Start grid search
         for i in range(parallel_units):
@@ -236,9 +245,7 @@ if __name__ == "__main__":
 
         print(f"Best epochs: \t{results_list[0][0]['epochs']}")
 
-        for params_values, fitness in results_list:
-            save_results(f, params_keys, params_values, fitness)
-
-        f.close()
+        # for params_values, fitness in results_list:
+        #     save_results(f, params_keys, params_values, fitness)
 
     main()
