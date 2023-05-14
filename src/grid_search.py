@@ -112,7 +112,7 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
                     sanitizer,
                     new_generation_params,
                 ),
-                population_sanitizer=BasicSanitizer(best_paths),
+                population_sanitizer=sanitizer,
             )
             fitness_values = sim_engine.run(params["epochs"], 0, report_show=False)
             best_fitness = fitness_values[-1]
