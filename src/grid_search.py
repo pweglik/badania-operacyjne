@@ -15,8 +15,22 @@ from graph_generation import generate_city_graph
 from initial_population import create_initial_population
 from new_generation.Mutators import LineMutator, GenotypeMutator
 from new_generation.SpecimenCrossers import GenotypeCrosser
-from new_generation.new_generation_function import new_generation_random
+from new_generation.new_generation_function import (
+    new_generation_random,
+    NewGenerationRandomParams,
+)
 from survival import n_best_survive, n_best_and_m_random_survive
+from src.common.params import (
+    CHANCE_CREATE_LINE,
+    CHANCE_CYCLE,
+    CHANCE_ERASE_LINE,
+    CHANCE_INVERT,
+    CHANCE_MERGE,
+    CHANCE_MERGE_SPECIMEN,
+    CHANCE_ROT_CYCLE,
+    CHANCE_ROT_RIGHT,
+    CHANCE_SPLIT,
+)
 
 random.seed(SEED)
 
@@ -67,6 +81,18 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
         line_mutator = LineMutator(G, all_stops, best_paths)
         genotype_mutator = GenotypeMutator(G, best_paths)
         genotype_crosser = GenotypeCrosser(G, best_paths)
+        sanitizer = BasicSanitizer(best_paths)
+        new_generation_params = NewGenerationRandomParams(
+            CHANCE_CREATE_LINE,
+            CHANCE_CYCLE,
+            CHANCE_ERASE_LINE,
+            CHANCE_INVERT,
+            CHANCE_MERGE,
+            CHANCE_MERGE_SPECIMEN,
+            CHANCE_ROT_CYCLE,
+            CHANCE_ROT_RIGHT,
+            CHANCE_SPLIT,
+        )  # TODO this should be checked by grid search
 
         fitness_sum = 0
 
@@ -83,6 +109,8 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
                     line_mutator,
                     genotype_mutator,
                     genotype_crosser,
+                    sanitizer,
+                    new_generation_params,
                 ),
                 population_sanitizer=BasicSanitizer(best_paths),
             )
