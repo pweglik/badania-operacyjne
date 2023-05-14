@@ -1,5 +1,5 @@
 import random
-from copy import deepcopy
+from dataclasses import dataclass
 
 from Sanitizers import Sanitizer
 from src.common.Genotype import Genotype
@@ -10,28 +10,17 @@ from src.common.params import (
 )
 
 
+@dataclass
 class NewGenerationRandomParams:
-    def __init__(
-        self,
-        chance_create_line: float,
-        chance_cycle: float,
-        chance_erase_line: float,
-        chance_invert: float,
-        chance_merge: float,
-        chance_merge_specimen: float,
-        chance_rot_cycle: float,
-        chance_rot_right: float,
-        chance_split: float,
-    ):
-        self.chance_create_line = chance_create_line
-        self.chance_cycle = chance_cycle
-        self.chance_erase_line = chance_erase_line
-        self.chance_invert = chance_invert
-        self.chance_merge = chance_merge
-        self.chance_merge_specimen = chance_merge_specimen
-        self.chance_rot_cycle = chance_rot_cycle
-        self.chance_rot_right = chance_rot_right
-        self.chance_split = chance_split
+    chance_create_line: float
+    chance_cycle: float
+    chance_erase_line: float
+    chance_invert: float
+    chance_merge: float
+    chance_merge_specimen: float
+    chance_rot_cycle: float
+    chance_rot_right: float
+    chance_split: float
 
 
 def new_generation_random(
