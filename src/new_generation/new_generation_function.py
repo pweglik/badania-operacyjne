@@ -1,6 +1,7 @@
 import random
 from copy import deepcopy
 
+from Sanitizers import Sanitizer
 from src.common.Genotype import Genotype
 from src.new_generation.Mutators import LineMutator, GenotypeMutator
 from src.new_generation.SpecimenCrossers import GenotypeCrosser
@@ -24,6 +25,7 @@ def new_generation_random(
     line_mutator: LineMutator,
     genotype_mutator: GenotypeMutator,
     genotype_crosser: GenotypeCrosser,
+    sanitizer: Sanitizer,
 ) -> list[Genotype]:
     # extract organisms only (ignore fitness) from population_with_fitness
     new_generation: list[Genotype] = [
@@ -35,18 +37,17 @@ def new_generation_random(
         # generate new specimen from best ones
         if random.random() < CHANCE_MERGE_SPECIMEN:
             g_new = genotype_crosser.merge_genotypes(
-                new_generation[0], new_generation[1]
+                new_generation[0],
+                new_generation[1],  # TODO this always crosses same ones
             )
 
             new_generation.append(g_new)
 
-        # get organism (clone it, don't modify original) by
+        # get organism (don't clone, mutators don't modify original data) by
         # looping over population_with_fitness with counter index
-        organism: Genotype = deepcopy(
-            population_with_fitness[counter % len(population_with_fitness)][0]
-        )
-
-        # (operating on clone)
+        organism: Genotype = population_with_fitness[
+            counter % len(population_with_fitness)
+        ][0]
 
         # run line mutators
         # get random line, remove it, run line mutator on it, add it back
@@ -65,11 +66,9 @@ def new_generation_random(
             random_line = line_mutator.invert(random_line)
             dprint("INVERT", len(random_line.stops))
 
-        if len(random_line.stops) > 0:
+        random_line = sanitizer.sanitizeLine(random_line)
+        if random_line is not None:
             organism.lines.append(random_line)
-
-        if len(organism.lines) == 0:
-            continue
 
         # run genotype mutators
 
@@ -77,7 +76,8 @@ def new_generation_random(
             organism = genotype_mutator.erase_line(organism)
             dprint("ERASE", organism.get_line_stops_count_summary())
 
-        if len(organism.lines) == 0:
+        organism = sanitizer.sanitizeGenotype(organism)
+        if organism is None:
             continue
 
         if random.random() < CHANCE_CREATE_LINE:
@@ -98,7 +98,10 @@ def new_generation_random(
             organism = genotype_mutator.cycle_stops_shift(organism)
             dprint("CYCLE", organism.get_line_stops_count_summary())
 
-        # add clone to new generation
+        organism = sanitizer.sanitizeGenotype(organism)
+        if organism is None:
+            continue
+
         new_generation.append(organism)
 
         counter += 1

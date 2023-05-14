@@ -26,6 +26,7 @@ def run_simulation(
     line_mutator = LineMutator(G, all_stops, best_paths)
     genotype_mutator = GenotypeMutator(G, best_paths)
     genotype_crosser = GenotypeCrosser(G, best_paths)
+    sanitizer = BasicSanitizer(best_paths)
 
     sim_engine = SimulationEngine(
         G,
@@ -40,6 +41,7 @@ def run_simulation(
             line_mutator,
             genotype_mutator,
             genotype_crosser,
+            sanitizer,
         ),
         population_sanitizer=BasicSanitizer(best_paths),
     )
