@@ -1,9 +1,12 @@
+import random
 from copy import deepcopy
 from typing import Optional
 
 from networkx import Graph
 import numpy as np
 import networkx as nx
+
+from new_generation.Sanitizers import Sanitizer
 from src.common.Genotype import Genotype
 from src.common.Line import Line
 from src.common import line_generation
@@ -82,6 +85,7 @@ class LineMutator:
         return Line(new_stops, self.best_paths)
 
     def erase_stops(self, line: Line, no_of_stops_to_erase: int = 1) -> Line:
+        no_of_stops_to_erase = min(no_of_stops_to_erase, line.stops_no)
         idx = np.random.choice(len(line.stops) - no_of_stops_to_erase, replace=False)
         new_stops = np.array(line.stops)[idx]
         return Line(new_stops, self.best_paths)
@@ -131,6 +135,25 @@ class LineMutator:
         stops[stops_to_replace_idxs] = choosen_neighbours
 
         return Line(list(stops), self.best_paths)
+
+    @staticmethod
+    def mutate_one_line_out_of_organism(
+        organism: Genotype, sanitizer: Sanitizer, mutator_function, *args, **kwargs
+    ):
+        original_line = random.sample(organism.lines, 1)[0]
+        new_line = mutator_function(original_line, *args, **kwargs)
+        new_line = sanitizer.sanitizeLine(new_line)
+        if new_line is not None:
+            # line is ok
+            organism = Genotype(organism.lines.copy())
+            organism.lines.remove(original_line)
+            organism.lines.append(new_line)
+        else:
+            # line not ok
+            # leave original line in place
+            pass
+
+        return organism
 
 
 class GenotypeMutator:

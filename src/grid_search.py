@@ -4,7 +4,9 @@ import os
 import random
 from multiprocessing import Process, Queue
 from time import perf_counter
-from typing import Tuple
+from typing import Tuple, Optional
+
+from typing import IO
 
 from new_generation.Sanitizers import BasicSanitizer
 from SimultionEngine import SimulationEngine
@@ -15,8 +17,22 @@ from graph_generation import generate_city_graph
 from initial_population import create_initial_population
 from new_generation.Mutators import LineMutator, GenotypeMutator
 from new_generation.SpecimenCrossers import GenotypeCrosser
-from new_generation.new_generation_function import new_generation_random
+from new_generation.new_generation_function import (
+    new_generation_random,
+    NewGenerationRandomParams,
+)
 from survival import n_best_survive, n_best_and_m_random_survive
+from src.common.params import (
+    CHANCE_CREATE_LINE,
+    CHANCE_CYCLE,
+    CHANCE_ERASE_LINE,
+    CHANCE_INVERT,
+    CHANCE_MERGE,
+    CHANCE_MERGE_SPECIMEN,
+    CHANCE_ROT_CYCLE,
+    CHANCE_ROT_RIGHT,
+    CHANCE_SPLIT,
+)
 
 random.seed(SEED)
 
@@ -46,6 +62,29 @@ SURVIVAL_FUNCTIONS = [
 ]
 
 
+class ResultSaver:
+    def __init__(self, filepath: str, params_keys: list[str]):
+        self.filepath: str = filepath
+        self.params_keys: list[str] = params_keys
+
+    def save_headers(self):
+        with open(self.filepath, "w") as f:
+            for key in self.params_keys:
+                f.write(key + ",")
+            f.write("fitness")
+            f.write("\n")
+
+    def save_results(self, params_values: dict, fitness: float):
+        with open(self.filepath, "a") as f:
+            for key in self.params_keys:
+                f.write(str(params_values[key]) + ",")
+            f.write(str(fitness))
+            f.write("\n")
+
+
+saver: Optional[ResultSaver] = None
+
+
 def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
     """
     Process params from tasks queue and put results in results queue
@@ -67,6 +106,27 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
         line_mutator = LineMutator(G, all_stops, best_paths)
         genotype_mutator = GenotypeMutator(G, best_paths)
         genotype_crosser = GenotypeCrosser(G, best_paths)
+        sanitizer = BasicSanitizer(best_paths)
+        new_generation_params = NewGenerationRandomParams(
+            params["chance_rot_cycle"],
+            params["chance_rot_right"],
+            params["chance_invert"],
+            params["chance_erase_stop"],
+            params["chance_add_stop"],
+            params["chance_add_stop_mix"],
+            params["chance_replace_stops"],
+            params["chance_replace_stops_proximity"],
+            params["chance_create_line"],
+            params["chance_cycle"],
+            params["chance_erase_line"],
+            params["chance_merge"],
+            params["chance_merge_mix"],
+            params["chance_split"],
+            params["cycle_stops_shift"],
+            params["chance_merge_specimen"],
+            params["chance_cycle_stops_shift"],
+            params["chance_line_based_merge"],
+        )
 
         fitness_sum = 0
 
@@ -83,8 +143,10 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
                     line_mutator,
                     genotype_mutator,
                     genotype_crosser,
+                    sanitizer,
+                    new_generation_params,
                 ),
-                population_sanitizer=BasicSanitizer(best_paths),
+                population_sanitizer=sanitizer,
             )
             fitness_values = sim_engine.run(params["epochs"], 0, report_show=False)
             best_fitness = fitness_values[-1]
@@ -98,6 +160,7 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
                 os.getpid(), "Done", params, average_best_fitness, f"in {run_time:.2f}s"
             )
         results.put((params, average_best_fitness))
+        saver.save_results(params, average_best_fitness)
 
     print(f"Done {os.getpid()}")
 
@@ -113,9 +176,35 @@ if __name__ == "__main__":
             create_initial_population(G, best_paths) for _ in range(3)
         ]
 
+        use_reduced = True
+        zero_to_one: list[float] = [0.0, 0.2, 0.5, 0.8]
+        zero_to_one_reduced: list[float] = [0.0, 0.2, 0.8]
+
+        float_param_list: list[float] = (
+            zero_to_one_reduced if use_reduced else zero_to_one
+        )
+
         grid_search_params = {
             "survival_functions": range(len(SURVIVAL_FUNCTIONS)),
             "epochs": [100],
+            "chance_rot_cycle": float_param_list,
+            "chance_rot_right": float_param_list,
+            "chance_invert": float_param_list,
+            "chance_erase_stop": float_param_list,
+            "chance_add_stop": [0],
+            "chance_add_stop_mix": float_param_list,
+            "chance_replace_stops": [0],
+            "chance_replace_stops_proximity": float_param_list,
+            "chance_create_line": float_param_list,
+            "chance_cycle": [0],
+            "chance_erase_line": float_param_list,
+            "chance_merge": [0],
+            "chance_merge_mix": float_param_list,
+            "chance_split": [0],
+            "cycle_stops_shift": [0],
+            "chance_merge_specimen": float_param_list,
+            "chance_cycle_stops_shift": float_param_list,
+            "chance_line_based_merge": float_param_list,
         }
 
         # Setup of the grid search
@@ -126,7 +215,10 @@ if __name__ == "__main__":
 
         print("Parallel units:", parallel_units)
 
-        params_keys = grid_search_params.keys()
+        # fixed order list
+        # order of keys in params_keys define column order in csv file
+        # must stay the same for all processes
+        params_keys = list(grid_search_params.keys())
         queue: "Queue[dict]" = Queue()
         results: "Queue[Tuple[dict, float]]" = Queue()
 
@@ -140,6 +232,11 @@ if __name__ == "__main__":
             )
             for _ in range(parallel_units)
         ]
+
+        # open results file and save headers
+        global saver
+        saver = ResultSaver("results/gridsearch.csv", params_keys)
+        saver.save_headers()
 
         # Start grid search
         for i in range(parallel_units):
@@ -155,7 +252,7 @@ if __name__ == "__main__":
         while not results.empty():
             results_list.append(results.get())
 
-        sorted(results_list, key=lambda x: x[1])
+        results_list.sort(key=lambda x: x[1])
 
         print(f"Best parameters: \t{results_list[0][0]}")
         print(f"Best fitness: \t{results_list[0][1]:.2f}")
@@ -164,5 +261,8 @@ if __name__ == "__main__":
         print(SURVIVAL_FUNCTIONS[results_list[0][0]["survival_functions"]][0])
 
         print(f"Best epochs: \t{results_list[0][0]['epochs']}")
+
+        # for params_values, fitness in results_list:
+        #     save_results(f, params_keys, params_values, fitness)
 
     main()

@@ -1,5 +1,5 @@
 import random
-
+import time
 
 from fitness import fitness
 from initial_population import create_initial_population
@@ -11,8 +11,20 @@ from SimultionEngine import SimulationEngine
 from new_generation.Mutators import GenotypeMutator, LineMutator
 from new_generation.SpecimenCrossers import GenotypeCrosser
 from common.params import N_IN_POPULATION, SEED, N
+from new_generation_function import NewGenerationRandomParams
 from src.new_generation.Sanitizers import BasicSanitizer
 from survival import n_best_survive
+from src.common.params import (
+    CHANCE_CREATE_LINE,
+    CHANCE_CYCLE,
+    CHANCE_ERASE_LINE,
+    CHANCE_INVERT,
+    CHANCE_MERGE,
+    CHANCE_MERGE_SPECIMEN,
+    CHANCE_ROT_CYCLE,
+    CHANCE_ROT_RIGHT,
+    CHANCE_SPLIT,
+)
 
 
 def run_simulation(
@@ -26,6 +38,18 @@ def run_simulation(
     line_mutator = LineMutator(G, all_stops, best_paths)
     genotype_mutator = GenotypeMutator(G, best_paths)
     genotype_crosser = GenotypeCrosser(G, best_paths)
+    sanitizer = BasicSanitizer(best_paths)
+    params = NewGenerationRandomParams(
+        CHANCE_CREATE_LINE,
+        CHANCE_CYCLE,
+        CHANCE_ERASE_LINE,
+        CHANCE_INVERT,
+        CHANCE_MERGE,
+        CHANCE_MERGE_SPECIMEN,
+        CHANCE_ROT_CYCLE,
+        CHANCE_ROT_RIGHT,
+        CHANCE_SPLIT,
+    )
 
     sim_engine = SimulationEngine(
         G,
@@ -40,6 +64,8 @@ def run_simulation(
             line_mutator,
             genotype_mutator,
             genotype_crosser,
+            sanitizer,
+            params,
         ),
         population_sanitizer=BasicSanitizer(best_paths),
     )
@@ -53,4 +79,8 @@ if __name__ == "__main__":
     G, best_paths = generate_city_graph(N)
     all_stops = list(G.nodes)
 
-    run_simulation(G, all_stops, best_paths, 10, 1, False)
+    start = time.time()
+    run_simulation(G, all_stops, best_paths, 100, 1, False)
+    end = time.time()
+
+    print(f"took {end - start:6.4f}s")
