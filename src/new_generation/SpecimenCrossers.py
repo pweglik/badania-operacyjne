@@ -56,6 +56,15 @@ class GenotypeCrosser:
                 line2.stops, size=line2.stops_no // 2, replace=False
             )
 
+            if used_stops1.size < 1 and used_stops2.size < 1:
+                continue
+            if used_stops1.size < 1:
+                new_lines.append(Line(list(used_stops2), self.best_paths))
+                continue
+            if used_stops2.size < 1:
+                new_lines.append(Line(list(used_stops1), self.best_paths))
+                continue
+
             # assumes distances between ends of used stops are bidirectional
             possibilities = [
                 (
@@ -66,11 +75,11 @@ class GenotypeCrosser:
                 (
                     self.distances[used_stops1[-1]][used_stops2[-1]],
                     used_stops1,
-                    reversed(used_stops2),
+                    np.flip(used_stops2),
                 ),
                 (
                     self.distances[used_stops1[0]][used_stops2[0]],
-                    reversed(used_stops1),
+                    np.flip(used_stops1),
                     used_stops2,
                 ),
                 (
@@ -80,10 +89,10 @@ class GenotypeCrosser:
                 ),
             ]
 
-            _, first_part, second_part = min(possibilities)
+            _, first_part, second_part = min(possibilities, key=lambda item: item[0])
 
             new_lines.append(
-                Line(list(np.concatenate(first_part, second_part)), self.best_paths)
+                Line(list(np.concatenate([first_part, second_part])), self.best_paths)
             )
 
         return Genotype(new_lines)
