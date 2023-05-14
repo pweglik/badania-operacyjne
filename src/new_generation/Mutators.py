@@ -6,7 +6,7 @@ from networkx import Graph
 import numpy as np
 import networkx as nx
 
-from Sanitizers import Sanitizer
+from new_generation.Sanitizers import Sanitizer
 from src.common.Genotype import Genotype
 from src.common.Line import Line
 from src.common import line_generation
