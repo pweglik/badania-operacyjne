@@ -50,12 +50,9 @@ def new_generation_random(
 
     counter = 0
     while len(new_generation) < new_generation_size:
-        # generate new specimen from best ones
         if random.random() < params.chance_merge_specimen:
-            g_new = genotype_crosser.merge_genotypes(
-                new_generation[0],
-                new_generation[1],  # TODO this always crosses same ones
-            )
+            # cross 2 random genotypes
+            g_new = genotype_crosser.merge_genotypes(*random.sample(new_generation, 2))
 
             new_generation.append(g_new)
 
