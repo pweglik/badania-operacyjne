@@ -6,6 +6,8 @@ from multiprocessing import Process, Queue
 from time import perf_counter
 from typing import Tuple
 
+from typing import IO
+
 from new_generation.Sanitizers import BasicSanitizer
 from SimultionEngine import SimulationEngine
 from common.params import N, SEED
@@ -58,6 +60,22 @@ SURVIVAL_FUNCTIONS = [
         ),
     ),
 ]
+
+
+def save_headers(f: IO[str], params_keys: list[str]):
+    for key in params_keys:
+        f.write(key + ",")
+    f.write("fitness")
+    f.write("\n")
+
+
+def save_results(
+    f: IO[str], params_keys: list[str], params_values: dict, fitness: float
+):
+    for key in params_keys:
+        f.write(str(params_values[key]) + ",")
+    f.write(str(fitness))
+    f.write("\n")
 
 
 def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
@@ -164,7 +182,10 @@ if __name__ == "__main__":
 
         print("Parallel units:", parallel_units)
 
-        params_keys = grid_search_params.keys()
+        # fixed order list
+        # order of keys in params_keys define column order in csv file
+        # must stay the same for all processes
+        params_keys = list(grid_search_params.keys())
         queue: "Queue[dict]" = Queue()
         results: "Queue[Tuple[dict, float]]" = Queue()
 
@@ -178,6 +199,10 @@ if __name__ == "__main__":
             )
             for _ in range(parallel_units)
         ]
+
+        # open results file and save headers
+        f = open("results/gridsearch.csv", "w")
+        save_headers(f, params_keys)
 
         # Start grid search
         for i in range(parallel_units):
@@ -193,7 +218,7 @@ if __name__ == "__main__":
         while not results.empty():
             results_list.append(results.get())
 
-        sorted(results_list, key=lambda x: x[1])
+        results_list.sort(key=lambda x: x[1])
 
         print(f"Best parameters: \t{results_list[0][0]}")
         print(f"Best fitness: \t{results_list[0][1]:.2f}")
@@ -202,5 +227,10 @@ if __name__ == "__main__":
         print(SURVIVAL_FUNCTIONS[results_list[0][0]["survival_functions"]][0])
 
         print(f"Best epochs: \t{results_list[0][0]['epochs']}")
+
+        for params_values, fitness in results_list:
+            save_results(f, params_keys, params_values, fitness)
+
+        f.close()
 
     main()
