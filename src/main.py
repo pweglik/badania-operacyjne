@@ -1,5 +1,5 @@
 import random
-
+import time
 
 from fitness import fitness
 from initial_population import create_initial_population
@@ -79,4 +79,8 @@ if __name__ == "__main__":
     G, best_paths = generate_city_graph(N)
     all_stops = list(G.nodes)
 
-    run_simulation(G, all_stops, best_paths, 10, 1, False)
+    start = time.time()
+    run_simulation(G, all_stops, best_paths, 100, 1, False)
+    end = time.time()
+
+    print(f"took {end - start:6.4f}s")

@@ -102,15 +102,15 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
         sanitizer = BasicSanitizer(best_paths)
         new_generation_params = NewGenerationRandomParams(
             params["chance_create_line"],
-            CHANCE_CYCLE,
-            CHANCE_ERASE_LINE,
-            CHANCE_INVERT,
-            CHANCE_MERGE,
-            CHANCE_MERGE_SPECIMEN,
-            CHANCE_ROT_CYCLE,
-            CHANCE_ROT_RIGHT,
-            CHANCE_SPLIT,
-        )  # TODO this should be checked by grid search
+            params["chance_cycle"],
+            params["chance_erase_line"],
+            params["chance_invert"],
+            params["chance_merge"],
+            params["chance_merge_specimen"],
+            params["chance_rot_cycle"],
+            params["chance_rot_right"],
+            params["chance_split"],
+        )
 
         fitness_sum = 0
 
@@ -172,6 +172,14 @@ if __name__ == "__main__":
             "survival_functions": range(len(SURVIVAL_FUNCTIONS)),
             "epochs": [100],
             "chance_create_line": float_param_list,
+            "chance_cycle": float_param_list,
+            "chance_erase_line": float_param_list,
+            "chance_invert": float_param_list,
+            "chance_merge": float_param_list,
+            "chance_merge_specimen": float_param_list,
+            "chance_rot_cycle": float_param_list,
+            "chance_rot_right": float_param_list,
+            "chance_split": float_param_list,
         }
 
         # Setup of the grid search
