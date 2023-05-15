@@ -99,11 +99,19 @@ def new_generation_random(
             )
         if random.random() < params.chance_replace_stops:
             organism = LineMutator.mutate_one_line_out_of_organism(
-                organism, sanitizer, line_mutator.replace_stops, proximity_based=False
+                organism,
+                sanitizer,
+                line_mutator.replace_stops,
+                proximity_based=False,
+                no_to_replace=1,
             )
         if random.random() < params.chance_replace_stops_proximity:
             organism = LineMutator.mutate_one_line_out_of_organism(
-                organism, sanitizer, line_mutator.replace_stops, proximity_based=True
+                organism,
+                sanitizer,
+                line_mutator.replace_stops,
+                proximity_based=True,
+                no_to_stops=1,
             )
         if random.random() < params.chance_add_stop:
             organism = LineMutator.mutate_one_line_out_of_organism(
