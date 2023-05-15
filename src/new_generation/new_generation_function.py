@@ -111,7 +111,7 @@ def new_generation_random(
                 sanitizer,
                 line_mutator.replace_stops,
                 proximity_based=True,
-                no_to_stops=1,
+                no_to_replace=1,
             )
         if random.random() < params.chance_add_stop:
             organism = LineMutator.mutate_one_line_out_of_organism(

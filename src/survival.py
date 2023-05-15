@@ -1,13 +1,8 @@
-from random import random, choices
+from random import choices
 from typing import Callable
 from common.Genotype import Genotype
 import numpy as np
-
-
-def _exp_pdf_for_range(i: np.ndarray, n: int, lamb: float) -> np.ndarray:
-    x_to_neg_lamb_x = pow(1 - i / n, lamb)
-    almost_probs = lamb * x_to_neg_lamb_x
-    return almost_probs / almost_probs.sum()
+from utils import exp_pdf_for_range
 
 
 def _partition(
@@ -111,7 +106,7 @@ def _exponentional_delegate(
         np.random.choice(
             sorted_generation,
             replace=False,
-            p=_exp_pdf_for_range(
+            p=exp_pdf_for_range(
                 np.arange(len(sorted_generation)), len(sorted_generation), lambda_param
             ),
             size=n,

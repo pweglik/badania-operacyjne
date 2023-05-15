@@ -7,6 +7,7 @@ import numpy as np
 import networkx as nx
 
 from new_generation.Sanitizers import Sanitizer
+from src.utils import exp_pdf_for_range
 from src.common.Genotype import Genotype
 from src.common.Line import Line
 from src.common import line_generation
@@ -86,7 +87,9 @@ class LineMutator:
 
     def erase_stops(self, line: Line, no_of_stops_to_erase: int = 1) -> Line:
         no_of_stops_to_erase = min(no_of_stops_to_erase, line.stops_no)
-        idx = np.random.choice(len(line.stops) - no_of_stops_to_erase, replace=False)
+        idx = np.random.choice(
+            len(line.stops) - no_of_stops_to_erase, replace=False, size=1
+        )
         new_stops = np.array(line.stops)[idx]
         return Line(new_stops, self.best_paths)
 
@@ -113,9 +116,13 @@ class LineMutator:
         return Line(new_stops, self.best_paths)
 
     def replace_stops(
-        self, line: Line, no_to_replace: int, proximity_based: bool = True
+        self,
+        line: Line,
+        lambda_param: float = 0.2,
+        no_to_replace: int = 1,
+        proximity_based: bool = True,
     ) -> Line:
-        stops = np.array(line.stops)
+        stops = np.array(line.stops, dtype=int)
         stops_to_replace_idxs = np.random.choice(
             line.stops_no, size=no_to_replace, replace=False
         )
@@ -127,10 +134,20 @@ class LineMutator:
             return Line(list(stops), self.best_paths)
 
         stops_to_replace = stops[stops_to_replace_idxs]
-        idxs = np.random.exponential(scale=0.5, size=no_to_replace)
         choosen_neighbours = [
-            self.sorted_distances[stop][idx]
-            for stop, idx in zip(stops_to_replace, idxs)
+            np.random.choice(
+                [
+                    s for s, _ in self.sorted_distances[stop]
+                ],  # take stop from tuple[stop, distance]
+                replace=False,
+                p=exp_pdf_for_range(
+                    # take distance from tuple[stop, distance]
+                    neighbours := np.array([d for _, d in self.sorted_distances[stop]]),
+                    neighbours.size,
+                    lambda_param,
+                ),
+            )
+            for stop in stops_to_replace
         ]
         stops[stops_to_replace_idxs] = choosen_neighbours
 
