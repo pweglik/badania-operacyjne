@@ -78,12 +78,12 @@
 \begin{document}
 
 \title{
-	Badania operacyjne\\
-	Projekt\\
+    Badania operacyjne\\
+    Projekt\\
 }
 
 \author{\\Jakub Kosmydel\\Norbert Morawski
-	\\Bartłomiej Wiśniewski\\Przemysław Węglik}
+    \\Bartłomiej Wiśniewski\\Przemysław Węglik}
 
 \date{\today}
 
@@ -105,36 +105,36 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 \subsection{Założenia}
 
 \begin{enumerate}
-	\item Przystankom przypisujemy ilość punktów w zależności od gęstości zaludnienia w pobliżu oraz ciekawych punktów (teatr, park itp.).
-	      \begin{itemize}
-		      \item Dla każdego przystanku obliczamy liczbę ludzi w pobliżu,
-		      \item Głównym punktom w Krakowie (np. D17, teatry, itp.) nadajemy wartość punktową,
-		      \item Dla każdego przystanku sumujemy powyższe wartości.
-	      \end{itemize}
-	\item Rozkładamy linie komunikacyjne po mieście tak, by maksymalizować sumę zebranych punktów przez wszystkie linie.
-	\item Wprowadzamy koszt dla linii: koszt ścieżki w grafie, po której jedzie + koszt utworzenia nowej linii.
-	\item Linie przebiegające przez jeden przystanek dzielą się punktami,
-	\item Maksymalizujemy sumę punktów zebranych przez wszystkie linie.
+    \item Przystankom przypisujemy ilość punktów w zależności od gęstości zaludnienia w pobliżu oraz ciekawych punktów (teatr, park itp.).
+          \begin{itemize}
+              \item Dla każdego przystanku obliczamy liczbę ludzi w pobliżu,
+              \item Głównym punktom w Krakowie (np. D17, teatry, itp.) nadajemy wartość punktową,
+              \item Dla każdego przystanku sumujemy powyższe wartości.
+          \end{itemize}
+    \item Rozkładamy linie komunikacyjne po mieście tak, by maksymalizować sumę zebranych punktów przez wszystkie linie.
+    \item Wprowadzamy koszt dla linii: koszt ścieżki w grafie, po której jedzie + koszt utworzenia nowej linii.
+    \item Linie przebiegające przez jeden przystanek dzielą się punktami,
+    \item Maksymalizujemy sumę punktów zebranych przez wszystkie linie.
 \end{enumerate}
 
 \subsection{Dane}
 \begin{enumerate}
-	\item $n$ - liczba linii
-	\item $m$ - liczba przystanków
+    \item $n$ - liczba linii
+    \item $m$ - liczba przystanków
 \end{enumerate}
 
 \subsubsection{Graf}
 
 \begin{enumerate}
-	\item Wierzchołki to istniejące przystanki z przypisanymi punktami,
-	\item $p(j)$ - wartość punktowa przystanku:
-	      \begin{itemize}
-		      \item  W początkowej wersji liczba ta jest określona z góry,
-		      \item $p(j) = \sum_{i=0}^{n-1} \frac{w_{j, i}}{f(d_j, i)}$ gdzie $w_{j, i}$ to wartość obiektu (np. liczba mieszkańców w pobliżu) a $d_{j,i}$ to odległość tego bloku od przystanku, f – funkcja skalująca.
-		      \item Funkcja liczona dla danego przystanku $j$
-	      \end{itemize}
-	\item Krawędzie to połączenia między przystankami.
-	\item Koszt krawędzi to odległości między przystankami.
+    \item Wierzchołki to istniejące przystanki z przypisanymi punktami,
+    \item $p(j)$ - wartość punktowa przystanku:
+          \begin{itemize}
+              \item  W początkowej wersji liczba ta jest określona z góry,
+              \item $p(j) = \sum_{i=0}^{n-1} \frac{w_{j, i}}{f(d_j, i)}$ gdzie $w_{j, i}$ to wartość obiektu (np. liczba mieszkańców w pobliżu) a $d_{j,i}$ to odległość tego bloku od przystanku, f – funkcja skalująca.
+              \item Funkcja liczona dla danego przystanku $j$
+          \end{itemize}
+    \item Krawędzie to połączenia między przystankami.
+    \item Koszt krawędzi to odległości między przystankami.
 \end{enumerate}
 
 
@@ -149,27 +149,28 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 \subsection{Szukane}
 $x_{i,j}$ - czy linia $i$ zatrzymuje się na przystanku $j$, gdzie:
 \begin{enumerate}
-	\item $i \in \left[ 0, n-1 \right]$
-	\item $j \in \left[ 0, m-1 \right]$
+    \item $i \in \left[ 0, n-1 \right]$
+    \item $j \in \left[ 0, m-1 \right]$
 \end{enumerate}
 
 \subsection{Hiperparametry}
 \begin{enumerate}
-	\item $\alpha$ - koszt zatrzymania się na przystanku,
-	\item $\beta$ - koszt nowej linii,
-	\item $R$ - hiper parametr zbiegania.
+    \item $\alpha$ - koszt zatrzymania się na przystanku,
+    \item $\beta$ - koszt nowej linii,
+    \item $R$ - hiper parametr zbiegania.
 \end{enumerate}
 
 \subsection{Funkcja kosztu}
 \begin{align*}
-	l_j      & = \sum_{i=0}^{n-1} x_{i, j}                                                    & \text{liczba linii zatrzymujących się na przystanku $j$} \\
-	q_j      & = \frac{p_j \cdot (1+\frac{R}{l_j})^{l_j}}{l_j} \xrightarrow{} \frac{e^R}{l_j} & \text{ile punktów każda linia uzyskuje z przystanku $j$} \\
-	S_{i}    &                                                                                & \text{długość ścieżki linii $i$ w grafie}                \\
-	cost_{j} & = \begin{cases}
-		\sum_{i=0}^{n-1} x_{i,j} \cdot (q_j-\alpha) & l_j > 0 \\
-		-\Delta                                     & l_j = 0 \\
-	\end{cases}                                                    & \text{penalizacja nieodwiedzonych przystanków}           \\
-	f(x)     & = \sum_{j=0}^{m-1} cost_{j} - \sum_{i=0}^{n-1} \left[ S_{i}-\beta \right]      & \text{funkcja kosztu}                                    \\
+    l_j                         & = \sum_{i=0}^{n-1} x_{i, j}                                               & \text{liczba linii zatrzymujących się na przystanku $j$}                 \\
+    q_j                         & = \frac{p_j \cdot (1+\frac{R}{l_j})^{l_j}}{l_j}                           & \text{ile punktów każda linia uzyskuje z przystanku $j$}                 \\
+    \lim_{l_{j}\to\infty} q_{j} & =  \frac{e^R}{l_j}                                                        & \text{$q_{j}$ jest ograniczone nawet jeśli liczba lini jest bardzo duża} \\
+    S_{i}                       &                                                                           & \text{długość ścieżki linii $i$ w grafie}                                \\
+    cost_{j}                    & = \begin{cases}
+        \sum_{i=0}^{n-1} x_{i,j} \cdot (q_j-\alpha) & l_j > 0 \\
+        -\Delta                                     & l_j = 0 \\
+    \end{cases}                                               & \text{penalizacja nieodwiedzonych przystanków}                           \\
+    f(x)                        & = \sum_{j=0}^{m-1} cost_{j} - \sum_{i=0}^{n-1} \left[ S_{i}-\beta \right] & \text{funkcja kosztu}                                                    \\
 \end{align*}
 % TODO update cost function (delta parameter), fix p_i,j
 
@@ -199,11 +200,11 @@ class Genotype:
 \subsection{Reprezentacja linii}
 Linia posiada następujące parametry:
 \begin{enumerate}
-	\item \lstinline{id} - id linii,
-	\item \lstinline{stops} - przystanki, na których się zatrzymuje,
-	\item \lstinline{edges} - wszystkie krawędzie, przez które linia przejeżdża,
-	\item \lstinline{edge_color} - kolor linii; do reprezentacji graficznej,
-	\item \lstinline{edge_style} - styl krawędzi linii; do reprezentacji graficznej,
+    \item \lstinline{id} - id linii,
+    \item \lstinline{stops} - przystanki, na których się zatrzymuje,
+    \item \lstinline{edges} - wszystkie krawędzie, przez które linia przejeżdża,
+    \item \lstinline{edge_color} - kolor linii; do reprezentacji graficznej,
+    \item \lstinline{edge_style} - styl krawędzi linii; do reprezentacji graficznej,
 \end{enumerate}
 
 
@@ -223,31 +224,31 @@ Na początku, chcąc się skupić na realizacji algorytmu, wygenerowaliśmy los
 
 \section{Symulacja}
 \begin{algorithm}[H]
-	\caption{Symulacja}
-	\begin{algorithmic}[1]
-		\Function{Symuluj}{liczba\_pokoleń, x}
-		\State populacja = \Call {populacja\_początkowa}{ }
-		\State \Call {zapisz\_populację}{ }
-		\ForTo{i}{0}{\text{liczba\_pokoleń} - 1}
-		\State populacja = \Call{usuń\_puste}{populacja}
-		\State populacja\_dopasowanie = \Call{fitness}{populacja}
+    \caption{Symulacja}
+    \begin{algorithmic}[1]
+        \Function{Symuluj}{liczba\_pokoleń, x}
+        \State populacja = \Call {populacja\_początkowa}{ }
+        \State \Call {zapisz\_populację}{ }
+        \ForTo{i}{0}{\text{liczba\_pokoleń} - 1}
+        \State populacja = \Call{usuń\_puste}{populacja}
+        \State populacja\_dopasowanie = \Call{fitness}{populacja}
 
-		\State populacja = \Call{funkcja\_przetrwania}{populacja, populacja\_dopasowanie}
-		\State populacja\_nowa = \Call{nowa\_populacja}{populacja} \Comment{Tutaj zachodzą mutacje i krzyżowania}
+        \State populacja = \Call{funkcja\_przetrwania}{populacja, populacja\_dopasowanie}
+        \State populacja\_nowa = \Call{nowa\_populacja}{populacja} \Comment{Tutaj zachodzą mutacje i krzyżowania}
 
-		Co x epok:
-		\State \Call {zapisz\_populację}{ }
-		\EndFor
-		\EndFunction
-	\end{algorithmic}
+        Co x epok:
+        \State \Call {zapisz\_populację}{ }
+        \EndFor
+        \EndFunction
+    \end{algorithmic}
 \end{algorithm}
 
 Powyżej przedstawiony został podstawowy silnik symulacji. W każdej epoce wykonuje on następujące kluczowe czynności:
 \begin{itemize}
-	\item Usuwa niedopuszczalne rozwiązania (linie bez przystanków, organizmy bez linii),
-	\item Oblicza funkcję dopasowania,
-	\item Uruchamia funkcję przetrwania, która likwiduje wybrane osobniki,
-	\item Uruchamia funkcję nowej populacji, która dokonuje mutacji i krzyżowań.
+    \item Usuwa niedopuszczalne rozwiązania (linie bez przystanków, organizmy bez linii),
+    \item Oblicza funkcję dopasowania,
+    \item Uruchamia funkcję przetrwania, która likwiduje wybrane osobniki,
+    \item Uruchamia funkcję nowej populacji, która dokonuje mutacji i krzyżowań.
 \end{itemize}
 
 Na tym poziomie nie definiujemy co dana funkcja robi. Zostało to zrobione poniżej.
@@ -255,11 +256,11 @@ Na tym poziomie nie definiujemy co dana funkcja robi. Zostało to zrobione poni�
 \section{Selekcja}
 Wypróbowaliśmy wielu różnych metod selekcji nowych osobników:
 \begin{enumerate}
-	\item \lstinline{n\_best\_survive(n)} - pozostawia daną liczbę $n$ najlepszych osobników,
-	\item \lstinline{n\_best\_and\_m\_random\_survive(n, m)} - pozostawia $n$ najlepszych osobników, oraz $m$ losowych spośród pozostałych,
-	\item \lstinline{n\_best\_and\_m\_worst\_survive(n, m)} - pozostawia $n$ najlepszych i $m$ najgorszych osobników,
-	\item \lstinline{exponentional\_survival(n, lambda)} - pozostawia $n$ osobników w sposób losowy, ale zależny od uzystanej wartości $fitness$ i zgodny z rozkładem wykładniczym parametryzowanym przez $lambda$,
-	\item \lstinline{exponentional\_survival\_with\_protection(best\_protected, worst\_protected, lambda)} - działa jak $exponentional\_survival(lambda, n)$, ale gwarantuje przeżycie $best\_protected$ najlepszym i $worst\_protected$ najgorszym osobnikom,
+    \item \lstinline{n\_best\_survive(n)} - pozostawia daną liczbę $n$ najlepszych osobników,
+    \item \lstinline{n\_best\_and\_m\_random\_survive(n, m)} - pozostawia $n$ najlepszych osobników, oraz $m$ losowych spośród pozostałych,
+    \item \lstinline{n\_best\_and\_m\_worst\_survive(n, m)} - pozostawia $n$ najlepszych i $m$ najgorszych osobników,
+    \item \lstinline{exponentional\_survival(n, lambda)} - pozostawia $n$ osobników w sposób losowy, ale zależny od uzystanej wartości $fitness$ i zgodny z rozkładem wykładniczym parametryzowanym przez $lambda$,
+    \item \lstinline{exponentional\_survival\_with\_protection(best\_protected, worst\_protected, lambda)} - działa jak $exponentional\_survival(lambda, n)$, ale gwarantuje przeżycie $best\_protected$ najlepszym i $worst\_protected$ najgorszym osobnikom,
 \end{enumerate}
 
 \section{Mutacja}
@@ -271,12 +272,12 @@ Tworzy nowe mutacje dla danej linii.
 Możliwe mutacje:
 
 \begin{enumerate}
-	\item \lstinline{rotation_to_right} - losuje spójny ciąg przystanków w lini i przesuwa je o zadaną (lub losową) liczbę pozycji
-	\item \lstinline{cycle_rotation} - losuje pozycje przystanków w lini i przesuwa obecne na tych pozycjach przystanki o jedną pozycję w ramach wylosowanych pozycji
-	\item \lstinline{invert} - odwraca kolejność przystanków, pomiędzy losowymi indeksami \lstinline{start} oraz \lstinline{end},
-	\item \lstinline{erase_stops} - losowo usuwa zadaną liczbę przystanków z linii,
-	\item \lstinline{add_stops} - losowo dodaje zadaną liczbę przystanków, spośród tych, które w linii nie występują
-	\item \lstinline{replace_stops} - losowo zmienia zadaną liczbę przystanków z lini na inne. Nowe przystanki są wybierane z rozkładu jednostajnego lub wykładniczego gdzie przystanki bliższe do obecnego są bardziej prawdopodobne
+    \item \lstinline{rotation_to_right} - losuje spójny ciąg przystanków w lini i przesuwa je o zadaną (lub losową) liczbę pozycji
+    \item \lstinline{cycle_rotation} - losuje pozycje przystanków w lini i przesuwa obecne na tych pozycjach przystanki o jedną pozycję w ramach wylosowanych pozycji
+    \item \lstinline{invert} - odwraca kolejność przystanków, pomiędzy losowymi indeksami \lstinline{start} oraz \lstinline{end},
+    \item \lstinline{erase_stops} - losowo usuwa zadaną liczbę przystanków z linii,
+    \item \lstinline{add_stops} - losowo dodaje zadaną liczbę przystanków, spośród tych, które w linii nie występują
+    \item \lstinline{replace_stops} - losowo zmienia zadaną liczbę przystanków z lini na inne. Nowe przystanki są wybierane z rozkładu jednostajnego lub wykładniczego gdzie przystanki bliższe do obecnego są bardziej prawdopodobne
 \end{enumerate}
 
 \subsection{GenotypeMutator}
@@ -284,11 +285,11 @@ Możliwe mutacje:
 Możliwe mutacje:
 
 \begin{enumerate}
-	\item \lstinline{erase_line(G)} - tworzy nowy genotyp, usuwając losową linię,
-	\item \lstinline{create_line(G)} - tworzy nowy genotyp, dodając losowo wygenerowaną linię,
-	\item \lstinline{split_line(G)} - tworzy nowy genotyp, rozdzielając losową, losową linię dwie różne.
-	\item \lstinline{merge_lines(G)} - tworzy nowy genotyp, łącząc zadaną liczbę losowych linii. W zależności od wartości parametru line mogą być łączone całościowo lub na poziomie pojedyńczych przystanków
-	\item \lstinline{cycle_stops_shift(G)} - tworzy nowy genotyp, ustawiając ciągi przystanków z lini obok siebie i wykonując \lstinline{cycle_rotation} na takim ciągu przystanków
+    \item \lstinline{erase_line(G)} - tworzy nowy genotyp, usuwając losową linię,
+    \item \lstinline{create_line(G)} - tworzy nowy genotyp, dodając losowo wygenerowaną linię,
+    \item \lstinline{split_line(G)} - tworzy nowy genotyp, rozdzielając losową, losową linię dwie różne.
+    \item \lstinline{merge_lines(G)} - tworzy nowy genotyp, łącząc zadaną liczbę losowych linii. W zależności od wartości parametru line mogą być łączone całościowo lub na poziomie pojedyńczych przystanków
+    \item \lstinline{cycle_stops_shift(G)} - tworzy nowy genotyp, ustawiając ciągi przystanków z lini obok siebie i wykonując \lstinline{cycle_rotation} na takim ciągu przystanków
 \end{enumerate}
 
 \section{Krzyżowanie}
@@ -297,9 +298,9 @@ Możliwe mutacje:
 \subsection{GenotypeCrosser}
 
 \begin{enumerate}
-	\item \lstinline{merge_genotypes(G1, G2)} - tworzy nowy genotyp poprzez wybranie losowych lini z genotypów G1 i G2
-	\item \lstinline{cycle_stops_shift(G1, G2)} - najpierw wykonuje \lstinline{merge_genotypes(G1, G2)}, a następnie \lstinline{GenotypeMutator.cycle_stops_shift(G)}
-	\item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z lini z G1 i G2 na połowy i jedną z połów każdej lini łączy z połową lini z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten w którym dystans pomiędzy połączonymi przystankami jest minimalny
+    \item \lstinline{merge_genotypes(G1, G2)} - tworzy nowy genotyp poprzez wybranie losowych lini z genotypów G1 i G2
+    \item \lstinline{cycle_stops_shift(G1, G2)} - najpierw wykonuje \lstinline{merge_genotypes(G1, G2)}, a następnie \lstinline{GenotypeMutator.cycle_stops_shift(G)}
+    \item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z lini z G1 i G2 na połowy i jedną z połów każdej lini łączy z połową lini z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten w którym dystans pomiędzy połączonymi przystankami jest minimalny
 \end{enumerate}
 
 \chapter{Aplikacja}
