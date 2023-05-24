@@ -136,6 +136,9 @@ def load_cracow_city_graph() -> tuple[nx.Graph, Any]:
     solitary = [n for n in nx.algorithms.isolate.isolates(G)]
     G.remove_nodes_from(solitary)
 
+    for v, u, _ in G.edges:
+        print(v, u)
+
     # for edge in G.edges:
     #     G[edge[0]][edge[1]]["weight"] = G[edge[0]][edge[1]][0]["travel_time"]
 

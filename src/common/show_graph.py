@@ -1,6 +1,7 @@
 import math
 
 import networkx as nx
+import osmnx as ox
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
@@ -49,6 +50,43 @@ def show_graph(
             vmax=v_max + 1,
             cmap=plt.cm.Greens,
         )
+
+    if show:
+        plt.show()
+    else:
+        plt.savefig(f"../results/gen_{gen_number}.svg")
+        plt.clf()
+
+
+def show_graph_osmx(
+    G: nx.MultiDiGraph,
+    genotype: Genotype,
+    gen_number: int = 0,
+    show: bool = False,
+    is_small: bool = False,
+):
+    edge_colors = {}
+
+    for line in genotype.lines:
+        for v, u in line.edges:
+            edge = (v, u, 0)
+            edge_colors[edge] = line.edge_color
+
+    C = []
+    for edge in G.edges:
+        if edge in edge_colors:
+            C.append(edge_colors[edge])
+        else:
+            C.append("#000")
+
+    ox.plot_graph(
+        G,
+        bgcolor="k",
+        node_color=G.graph["points"],
+        node_size=50,
+        edge_linewidth=2,
+        edge_color=C,
+    )
 
     if show:
         plt.show()

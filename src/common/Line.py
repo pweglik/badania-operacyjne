@@ -1,27 +1,37 @@
 from copy import deepcopy
 from functools import cached_property
 
+import distinctipy
+
+
+def fix_stops(stops, best_paths):
+    stops_new = []
+    for i in range(len(stops) - 1):
+        best_path = best_paths[stops[i]][stops[i + 1]]
+        stops_new.extend(best_path)
+
+    return stops_new
+
 
 class Line:
     next_id = 0
     next_color = 0
-    colors = ["red", "green", "yellow", "purple", "orange", "olive"]
+    colors = distinctipy.get_colors(16)
 
     def __init__(self, stops: list[int], best_paths):
         self.id = Line.get_next_id()
-        self.stops = stops  # ordered list of stops
+        self.stops = fix_stops(stops, best_paths)  # ordered list of stops
         self.edge_color, self.edge_style = Line.get_next_edge_style()
         self.best_paths = best_paths
 
     @cached_property
     def edges(self) -> list[tuple[int, int]]:
         edges = []
+        # stops are fixed now
         for i in range(len(self.stops) - 1):
-            best_path = self.best_paths[self.stops[i]][self.stops[i + 1]]
-            for j in range(len(best_path) - 1):
-                v = best_path[j]
-                u = best_path[j + 1]
-                edges.append((v, u))
+            v = self.stops[i]
+            u = self.stops[i + 1]
+            edges.append((v, u))
 
         return edges
 

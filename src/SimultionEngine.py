@@ -1,7 +1,7 @@
 from typing import Callable, Optional
 import networkx as nx
 from common.Genotype import Genotype
-from common.show_graph import show_graph
+from common.show_graph import show_graph, show_graph_osmx
 from common.params import dprint
 from src.new_generation.Sanitizers import Sanitizer
 
@@ -45,7 +45,8 @@ class SimulationEngine:
         )
 
         # save the best <new one> one to file
-        show_graph(self.G, population[0], i, show=report_show)
+        show_graph(self.G, population[0], i, show=report_show)  # TODO handle osmnx
+        # show_graph_osmx(self.G, population[0], i, show=report_show)
 
     def sanitize_population(self, population: list[Genotype]) -> list[Genotype]:
         """

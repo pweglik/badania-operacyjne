@@ -3,3 +3,6 @@ numpy==1.23.5
 intervaltree
 pre-commit
 matplotlib
+pyproj
+osmnx
+distinctipy
