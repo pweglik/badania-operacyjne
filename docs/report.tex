@@ -254,6 +254,7 @@ Powyżej przedstawiony został podstawowy silnik symulacji. W każdej epoce wyko
 Na tym poziomie nie definiujemy co dana funkcja robi. Zostało to zrobione poniżej.
 
 \section{Selekcja}
+\label{sec:selection}
 Wypróbowaliśmy wielu różnych metod selekcji nowych osobników:
 \begin{enumerate}
     \item \lstinline{n_best_survive(n)} - pozostawia daną liczbę $n$ najlepszych osobników,
@@ -321,7 +322,16 @@ Jak widać, rzeczywiście tempo dopasowywania się modelu znacznie spada w poźn
 
 \section{Przeszukiwanie siatki hiper-parametrów}
 
-Pierwszy eksperyment obejmował wszystkie funkcje przetrwania. Pozostałe parametry były dobierane jako 0.2 lub 0.8.
+Pierwszy eksperyment obejmował wszystkie funkcje przetrwania. Przeszukiwana przestrzeń parametrów:
+\lstinputlisting{lst/hp}
+
+Funkcje przetrwania (opisy funkcji w sekcji \ref{sec:selection}):
+\begin{itemize}
+	\item [0] \lstinline|n_best_survive(N // 4)|
+	\item [1] \lstinline|n_best_survive(N // 8)|
+	\item [2] \lstinline|n_best_and_m_random_survive(N // 4, N // 10)|
+	\item [3] \lstinline|n_best_and_m_random_survive(N // 4, N // 20)|
+\end{itemize}
 
 \img{gs1/all}{Rozkład funkcji dopasowania dla pierwszego przeszukiwania siatki hiper-parametrów}
 
@@ -331,12 +341,14 @@ Pierwszy eksperyment obejmował wszystkie funkcje przetrwania. Pozostałe parame
 \imgsidebyside{gs1/7}{Rozkład dopasowania względem hiper-parametru}{gs1/8}{Rozkład dopasowania względem hiper-parametru}
 \imgsidebyside{gs1/9}{Rozkład dopasowania względem hiper-parametru}{gs1/10}{Rozkład dopasowania względem hiper-parametru}
 
-Jak widać niektóre rozkłady są lewoskośne, więc dalsze eksperymenty zawęziliśmy do wartości dla tych rozkładów. Jeżeli był to rozkład z parametrem 0.8 to wartości w dalszych eksperymentach to 0.5, 0.75, 0.9; dla parametru o wartości 0.2: 0.1, 0.25, 0.5. Dla rozkładów symetrycznych przyjęliśmy stałą wartość 0.5 (oprócz \lstinline|chance_merge_specimen| -- tutaj zostawiono duży rozrzut). Dalej zostały wykorzystane funkcje przetrwania 0 i 1.
+Jak widać niektóre rozkłady są lewoskośne, więc dalsze eksperymenty zawęziliśmy do wartości dla tych rozkładów. Jeżeli był to rozkład z parametrem 0.8 to wartości w dalszych eksperymentach to 0.5, 0.75, 0.9; dla parametru o wartości 0.2: 0.1, 0.25, 0.5. Dla rozkładów symetrycznych przyjęliśmy stałą wartość 0.5 (oprócz \lstinline|chance_merge_specimen| -- tutaj zostawiono duży rozrzut).
+
+Zdecydowanie lepiej radzi sobie funkcja przetrwania 0 od 1 i analogicznie 3 od 2. W poniższym eksperymencie zostały porównane tylko 0 i 1 ale do pozostałych wrócono niżej.
 
 Teraz przestrzeń parametrów wygląda następująco:
 \lstinputlisting{lst/hp2}
 
-\img{gs2/all}{Rozkład funkcji dopasowania dla pierwszego przeszukiwania siatki hiper-parametrów -- zawężona przestrzeń parametrów}
+\img{gs2/all}{Rozkład funkcji dopasowania dla drugiego przeszukiwania siatki hiper-parametrów -- zawężona przestrzeń parametrów}
 
 Minimum wzrosło z 18.25 do 27.16, idziemy w dobrą stronę! Ale maksimum wzrosło tylko o 0.2.
 
@@ -345,7 +357,7 @@ Minimum wzrosło z 18.25 do 27.16, idziemy w dobrą stronę! Ale maksimum wzros
 \imgsidebyside{gs2/5}{Rozkład dopasowania względem hiper-parametru}{gs2/6}{Rozkład dopasowania względem hiper-parametru}
 \imgcustomsize{gs2/7}{Rozkład dopasowania względem hiper-parametru}{0.5}
 
-Największy rozrzut powoduje funkcja dopasowania. Zdecydowanie lepiej radzi sobie 1 (przeżywa tylko 1/8 najlepszych osobników, w opcji 0 przeżywa aż 1/4). Najlepsze parametry z wykresów odczytano jako (najbardziej lewoskośny/najwięcej przypadków po prawej/najmniej po lewej):
+Najlepsze parametry z wykresów odczytano jako (najbardziej lewoskośny/najwięcej przypadków po prawej/najmniej po lewej):
 \lstinputlisting{lst/hp3}
 
 Maksymalne dopasowanie (35.77) osiągnięto dla
@@ -357,6 +369,15 @@ Dla najlepszych parametrów graf miasta prezentuje się następująco:
 \imgsidebyside{best_params_hp3}{Epoka 100, dopasowanie 34.90}{best_params_hp3_1000}{Epoka 1000, dopasowanie 41.96}
 
 Nadal widoczne są patologiczne sytuacje. Np wierzchołki 19 i 23 są połączone tylko między sobą.
+
+\subsection{title}
+
+Przetestujemy następujące funkcje przetrwania:
+\begin{itemize}
+	\item [1] \lstinline|n_best_survive(N // 8)|
+	\item [4] \lstinline|n_best_and_m_random_survive(N // 8, N // 20)| -- połączenie 1 i 3 z poprzednich eksperymentów
+\end{itemize}
+
 
 \chapter{Podsumowanie}
 

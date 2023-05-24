@@ -59,6 +59,12 @@ SURVIVAL_FUNCTIONS = [
             population, N_IN_POPULATION // 4, N_IN_POPULATION // 20
         ),
     ),
+    (
+        "(1/8)_best_and_(1/20)_random_survive",
+        lambda population: n_best_and_m_random_survive(
+            population, N_IN_POPULATION // 8, N_IN_POPULATION // 20
+        ),
+    ),
 ]
 
 
@@ -176,33 +182,29 @@ if __name__ == "__main__":
             create_initial_population(G, best_paths) for _ in range(3)
         ]
 
-        use_reduced = True
-        zero_to_one: list[float] = [0.0, 0.2, 0.5, 0.8]
-        zero_to_one_reduced: list[float] = [0.0, 0.2, 0.8]
-
-        float_param_list: list[float] = (
-            zero_to_one_reduced if use_reduced else zero_to_one
-        )
+        float_param_list: list[float] = [0.2, 0.8]
+        lower_bound_params: list[float] = [0.1, 0.25, 0.5]
+        higher_bound_params: list[float] = [0.5, 0.75, 0.9]
 
         grid_search_params = {
-            "survival_functions": range(len(SURVIVAL_FUNCTIONS)),
+            "survival_functions": [1, 4],  # range(len(SURVIVAL_FUNCTIONS)),
             "epochs": [100],
-            "chance_rot_cycle": float_param_list,
-            "chance_rot_right": float_param_list,
-            "chance_invert": float_param_list,
+            "chance_rot_cycle": [0.5],
+            "chance_rot_right": [0.5],
+            "chance_invert": [0.5],
             "chance_erase_stop": float_param_list,
-            "chance_add_stop": [0],
+            "chance_add_stop": float_param_list,
             "chance_add_stop_mix": float_param_list,
-            "chance_replace_stops": [0],
+            "chance_replace_stops": float_param_list,
             "chance_replace_stops_proximity": float_param_list,
-            "chance_create_line": float_param_list,
-            "chance_cycle": [0],
-            "chance_erase_line": float_param_list,
-            "chance_merge": [0],
+            "chance_create_line": [0.1],
+            "chance_cycle": [0.1],
+            "chance_erase_line": [0.25],
+            "chance_merge": [0.25],
             "chance_merge_mix": float_param_list,
-            "chance_split": [0],
-            "cycle_stops_shift": [0],
-            "chance_merge_specimen": float_param_list,
+            "chance_split": [0.75],
+            "cycle_stops_shift": float_param_list,
+            "chance_merge_specimen": [0.5],
             "chance_cycle_stops_shift": float_param_list,
             "chance_line_based_merge": float_param_list,
         }
@@ -211,7 +213,7 @@ if __name__ == "__main__":
         parallel_units = 1
         cpu_count = os.cpu_count()
         if cpu_count is not None:
-            parallel_units = cpu_count - 1
+            parallel_units = cpu_count
 
         print("Parallel units:", parallel_units)
 
@@ -222,7 +224,7 @@ if __name__ == "__main__":
         queue: "Queue[dict]" = Queue()
         results: "Queue[Tuple[dict, float]]" = Queue()
 
-        for values in itertools.product(*grid_search_params.values()):
+        for values in itertools.product(*grid_search_params.values()):  # type: ignore
             queue.put(dict(zip(params_keys, values)))
 
         processes = [
