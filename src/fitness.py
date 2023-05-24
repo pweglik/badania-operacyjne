@@ -58,6 +58,7 @@ def get_lines_cost(organism: Genotype, G: nx.Graph) -> float:
         line_cost = 0
         for edge in line.edges:
             line_cost += G[edge[0]][edge[1]]["weight"]
+            # line_cost += G[edge[0]][edge[1]][0]["travel_time"] # TODO handle this
 
         if len(line.edges) != 0:
             cost += line_cost * (np.log(len(line.edges)) / 2 + 1)

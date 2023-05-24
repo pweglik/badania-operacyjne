@@ -26,4 +26,5 @@
 \contentsline {section}{\numberline {5.1\relax .\enspace }Eksperymenty proste}{10}{section.5.1}%
 \contentsline {section}{\numberline {5.2\relax .\enspace }Przeszukiwanie siatki hiper-parametrów}{11}{section.5.2}%
 \contentsline {subsection}{\numberline {5.2.1\relax .\enspace }Dodatkowe operatory genetyczne}{17}{subsection.5.2.1}%
+\contentsline {section}{\numberline {5.3\relax .\enspace }Eksperymenty z mapą Krakowa}{22}{section.5.3}%
 \contentsline {chapter}{\numberline {6\relax .\enspace }Podsumowanie}{23}{chapter.6}%

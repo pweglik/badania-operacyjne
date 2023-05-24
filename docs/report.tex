@@ -130,7 +130,7 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
     \item $p(j)$ - wartość punktowa przystanku:
           \begin{itemize}
               \item  W początkowej wersji liczba ta jest określona z góry,
-              \item $p(j) = \sum_{i=0}^{n-1} \frac{w_{j, i}}{f(d_j, i)}$ gdzie $w_{j, i}$ to wartość obiektu (np. liczba mieszkańców w pobliżu) a $d_{j,i}$ to odległość tego bloku od przystanku, f – funkcja skalująca.
+              \item $p(j) = \sum_{i=0}^{n-1} \left[ w_{j, i} \cdot f(d_{j, i}) \right]$ gdzie $w_{j, i}$ to wartość obiektu (np. liczba mieszkańców w pobliżu) a $d_{j,i}$ to odległość tego bloku od przystanku, f – funkcja malejących zysków.
               \item Funkcja liczona dla danego przystanku $j$
           \end{itemize}
     \item Krawędzie to połączenia między przystankami.
@@ -406,6 +406,8 @@ Minimum wzrosło z 32.34 do 26.90, a maksimum z 34.72 do 35.90 (przed implementa
 
 Teraz całość najlepszych hiper-parametrów wygląda następująco:
 \lstinputlisting{lst/hp6}
+
+\section{Eksperymenty z mapą Krakowa}
 
 \chapter{Podsumowanie}
 
