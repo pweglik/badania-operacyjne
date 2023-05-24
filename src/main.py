@@ -1,6 +1,8 @@
 import random
 import time
 
+import numpy as np
+
 from fitness import fitness
 from initial_population import create_initial_population
 from networkx import Graph

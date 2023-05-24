@@ -77,9 +77,9 @@ def show_graph_osmx(
         if edge in edge_colors:
             C.append(edge_colors[edge])
         else:
-            C.append("#000")
+            C.append((0, 0, 0))
 
-    ox.plot_graph(
+    fig, ax = ox.plot_graph(
         G,
         bgcolor="k",
         node_color=G.graph["points"],
@@ -90,6 +90,8 @@ def show_graph_osmx(
         save=not show,
         filepath=f"results/gen_{gen_number}.svg",
     )
+
+    plt.close(fig)
 
 
 if __name__ == "__main__":

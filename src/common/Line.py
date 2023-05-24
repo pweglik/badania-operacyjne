@@ -4,15 +4,6 @@ from functools import cached_property
 import distinctipy
 
 
-def fix_stops(stops, best_paths):
-    stops_new = []
-    for i in range(len(stops) - 1):
-        best_path = best_paths[stops[i]][stops[i + 1]]
-        stops_new.extend(best_path)
-
-    return stops_new
-
-
 class Line:
     next_id = 0
     next_color = 0
@@ -20,7 +11,7 @@ class Line:
 
     def __init__(self, stops: list[int], best_paths):
         self.id = Line.get_next_id()
-        self.stops = fix_stops(stops, best_paths)  # ordered list of stops
+        self.stops = stops  # ordered list of stops
         self.edge_color, self.edge_style = Line.get_next_edge_style()
         self.best_paths = best_paths
 
