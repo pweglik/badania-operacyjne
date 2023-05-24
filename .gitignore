@@ -140,3 +140,7 @@ dmypy.json
 
 # pycharm
 .idea
+
+# osmnx
+docs/cache
+cache

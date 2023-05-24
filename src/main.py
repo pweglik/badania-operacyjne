@@ -6,7 +6,7 @@ from initial_population import create_initial_population
 from networkx import Graph
 from new_generation.new_generation_function import new_generation_random
 
-from graph_generation import generate_city_graph
+from graph_generation import generate_city_graph, load_cracow_city_graph
 from SimultionEngine import SimulationEngine
 from new_generation.Mutators import GenotypeMutator, LineMutator
 from new_generation.SpecimenCrossers import GenotypeCrosser
@@ -14,17 +14,6 @@ from common.params import N_IN_POPULATION, SEED, N
 from new_generation_function import NewGenerationRandomParams
 from src.new_generation.Sanitizers import BasicSanitizer
 from survival import n_best_survive
-from src.common.params import (
-    CHANCE_CREATE_LINE,
-    CHANCE_CYCLE,
-    CHANCE_ERASE_LINE,
-    CHANCE_INVERT,
-    CHANCE_MERGE,
-    CHANCE_MERGE_SPECIMEN,
-    CHANCE_ROT_CYCLE,
-    CHANCE_ROT_RIGHT,
-    CHANCE_SPLIT,
-)
 
 
 def run_simulation(
@@ -40,15 +29,24 @@ def run_simulation(
     genotype_crosser = GenotypeCrosser(G, best_paths)
     sanitizer = BasicSanitizer(best_paths)
     params = NewGenerationRandomParams(
-        CHANCE_CREATE_LINE,
-        CHANCE_CYCLE,
-        CHANCE_ERASE_LINE,
-        CHANCE_INVERT,
-        CHANCE_MERGE,
-        CHANCE_MERGE_SPECIMEN,
-        CHANCE_ROT_CYCLE,
-        CHANCE_ROT_RIGHT,
-        CHANCE_SPLIT,
+        chance_create_line=0.1,
+        chance_cycle=0.1,
+        chance_erase_line=0.1,
+        chance_invert=0.5,
+        chance_merge=0.25,
+        chance_merge_specimen=0.5,
+        chance_rot_cycle=0.5,
+        chance_rot_right=0.5,
+        chance_split=0.75,
+        chance_erase_stop=0.1,
+        chance_add_stop=0.3,
+        chance_add_stop_mix=0.1,
+        chance_replace_stops=0.1,
+        chance_replace_stops_proximity=0.1,
+        chance_merge_mix=0.5,  # brak wplywu
+        cycle_stops_shift=0.5,  # brak wplywu
+        chance_cycle_stops_shift=0.1,
+        chance_line_based_merge=0.1,
     )
 
     sim_engine = SimulationEngine(
@@ -56,7 +54,7 @@ def run_simulation(
         initial_population=create_initial_population(G, best_paths),
         fitness_function=fitness,
         survival_function=lambda population: n_best_survive(
-            population, N_IN_POPULATION // 5
+            population, N_IN_POPULATION // 8  # deemed best by grid search
         ),
         new_generation_function=lambda population, graph: new_generation_random(
             population,
@@ -76,7 +74,8 @@ def run_simulation(
 if __name__ == "__main__":
     random.seed(SEED)
 
-    G, best_paths = generate_city_graph(N)
+    # G, best_paths = generate_city_graph(N)
+    G, best_paths = load_cracow_city_graph()
     all_stops = list(G.nodes)
 
     start = time.time()

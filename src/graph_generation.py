@@ -71,8 +71,8 @@ def parse_feature(f, transformer):
     }
 
 
-def load_cracow_city_graph() -> tuple[nx.Graph, Any]:
-    ox.config(use_cache=True, log_console=True)
+def load_cracow_city_graph(krk_json_path: str = "data") -> tuple[nx.Graph, Any]:
+    # ox.config(use_cache=True, log_console=True)
 
     # download street network data from OSM and construct a MultiDiGraph model
     G = ox.graph_from_point(
@@ -96,7 +96,7 @@ def load_cracow_city_graph() -> tuple[nx.Graph, Any]:
 
     G = G.to_undirected()
 
-    Z = json.load(open("zameldowania_stale_2022_krk.geojson"))
+    Z = json.load(open(f"{krk_json_path}/zameldowania_stale_2022_krk.geojson"))
     transformer = Transformer.from_crs(Z["crs"]["properties"]["name"], "EPSG:4326")
     lat_long_people = [parse_feature(zf, transformer) for zf in Z["features"]]
 
@@ -136,8 +136,8 @@ def load_cracow_city_graph() -> tuple[nx.Graph, Any]:
     solitary = [n for n in nx.algorithms.isolate.isolates(G)]
     G.remove_nodes_from(solitary)
 
-    for v, u, _ in G.edges:
-        print(v, u)
+    # for v, u, _ in G.edges:
+    #     print(v, u)
 
     # for edge in G.edges:
     #     G[edge[0]][edge[1]]["weight"] = G[edge[0]][edge[1]][0]["travel_time"]

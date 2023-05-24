@@ -22,17 +22,6 @@ from new_generation.new_generation_function import (
     NewGenerationRandomParams,
 )
 from survival import n_best_survive, n_best_and_m_random_survive
-from src.common.params import (
-    CHANCE_CREATE_LINE,
-    CHANCE_CYCLE,
-    CHANCE_ERASE_LINE,
-    CHANCE_INVERT,
-    CHANCE_MERGE,
-    CHANCE_MERGE_SPECIMEN,
-    CHANCE_ROT_CYCLE,
-    CHANCE_ROT_RIGHT,
-    CHANCE_SPLIT,
-)
 
 random.seed(SEED)
 

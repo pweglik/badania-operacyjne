@@ -86,13 +86,10 @@ def show_graph_osmx(
         node_size=50,
         edge_linewidth=2,
         edge_color=C,
+        show=show,
+        save=not show,
+        filepath=f"results/gen_{gen_number}.svg",
     )
-
-    if show:
-        plt.show()
-    else:
-        plt.savefig(f"../results/gen_{gen_number}.svg")
-        plt.clf()
 
 
 if __name__ == "__main__":

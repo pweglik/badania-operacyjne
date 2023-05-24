@@ -27,11 +27,12 @@ class Line:
     @cached_property
     def edges(self) -> list[tuple[int, int]]:
         edges = []
-        # stops are fixed now
         for i in range(len(self.stops) - 1):
-            v = self.stops[i]
-            u = self.stops[i + 1]
-            edges.append((v, u))
+            best_path = self.best_paths[self.stops[i]][self.stops[i + 1]]
+            for j in range(len(best_path) - 1):
+                v = best_path[j]
+                u = best_path[j + 1]
+                edges.append((v, u))
 
         return edges
 
