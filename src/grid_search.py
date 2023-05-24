@@ -183,20 +183,20 @@ if __name__ == "__main__":
         ]
 
         float_param_list: list[float] = [0.2, 0.8]
-        lower_bound_params: list[float] = [0.1, 0.25, 0.5]
-        higher_bound_params: list[float] = [0.5, 0.75, 0.9]
+        lower_bound_params: list[float] = [0.1, 0.3]
+        higher_bound_params: list[float] = [0.7, 0.9]
 
         grid_search_params = {
-            "survival_functions": [1, 4],  # range(len(SURVIVAL_FUNCTIONS)),
+            "survival_functions": [1],  # range(len(SURVIVAL_FUNCTIONS)),
             "epochs": [100],
             "chance_rot_cycle": [0.5],
             "chance_rot_right": [0.5],
             "chance_invert": [0.5],
-            "chance_erase_stop": float_param_list,
-            "chance_add_stop": float_param_list,
-            "chance_add_stop_mix": float_param_list,
-            "chance_replace_stops": float_param_list,
-            "chance_replace_stops_proximity": float_param_list,
+            "chance_erase_stop": lower_bound_params,
+            "chance_add_stop": lower_bound_params,
+            "chance_add_stop_mix": lower_bound_params,
+            "chance_replace_stops": lower_bound_params,
+            "chance_replace_stops_proximity": lower_bound_params,
             "chance_create_line": [0.1],
             "chance_cycle": [0.1],
             "chance_erase_line": [0.25],
@@ -205,8 +205,8 @@ if __name__ == "__main__":
             "chance_split": [0.75],
             "cycle_stops_shift": float_param_list,
             "chance_merge_specimen": [0.5],
-            "chance_cycle_stops_shift": float_param_list,
-            "chance_line_based_merge": float_param_list,
+            "chance_cycle_stops_shift": lower_bound_params,
+            "chance_line_based_merge": lower_bound_params,
         }
 
         # Setup of the grid search

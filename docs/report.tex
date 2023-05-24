@@ -370,14 +370,26 @@ Dla najlepszych parametrów graf miasta prezentuje się następująco:
 
 Nadal widoczne są patologiczne sytuacje. Np wierzchołki 19 i 23 są połączone tylko między sobą.
 
-\subsection{title}
+\subsection{Dodatkowe operatory genetyczne}
 
-Przetestujemy następujące funkcje przetrwania:
+Przetestowaliśmy dodatkowo (poprzednie parametry takie same jak powyżej):
+\lstinputlisting{lst/hp4}
+
+Funkcje przetrwania:
 \begin{itemize}
 	\item [1] \lstinline|n_best_survive(N // 8)|
-	\item [4] \lstinline|n_best_and_m_random_survive(N // 8, N // 20)| -- połączenie 1 i 3 z poprzednich eksperymentów
+	\item [4] \lstinline|n_best_and_m_random_survive(N // 8, N // 20)| -- połączenie 1 i 3 z poprzednich eksperymentów (najlepsze wyniki)
 \end{itemize}
 
+\img{gs3/all}{Rozkład funkcji dopasowania dla trzeciego przeszukiwania siatki hiper-parametrów -- nowe operatory}
+
+Minimum wzrosło z 27.16 do 26.90, maksimum spadło tylko z 35.77 do 34.72.
+
+\imgsidebyside{gs3/1}{Rozkład dopasowania względem hiper-parametru}{gs3/2}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs3/3}{Rozkład dopasowania względem hiper-parametru}{gs3/4}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs3/5}{Rozkład dopasowania względem hiper-parametru}{gs3/6}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs3/7}{Rozkład dopasowania względem hiper-parametru}{gs3/8}{Rozkład dopasowania względem hiper-parametru}
+\imgsidebyside{gs3/9}{Rozkład dopasowania względem hiper-parametru}{gs3/10}{Rozkład dopasowania względem hiper-parametru}
 
 \chapter{Podsumowanie}
 
