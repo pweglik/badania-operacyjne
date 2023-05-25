@@ -2,7 +2,7 @@ import math
 from common.Genotype import Genotype
 import networkx as nx
 import numpy as np
-from common.params import alpha, beta, delta, R, OSMNX, gamma
+from common.params import alpha, beta, delta, R, OSMNX, K
 
 
 def get_count_of_lines_at_bus_stop(organism: Genotype, G: nx.Graph) -> np.ndarray:
@@ -58,9 +58,9 @@ def get_lines_cost(organism: Genotype, G: nx.Graph) -> float:
         line_cost = 0
         for edge in line.edges:
             if not OSMNX:
-                line_cost += gamma * G[edge[0]][edge[1]]["weight"]
+                line_cost += K(G[edge[0]][edge[1]]["weight"])
             else:
-                line_cost += gamma * G[edge[0]][edge[1]][0]["travel_time"]
+                line_cost += K(G[edge[0]][edge[1]][0]["travel_time"])
 
         if len(line.edges) != 0:
             cost += line_cost * (np.log(len(line.edges)) / 2 + 1)

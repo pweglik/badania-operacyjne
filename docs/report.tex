@@ -157,7 +157,7 @@ $x_{i,j}$ - czy linia $i$ zatrzymuje się na przystanku $j$, gdzie:
 \begin{enumerate}
     \item $\alpha$ - koszt zatrzymania się na przystanku,
     \item $\beta$ - koszt nowej linii,
-    \item $\gamma$ - mnożnik kosztu dla długości linii,
+    \item $K$ - funkcja dopasowania dla długości linii,
     \item $\Delta$ - koszt nieodwiedzenia przystanku,
     % TODO koszt długiej linii
     \item $R$ - hiper parametr zbiegania.
@@ -173,9 +173,16 @@ $x_{i,j}$ - czy linia $i$ zatrzymuje się na przystanku $j$, gdzie:
         \sum_{i=0}^{n-1} x_{i,j} \cdot (q_j-\alpha) & l_j > 0 \\
         -\Delta                                     & l_j = 0 \\
     \end{cases}                                               & \text{penalizacja nieodwiedzonych przystanków}                           \\
-    f(x)                        & = \sum_{j=0}^{m-1} cost_{j} - \sum_{i=0}^{n-1} \left[ \gamma \, S_{i}-\beta \right] & \text{funkcja kosztu}                                                    \\
+    f(x)                        & = \sum_{j=0}^{m-1} cost_{j} - \sum_{i=0}^{n-1} \left[ K(S_{i})-\beta \right] & \text{funkcja kosztu}                                                    \\
 \end{align*}
-% TODO update cost function (delta parameter), fix p_i,j
+gdzie
+\begin{itemize}
+	\item $K$ -- funkcja skalująca długość
+\end{itemize}
+Względem oryginalnego modelu zmieniło się:
+\begin{itemize}
+	\item Dodano funkcje $K$
+\end{itemize}
 
 
 
@@ -411,6 +418,12 @@ Teraz całość najlepszych hiper-parametrów wygląda następująco:
 \lstinputlisting{lst/hp6}
 
 \section{Eksperymenty z mapą Krakowa}
+Udało nam się pobrać mapę Krakowa dzięki bibliotece OSMNX (OpenStreetMap NetworkX). Dane o ludności pobrano z msip.krakow.pl. Mapa z nałożoną punktacją wierzchołków (wg modelu) wygląda następująco:
+\imgsidebyside{krk}{Mapa Krakowa z danymi o ludności}{krk1.png}{Wynik algorytmu}
+Jaśniejszy kolor wierzchołka oznacza wyższą wartość punktową.
+Po uruchomieniu naszego algorytmu, uzyskaliśmy:
+Ile przystanków ma ile linii:
+\lstinputlisting{lst/krk1}
 
 \chapter{Podsumowanie}
 
