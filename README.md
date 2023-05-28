@@ -58,7 +58,7 @@ The results of the grid search will be saved in the `results/gridsearch.csv` fil
 
 ### Cracow city
 #### Running the Cracow city generation
-To run Cracow city generation, run the `city_generation_test.ipynb` file in Jupyter Notebook.
+To run Cracow city generation, run the `docs/city_generation_test.ipynb` file in Jupyter Notebook.
 
 ---
 
