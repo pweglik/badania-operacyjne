@@ -34,7 +34,16 @@ def run_simulation(
     no_of_generations: int,
     report_every_n: int,
     report_show: bool,
-):
+) -> None:
+    """
+    Run simulation with given parameters
+    :param G: Graph representing the city
+    :param all_stops: All stops in the city (vertices of the graph)
+    :param best_paths: Shortest paths between all stops
+    :param no_of_generations: Number of generations to simulate
+    :param report_every_n: Report every n-th generation
+    :param report_show: if <True> run plt.show(), otherwise plt.savefig(...)
+    """
     line_mutator = LineMutator(G, all_stops, best_paths)
     genotype_mutator = GenotypeMutator(G, best_paths)
     genotype_crosser = GenotypeCrosser(G, best_paths)
