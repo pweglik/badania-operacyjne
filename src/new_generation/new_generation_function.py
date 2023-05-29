@@ -2,10 +2,10 @@ import random
 from dataclasses import dataclass
 
 from new_generation.Sanitizers import Sanitizer
-from src.common.Genotype import Genotype
-from src.new_generation.Mutators import LineMutator, GenotypeMutator
-from src.new_generation.SpecimenCrossers import GenotypeCrosser
-from src.common.params import (
+from common.Genotype import Genotype
+from new_generation.Mutators import LineMutator, GenotypeMutator
+from new_generation.SpecimenCrossers import GenotypeCrosser
+from common.params import (
     dprint,
 )
 

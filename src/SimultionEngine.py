@@ -3,7 +3,7 @@ import networkx as nx
 from common.Genotype import Genotype
 from common.show_graph import show_graph, show_graph_osmnx
 from common.params import dprint, SimulationParams
-from src.new_generation.Sanitizers import Sanitizer
+from new_generation.Sanitizers import Sanitizer
 
 
 class SimulationEngine:

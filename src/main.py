@@ -6,16 +6,17 @@ import numpy as np
 from fitness import fitness
 from initial_population import create_initial_population
 from networkx import Graph
-from new_generation.new_generation_function import new_generation_random
+from new_generation.new_generation_function import (
+    new_generation_random,
+    NewGenerationRandomParams,
+)
 
 from graph_generation import generate_city_graph, load_cracow_city_graph
 from SimultionEngine import SimulationEngine
 from new_generation.Mutators import GenotypeMutator, LineMutator
 from new_generation.SpecimenCrossers import GenotypeCrosser
-from common.params import N_IN_POPULATION, SEED, N
-from new_generation_function import NewGenerationRandomParams
-from params import SimulationParams, default_params
-from src.new_generation.Sanitizers import BasicSanitizer
+from common.params import N_IN_POPULATION, SEED, N, SimulationParams, default_params
+from new_generation.Sanitizers import BasicSanitizer
 from survival import n_best_survive
 
 
