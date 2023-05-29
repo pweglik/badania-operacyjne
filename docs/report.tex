@@ -83,7 +83,7 @@
 }
 
 \author{\\Jakub Kosmydel\\Norbert Morawski
-    \\Bartłomiej Wiśniewski\\Przemysław Węglik}
+    \\Przemysław Węglik\\Bartłomiej Wiśniewski}
 
 \date{\today}
 
@@ -91,29 +91,30 @@
 \tableofcontents
 
 \chapter{Wstęp}
-Celem naszego projektu jest znalezienie optymalnych tras linii dla autobusów, aby maksymalizować liczbę pasażerów, przy minimalnej liczbie linii autobusowych. Aby to osiągnąć, wykorzystywane są algorytmy genetyczne -  algorytmy przeszukujące przestrzeń rozwiązań, które opierają się na procesie działania mechanizmu dziedziczenia biologicznego.
+Celem naszego projektu jest znalezienie optymalnych tras linii dla autobusów, aby maksymalizować liczbę pasażerów, przy minimalizacji kosztów. Aby to osiągnąć, wykorzystywane są algorytmy genetyczne -  algorytmy przeszukujące przestrzeń rozwiązań, które opierają się na procesie działania mechanizmu dziedziczenia biologicznego.
 
-W systemie założono, że pozycje oraz popularność przystanków są z góry ustalone. Stosowanie algorytmów genetycznych pozwoliło na wygenerowanie zestawu najlepszych połączeń autobusowych, które można skonfigurować dla lepszego wykorzystania zasobów oraz zwiększenie korzyści z transportu publicznego dla pasażerów.
+
+Pozycje przystanków są ustawione na sztywno w miejscach inspirowanych ich prawdziwą obecnością w Krakowie, a ich popularność jest zależna od gęstości zaludnienia dookoła nich. Stosowanie algorytmów genetycznych pozwoliło na wygenerowanie zestawu najlepszych połączeń autobusowych, które można skonfigurować dla lepszego wykorzystania zasobów oraz zwiększenie korzyści z transportu publicznego dla pasażerów.
 
 \chapter{Opis zagadnienia}
 
 \section{Sformułowanie problemu}
-Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywającej dany obszar miejski, który już posiada sieć przystanków autobusowych. Linie te, powinny mieć możliwość obsłużenia jak największej liczby pasażerów, tworząc jak najmniej postojów oraz zatrzymując się na jak najmniejszej liczbie przystanków.
+Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywającej dany obszar miejski, przy danym rozłożeniu przystanków. Linie te, powinny mieć możliwość obsłużenia jak największej liczby pasażerów, tworząc jak najmniej postojów oraz zatrzymując się na jak najmniejszej liczbie przystanków.
 
 \section{Model matematyczny}
 
 \subsection{Założenia}
 
 \begin{enumerate}
-    \item Przystankom przypisujemy ilość punktów w zależności od gęstości zaludnienia w pobliżu oraz ciekawych punktów (teatr, park itp.).
-          \begin{itemize}
-              \item Dla każdego przystanku obliczamy liczbę ludzi w pobliżu,
-              \item Głównym punktom w Krakowie (np. D17, teatry, itp.) nadajemy wartość punktową,
-              \item Dla każdego przystanku sumujemy powyższe wartości.
-          \end{itemize}
+    \item Przystankom przypisujemy ilość punktów w zależności od gęstości zaludnienia w pobliżu.
+        %   \begin{itemize}
+        %       \item Dla każdego przystanku obliczamy liczbę ludzi w pobliżu,
+        %       \item Głównym punktom w Krakowie (np. D17, teatry, itp.) nadajemy wartość punktową,
+        %       \item Dla każdego przystanku sumujemy powyższe wartości.
+        %   \end{itemize}
     \item Rozkładamy linie komunikacyjne po mieście tak, by maksymalizować sumę zebranych punktów przez wszystkie linie.
     \item Wprowadzamy koszt dla linii: koszt ścieżki w grafie, po której jedzie + koszt utworzenia nowej linii.
-    \item Linie przebiegające przez jeden przystanek dzielą się punktami,
+    \item Linie przebiegające przez jeden przystanek uzyskają więcej punktów niż jedna linia, ale stosujemy prawo malejących przychodów.
     \item Maksymalizujemy sumę punktów zebranych przez wszystkie linie.
 \end{enumerate}
 
@@ -126,10 +127,9 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 \subsubsection{Graf}
 
 \begin{enumerate}
-    \item Wierzchołki to istniejące przystanki z przypisanymi punktami,
+    \item Wierzchołki to istniejące przystanki z przypisanymi punktami, zależącymi od gęstości zaludnienia w pobliżu.
     \item $p(j)$ - wartość punktowa przystanku:
           \begin{itemize}
-              \item  W początkowej wersji liczba ta jest określona z góry,
               \item $p(j) = \sum_{i=0}^{n-1} \left[ w_{j, i} \cdot f(d_{j, i}) \right]$ gdzie $w_{j, i}$ to wartość obiektu (np. liczba mieszkańców w pobliżu) a $d_{j,i}$ to odległość tego bloku od przystanku, f – funkcja malejących zysków.
               \item Funkcja liczona dla danego przystanku $j$
           \end{itemize}
@@ -159,21 +159,20 @@ $x_{i,j}$ - czy linia $i$ zatrzymuje się na przystanku $j$, gdzie:
     \item $\beta$ - koszt nowej linii,
     \item $K$ - funkcja dopasowania dla długości linii,
     \item $\Delta$ - koszt nieodwiedzenia przystanku,
-    % TODO koszt długiej linii
-    \item $R$ - hiper parametr zbiegania.
+    \item $R$ - hiperparametr zbiegania.
 \end{enumerate}
 
-\subsection{Funkcja kosztu}
+\subsection{Funkcja zysku}
 \begin{align*}
     l_j                         & = \sum_{i=0}^{n-1} x_{i, j}                                               & \text{liczba linii zatrzymujących się na przystanku $j$}                 \\
     q_j                         & = \frac{p_j \cdot (1+\frac{R}{l_j})^{l_j}}{l_j}                           & \text{ile punktów każda linia uzyskuje z przystanku $j$}                 \\
     \lim_{l_{j}\to\infty} q_{j} & =  \frac{e^R}{l_j}                                                        & \text{$q_{j}$ jest ograniczone nawet jeśli liczba lini jest bardzo duża} \\
-    S_{i}                       &                                                                           & \text{długość ścieżki linii $i$ w grafie}                                \\
-    cost_{j}                    & = \begin{cases}
+    fitness_{j}                    & = \begin{cases}
         \sum_{i=0}^{n-1} x_{i,j} \cdot (q_j-\alpha) & l_j > 0 \\
         -\Delta                                     & l_j = 0 \\
-    \end{cases}                                               & \text{penalizacja nieodwiedzonych przystanków}                           \\
-    f(x)                        & = \sum_{j=0}^{m-1} cost_{j} - \sum_{i=0}^{n-1} \left[ K(S_{i})-\beta \right] & \text{funkcja kosztu}                                                    \\
+    \end{cases}                                               & \text{zysk jednej lini  i penalizacja nieodwiedzonych przystanków}                           \\
+    S_{i}                       &                                                                           & \text{długość ścieżki linii $i$ w grafie}                                \\
+    f(x)                        & = \sum_{j=0}^{m-1} cost_{j} - \sum_{i=0}^{n-1} \left[ K(S_{i})-\beta \right] & \text{funkcja zysku}                                                    \\
 \end{align*}
 gdzie
 \begin{itemize}
@@ -222,10 +221,10 @@ Linia posiada następujące parametry:
 class Line:
     def __init__(self, stops: list[int], best_paths):
         self.id = Line.get_next_id()
-        self.stops = stops  # ordered list of stops
+        # ordered list of stops
+        self.stops = stops
+        # list of edges on shortest paths between successive stops
         self.edges = []
-        self.edge_color = [...]
-        self.edge_style = [...]
 \end{lstlisting}
 
 \section{Rozwiązanie początkowe}
@@ -275,7 +274,6 @@ Wypróbowaliśmy wielu różnych metod selekcji nowych osobników:
 \end{enumerate}
 
 \section{Mutacja}
-% TODO describe all mutations
 
 \subsection{LineMutator}
 Tworzy nowe mutacje dla danej linii.
@@ -429,4 +427,20 @@ Ile przystanków ma ile linii:
 
 Problem generowania linii autobusowych jest bardzo skomplikowany. W celu jego rozwiązania, przydatne są algorytmy genetyczne. Z odpowiednią liczbą nowych generacji jesteśmy w stanie osiągnąć ciekawe wyniki. Nie są one jednak w pełni satysfakcjonujące.
 
+\chapter{Bibliografia}
+\href{https://pl.wikipedia.org/wiki/Prawo_malej%C4%85cych_przychod%C3%B3w}{1. Wikipedia, prawo malejących przychodów}
+
+
+\chapter{Podział pracy}
+\begin{itemize}
+    \item Jakub Kosmydel - 25\%
+    \item Norbert Morawski - 25\%
+    \item Przemysław Węglik - 25\%
+    \begin{itemize}
+        \item Generacja prostych grafów losowych
+        \item Prace nad architekturą projektu(Simulation Engine)
+        \item Pierwsze proste eksperymenty
+    \end{itemize}
+    \item Bartłomiej Wiśniewski - 25\%
+\end{itemize}
 \end{document}

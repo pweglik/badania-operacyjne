@@ -5,9 +5,9 @@
 \contentsline {section}{\numberline {2.2\relax .\enspace }Model matematyczny}{3}{section.2.2}%
 \contentsline {subsection}{\numberline {2.2.1\relax .\enspace }Założenia}{3}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2\relax .\enspace }Dane}{3}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3\relax .\enspace }Szukane}{4}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.3\relax .\enspace }Szukane}{3}{subsection.2.2.3}%
 \contentsline {subsection}{\numberline {2.2.4\relax .\enspace }Hiperparametry}{4}{subsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.2.5\relax .\enspace }Funkcja kosztu}{4}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.5\relax .\enspace }Funkcja zysku}{4}{subsection.2.2.5}%
 \contentsline {chapter}{\numberline {3\relax .\enspace }Opis algorytmów}{5}{chapter.3}%
 \contentsline {section}{\numberline {3.1\relax .\enspace }Reprezentacja środowiska}{5}{section.3.1}%
 \contentsline {subsection}{\numberline {3.1.1\relax .\enspace }Reprezentacja mapy}{5}{subsection.3.1.1}%
@@ -28,3 +28,5 @@
 \contentsline {subsection}{\numberline {5.2.1\relax .\enspace }Dodatkowe operatory genetyczne}{17}{subsection.5.2.1}%
 \contentsline {section}{\numberline {5.3\relax .\enspace }Eksperymenty z mapą Krakowa}{22}{section.5.3}%
 \contentsline {chapter}{\numberline {6\relax .\enspace }Podsumowanie}{24}{chapter.6}%
+\contentsline {chapter}{\numberline {7\relax .\enspace }Bibliografia}{25}{chapter.7}%
+\contentsline {chapter}{\numberline {8\relax .\enspace }Podział pracy}{26}{chapter.8}%
