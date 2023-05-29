@@ -29,7 +29,7 @@ which takes several parameters:
 - `report_every_n: int` - report every n-th generation,
 - `report_show: bool` - if `True` then the map image is displayed, otherwise it is saved to the file
 #### Running the app
-To run the app, run the following command in directory:
+To run the app, run the following command in `src` directory:
 ```
 python main.py
 ```
@@ -76,4 +76,7 @@ pre-commit run --all-files
 ---
 
 ## Authors
-TODO
+- Jakub Kosmydel
+- Norbert Morawski
+- Bartłomiej Wiśniewski
+- Przemysław Węglik

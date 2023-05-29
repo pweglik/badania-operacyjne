@@ -57,10 +57,10 @@ def get_lines_cost(organism: Genotype, G: nx.Graph) -> float:
     for line in organism.lines:
         line_cost = 0
         for edge in line.edges:
-            if not OSMNX:
-                line_cost += K(G[edge[0]][edge[1]]["weight"])
-            else:
+            if OSMNX:
                 line_cost += K(G[edge[0]][edge[1]][0]["travel_time"])
+            else:
+                line_cost += K(G[edge[0]][edge[1]]["weight"])
 
         if len(line.edges) != 0:
             cost += line_cost * (np.log(len(line.edges)) / 2 + 1)
