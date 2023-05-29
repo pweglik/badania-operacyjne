@@ -18,6 +18,9 @@ The app consist of several modules:
 - `grid_search.py` - grid search for looking for hyperparameters,
 - `experiments.ipynb` - notebook for testing random city generation and Cracow city graph.
 
+### Jupyter notebook
+The easiest method to get some results is to run a Jupyter notebook server in the main repo's dir and open the `experiments.ipynb` file.
+
 ### Main module
 #### Description
 This module shows a short example of how to use our genetic algorithm. It provides us with `run_simulation` function,
@@ -30,13 +33,9 @@ which takes several parameters:
 - `report_show: bool` - if `True` then the map image is displayed, otherwise it is saved to the file
 - `simulation_params: SimulationParams` - optional simulation params
 #### Running the app
-First you need to set your `PYTHONPATH` to `src`:
-```
-export PYTHONPATH="src"
-```
 To run the app, run the following command in repo's root directory:
 ```
-python src/main.py
+PYTHONPATH="src" python src/main.py
 ```
 The script will ask you to choose one of avaliable cities for simulations:
 ```
@@ -53,7 +52,7 @@ The graphs will be saved to `results` folder in the SVG format.
 #### Running the grid search
 To run grid search, run the following command in repo's root directory:
 ```
-python src/grid_search.py
+PYTHONPATH="src" python src/grid_search.py
 ```
 
 #### Setting the parameters
