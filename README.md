@@ -16,7 +16,7 @@ pip install -r requirements.txt
 The app consist of several modules:
 - `main.py` - main module for running the app,
 - `grid_search.py` - grid search for looking for hyperparameters,
-- `city_generation_test.ipynb` - notebook for testing Cracow city generation.
+- `experiments.ipynb` - notebook for testing random city generation and Cracow city graph.
 
 ### Main module
 #### Description
@@ -28,15 +28,30 @@ which takes several parameters:
 - `no_of_generations: int` - number of generations to simulate,
 - `report_every_n: int` - report every n-th generation,
 - `report_show: bool` - if `True` then the map image is displayed, otherwise it is saved to the file
+- `simulation_params: SimulationParams` - optional simulation params
 #### Running the app
-To run the app, run the following command in `src` directory:
+First you need to set your `PYTHONPATH` to `src`:
 ```
-python main.py
+export PYTHONPATH="src"
 ```
+To run the app, run the following command in repo's root directory:
+```
+python src/main.py
+```
+The script will ask you to choose one of avaliable cities for simulations:
+```
+available simulations:
+	[0] Random city
+	[1] Cracow city
+your choice:
+```
+After giving input to the program the calculations will begin.
+#### Results
+The graphs will be saved to `results` folder in the SVG format.
 
 ### Grid search
 #### Running the grid search
-To run grid search, run the following command in `src` directory:
+To run grid search, run the following command in repo's root directory:
 ```
 python src/grid_search.py
 ```
@@ -50,15 +65,10 @@ Remember, that the grid search will run all possible combinations of the paramet
 To set the number of parallel processes, edit the `grid_search.py` file.
 Look for variable named `parallel_units` and edit it.
 By default, it is set to -1, which means that the number of parallel processes will be equal to
-the number of cores on your machine minus 1.
+the number of cores on your machine.
 
 #### Results
 The results of the grid search will be saved in the `results/gridsearch.csv` file.
-
-
-### Cracow city
-#### Running the Cracow city generation
-To run Cracow city generation, run the `city_generation_test.ipynb` file in Jupyter Notebook.
 
 ---
 
