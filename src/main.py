@@ -77,6 +77,7 @@ def run_simulation(
             params,
         ),
         population_sanitizer=BasicSanitizer(best_paths),
+        osmnx=False,
     )
 
     sim_engine.run(no_of_generations, report_every_n, report_show=report_show)
@@ -85,8 +86,8 @@ def run_simulation(
 if __name__ == "__main__":
     random.seed(SEED)
 
-    # G, best_paths = generate_city_graph(N)
-    G, best_paths = load_cracow_city_graph()
+    G, best_paths = generate_city_graph(N)
+    # G, best_paths = load_cracow_city_graph()
     all_stops = list(G.nodes)
 
     start = time.time()

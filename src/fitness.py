@@ -2,7 +2,7 @@ import math
 from common.Genotype import Genotype
 import networkx as nx
 import numpy as np
-from common.params import alpha, beta, delta, R, OSMNX, K
+from common.params import alpha, beta, delta, R, K
 
 
 def get_count_of_lines_at_bus_stop(organism: Genotype, G: nx.Graph) -> np.ndarray:
@@ -49,7 +49,7 @@ def get_stop_penalty(organism: Genotype) -> float:
     return alpha * penalty
 
 
-def get_lines_cost(organism: Genotype, G: nx.Graph) -> float:
+def get_lines_cost(organism: Genotype, G, osmnx: bool) -> float:
     """
     Returns sum of costs of paths of all lines
     """
@@ -57,7 +57,7 @@ def get_lines_cost(organism: Genotype, G: nx.Graph) -> float:
     for line in organism.lines:
         line_cost = 0
         for edge in line.edges:
-            if OSMNX:
+            if osmnx:
                 line_cost += K(G[edge[0]][edge[1]][0]["travel_time"])
             else:
                 line_cost += K(G[edge[0]][edge[1]]["weight"])
@@ -68,14 +68,14 @@ def get_lines_cost(organism: Genotype, G: nx.Graph) -> float:
     return cost
 
 
-def fitness(organism: Genotype, G: nx.Graph) -> float:
+def fitness(organism: Genotype, G, osmnx: bool) -> float:
     """
     Returns fitness of organism in graph G
     """
     bus_stop_points = get_bus_stops_points(organism, G)
     penalty_number_of_lines = beta * organism.no_of_lines
     penalty_bus_stops = get_stop_penalty(organism)
-    penalty_lines_cost = get_lines_cost(organism, G)
+    penalty_lines_cost = get_lines_cost(organism, G, osmnx)
 
     return (
         np.sum(bus_stop_points)

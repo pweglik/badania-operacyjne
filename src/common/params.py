@@ -49,8 +49,3 @@ DEBUG = False
 def dprint(*args, **kwargs):
     if DEBUG:
         print(*args, **kwargs)
-
-
-# if using OSMNX this needs to be true
-# I know, kinda sketchy, TODO handle better
-OSMNX = True

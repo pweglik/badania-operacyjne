@@ -54,7 +54,7 @@ def show_graph(
     if show:
         plt.show()
     else:
-        plt.savefig(f"../results/gen_{gen_number}.svg")
+        plt.savefig(f"results/gen_{gen_number}.svg")
         plt.clf()
 
 

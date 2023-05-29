@@ -2,7 +2,7 @@ from typing import Callable, Optional
 import networkx as nx
 from common.Genotype import Genotype
 from common.show_graph import show_graph, show_graph_osmx
-from common.params import dprint, OSMNX
+from common.params import dprint
 from src.new_generation.Sanitizers import Sanitizer
 
 
@@ -11,7 +11,7 @@ class SimulationEngine:
         self,
         G: nx.Graph,
         initial_population: list[Genotype],
-        fitness_function: Callable[[Genotype, nx.Graph], float],
+        fitness_function: Callable[[Genotype, nx.Graph, bool], float],
         survival_function: Callable[
             [list[tuple[Genotype, float]]], list[tuple[Genotype, float]]
         ],
@@ -19,6 +19,7 @@ class SimulationEngine:
             [list[tuple[Genotype, float]], nx.Graph], list[Genotype]
         ],
         population_sanitizer: Sanitizer,
+        osmnx: bool,
     ):
         """
         Creates simulation
@@ -27,6 +28,7 @@ class SimulationEngine:
         :param fitness_function: Calculates some metric for organism, result passed to survival_function
         :param survival_function: Implements dying of the weakest organisms
         :param new_generation_function: Implements mutations/crossing/etc.
+        :param osmnx: is a graph in OSMNX representation
         """
         self.G = G
         self.initial_population = initial_population
@@ -35,17 +37,18 @@ class SimulationEngine:
         self.new_generation_function = new_generation_function
         self.latest_generation: Optional[list[Genotype]] = None
         self.population_sanitizer = population_sanitizer
+        self.osmnx = osmnx
 
     def report(self, i: int, population: list[Genotype], report_show: bool = False):
         print(
             f"Population {i:5}, "
-            f"best fitness function: {self.fitness_function(population[0], self.G):20.6f}, "
+            f"best fitness function: {self.fitness_function(population[0], self.G, self.osmnx):20.6f}, "
             f"best lines stops count: {population[0].get_line_stops_count_summary()}"
             f"no of lines: {len(population[0].lines)}"
         )
 
         # save the best <new one> one to file
-        if not OSMNX:
+        if not self.osmnx:
             show_graph(self.G, population[0], i, show=report_show)
         else:
             show_graph_osmx(self.G, population[0], i, show=report_show)
@@ -86,7 +89,7 @@ class SimulationEngine:
 
             # calculating fitness for all organisms
             population_with_fitness: list[tuple[Genotype, float]] = [
-                (organism, self.fitness_function(organism, self.G))
+                (organism, self.fitness_function(organism, self.G, self.osmnx))
                 for organism in population
             ]
 
@@ -96,7 +99,7 @@ class SimulationEngine:
             )
             self.latest_generation = population
             fitness_values.append(
-                self.fitness_function(self.latest_generation[0], self.G)
+                self.fitness_function(self.latest_generation[0], self.G, self.osmnx)
             )
 
             # generating new population from survived
