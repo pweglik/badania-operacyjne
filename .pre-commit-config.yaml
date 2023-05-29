@@ -6,7 +6,7 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: check-added-large-files
-        exclude: 'docs/zameldowania_stale_2022_krk.geojson|docs/img/krk1.png'
+        exclude: '(.*.geojson)|(.*.png)|(.*.ipynb)'
 -   repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:

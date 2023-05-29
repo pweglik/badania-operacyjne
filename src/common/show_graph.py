@@ -58,7 +58,7 @@ def show_graph(
         plt.clf()
 
 
-def show_graph_osmx(
+def show_graph_osmnx(
     G: nx.MultiDiGraph,
     genotype: Genotype,
     gen_number: int = 0,

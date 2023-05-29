@@ -10,8 +10,7 @@ from typing import IO
 
 from new_generation.Sanitizers import BasicSanitizer
 from SimultionEngine import SimulationEngine
-from common.params import N, SEED
-from common.params import N_IN_POPULATION
+from common.params import N, SEED, N_IN_POPULATION, default_params
 from fitness import fitness
 from graph_generation import generate_city_graph
 from initial_population import create_initial_population
@@ -142,6 +141,7 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
                     new_generation_params,
                 ),
                 population_sanitizer=sanitizer,
+                simulation_params=default_params.no_osmnx(),
             )
             fitness_values = sim_engine.run(params["epochs"], 0, report_show=False)
             best_fitness = fitness_values[-1]
@@ -160,100 +160,98 @@ def process_params(tasks, results, G, best_paths, INITIAL_POPULATIONS):
     print(f"Done {os.getpid()}")
 
 
+def main() -> None:
+    # Setup of the city
+    G, best_paths = generate_city_graph(N)
+
+    # Parameters
+    INITIAL_POPULATIONS = [create_initial_population(G, best_paths) for _ in range(3)]
+
+    float_param_list: list[float] = [0.2, 0.8]
+    lower_bound_params: list[float] = [0.1, 0.3]
+    higher_bound_params: list[float] = [0.7, 0.9]
+
+    grid_search_params = {
+        "survival_functions": [1],  # range(len(SURVIVAL_FUNCTIONS)),
+        "epochs": [100],
+        "chance_rot_cycle": [0.5],
+        "chance_rot_right": [0.5],
+        "chance_invert": [0.5],
+        "chance_erase_stop": lower_bound_params,
+        "chance_add_stop": lower_bound_params,
+        "chance_add_stop_mix": lower_bound_params,
+        "chance_replace_stops": lower_bound_params,
+        "chance_replace_stops_proximity": lower_bound_params,
+        "chance_create_line": [0.1],
+        "chance_cycle": [0.1],
+        "chance_erase_line": [0.25],
+        "chance_merge": [0.25],
+        "chance_merge_mix": float_param_list,
+        "chance_split": [0.75],
+        "cycle_stops_shift": float_param_list,
+        "chance_merge_specimen": [0.5],
+        "chance_cycle_stops_shift": lower_bound_params,
+        "chance_line_based_merge": lower_bound_params,
+    }
+
+    # Setup of the grid search
+    parallel_units = 1
+    cpu_count = os.cpu_count()
+    if cpu_count is not None:
+        parallel_units = cpu_count
+
+    print("Parallel units:", parallel_units)
+
+    # fixed order list
+    # order of keys in params_keys define column order in csv file
+    # must stay the same for all processes
+    params_keys = list(grid_search_params.keys())
+    queue: "Queue[dict]" = Queue()
+    results: "Queue[Tuple[dict, float]]" = Queue()
+
+    for values in itertools.product(*grid_search_params.values()):  # type: ignore
+        queue.put(dict(zip(params_keys, values)))
+
+    processes = [
+        Process(
+            target=process_params,
+            args=(queue, results, G, best_paths, INITIAL_POPULATIONS),
+        )
+        for _ in range(parallel_units)
+    ]
+
+    # open results file and save headers
+    global saver
+    saver = ResultSaver("results/gridsearch.csv", params_keys)
+    saver.save_headers()
+
+    # Start grid search
+    for i in range(parallel_units):
+        processes[i].start()
+
+    # Wait for grid search to finish
+    for p in processes:
+        p.join()
+
+    # Print results
+    print("Results:")
+    results_list = []
+    while not results.empty():
+        results_list.append(results.get())
+
+    results_list.sort(key=lambda x: x[1])
+
+    print(f"Best parameters: \t{results_list[0][0]}")
+    print(f"Best fitness: \t{results_list[0][1]:.2f}")
+
+    print("Best survival function:")
+    print(SURVIVAL_FUNCTIONS[results_list[0][0]["survival_functions"]][0])
+
+    print(f"Best epochs: \t{results_list[0][0]['epochs']}")
+
+    # for params_values, fitness in results_list:
+    #     save_results(f, params_keys, params_values, fitness)
+
+
 if __name__ == "__main__":
-
-    def main() -> None:
-        # Setup of the city
-        G, best_paths = generate_city_graph(N)
-
-        # Parameters
-        INITIAL_POPULATIONS = [
-            create_initial_population(G, best_paths) for _ in range(3)
-        ]
-
-        float_param_list: list[float] = [0.2, 0.8]
-        lower_bound_params: list[float] = [0.1, 0.3]
-        higher_bound_params: list[float] = [0.7, 0.9]
-
-        grid_search_params = {
-            "survival_functions": [1],  # range(len(SURVIVAL_FUNCTIONS)),
-            "epochs": [100],
-            "chance_rot_cycle": [0.5],
-            "chance_rot_right": [0.5],
-            "chance_invert": [0.5],
-            "chance_erase_stop": lower_bound_params,
-            "chance_add_stop": lower_bound_params,
-            "chance_add_stop_mix": lower_bound_params,
-            "chance_replace_stops": lower_bound_params,
-            "chance_replace_stops_proximity": lower_bound_params,
-            "chance_create_line": [0.1],
-            "chance_cycle": [0.1],
-            "chance_erase_line": [0.25],
-            "chance_merge": [0.25],
-            "chance_merge_mix": float_param_list,
-            "chance_split": [0.75],
-            "cycle_stops_shift": float_param_list,
-            "chance_merge_specimen": [0.5],
-            "chance_cycle_stops_shift": lower_bound_params,
-            "chance_line_based_merge": lower_bound_params,
-        }
-
-        # Setup of the grid search
-        parallel_units = 1
-        cpu_count = os.cpu_count()
-        if cpu_count is not None:
-            parallel_units = cpu_count
-
-        print("Parallel units:", parallel_units)
-
-        # fixed order list
-        # order of keys in params_keys define column order in csv file
-        # must stay the same for all processes
-        params_keys = list(grid_search_params.keys())
-        queue: "Queue[dict]" = Queue()
-        results: "Queue[Tuple[dict, float]]" = Queue()
-
-        for values in itertools.product(*grid_search_params.values()):  # type: ignore
-            queue.put(dict(zip(params_keys, values)))
-
-        processes = [
-            Process(
-                target=process_params,
-                args=(queue, results, G, best_paths, INITIAL_POPULATIONS),
-            )
-            for _ in range(parallel_units)
-        ]
-
-        # open results file and save headers
-        global saver
-        saver = ResultSaver("results/gridsearch.csv", params_keys)
-        saver.save_headers()
-
-        # Start grid search
-        for i in range(parallel_units):
-            processes[i].start()
-
-        # Wait for grid search to finish
-        for p in processes:
-            p.join()
-
-        # Print results
-        print("Results:")
-        results_list = []
-        while not results.empty():
-            results_list.append(results.get())
-
-        results_list.sort(key=lambda x: x[1])
-
-        print(f"Best parameters: \t{results_list[0][0]}")
-        print(f"Best fitness: \t{results_list[0][1]:.2f}")
-
-        print("Best survival function:")
-        print(SURVIVAL_FUNCTIONS[results_list[0][0]["survival_functions"]][0])
-
-        print(f"Best epochs: \t{results_list[0][0]['epochs']}")
-
-        # for params_values, fitness in results_list:
-        #     save_results(f, params_keys, params_values, fitness)
-
     main()

@@ -14,6 +14,7 @@ from new_generation.Mutators import GenotypeMutator, LineMutator
 from new_generation.SpecimenCrossers import GenotypeCrosser
 from common.params import N_IN_POPULATION, SEED, N
 from new_generation_function import NewGenerationRandomParams
+from params import SimulationParams, default_params
 from src.new_generation.Sanitizers import BasicSanitizer
 from survival import n_best_survive
 
@@ -77,7 +78,7 @@ def run_simulation(
             params,
         ),
         population_sanitizer=BasicSanitizer(best_paths),
-        osmnx=False,
+        simulation_params=default_params.no_osmnx(),
     )
 
     sim_engine.run(no_of_generations, report_every_n, report_show=report_show)
