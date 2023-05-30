@@ -439,7 +439,11 @@ Ile przystanków ma ile linii:
 
 \section{Podsumowanie}
 
-Problem generowania linii autobusowych jest bardzo skomplikowany. W celu jego rozwiązania, przydatne są algorytmy genetyczne. Z odpowiednią liczbą nowych generacji jesteśmy w stanie osiągnąć ciekawe wyniki. Nie są one jednak w pełni satysfakcjonujące.
+Problem optymalnego rozplanowania komunikacji miejskiej jest niezwykle skomplikowany. W naszej pracy rozważyliśmy jedynie jego uproszczoną wersję - rozłożenie linii, a i tak trudno jest o jednoznaczne wnioski.
+
+Podczas pracy nad rozwiązaniem wielokrotnie generowaliśmy rozwiązania ekstremalne i niepoprawne np. pokrycie miasta liniami wyłącznie o długości 2 lub jedną linią długości 500. Problemy te wynikały z tego, że algorytm genetyczny próbował znaleźć słaby punkt w naszej funkcji zysku. Jeśli kara za utworzenie nowej linii była zbyt wysoka, optymalnym rozwiązaniem była jedna długa linia. Jeśli kara ta była za niska, a koszt podróży po krawędzi zbyt wysoki, lepsze okazywało się tworzenie setek lini o najkrótszej możliwej długości. Ostatecznie udało nam się tak dobrać funkcję zysku, że powstawały rozwiązania "naturalne" (zarówno krótkie jak i dłuższe linie).
+
+Kolejnym krokiem w pracy nad rozplanowaniem komunikacji mogłoby być generowanie przykładowych rozkładów jazdy, które musiałby sprostać zmiennemu natężeniu podróżujących jak i ograniczonej liczbie pojazdów. Takie rozwiązanie stanowiłoby już bliski rzeczywistości model komunikacji miejskiej.
 
 \section{Bibliografia}
 \href{https://pl.wikipedia.org/wiki/Prawo_malej%C4%85cych_przychod%C3%B3w}{1. Wikipedia, prawo malejących przychodów}
