@@ -230,6 +230,13 @@ class Line:
         self.edges = []
 \end{lstlisting}
 
+Przystanki są uporządkowanym zbiorem wierzhcołków z grafu. Każda linia jest jednoznacznie reprezentowana przez swoje przystanki $stops$.
+Zbiór krawędzi należących do danej lini $egdes$ tworzymy w następujący sposób:
+\begin{enumerate}
+    \item Generujemy słownik $best_paths$ zawierający najkrótsze ścieżki od każdego do każdego wierzchołka. Używamy do tego funkcji $all_pairs_shortest_path()$ z biblioteki NetworkX
+    \item Dla każdej pary kolejnych wierzchołków $u$ i $v$ w zbiorze $stops$ do zbioru $edges$ dodajemy wszystkie krawędzie leżące na najkrótszej ścieżce między $u$ i $v$
+\end{enumerate}
+
 \subsection{Rozwiązanie początkowe}
 Na początku, chcąc się skupić na realizacji algorytmu, wygenerowaliśmy losowo sieć połączeń. Powstała ona przez wygenerowanie N punktów na płaszczyźnie, a następnie połączeniu ich między sobą z pewnym prawdopodobieństwem. Dawało to całkiem dobre rezultaty:
 \img{map_seed_46}{Przykładowa wygenerowana mapa}
@@ -436,6 +443,10 @@ Problem generowania linii autobusowych jest bardzo skomplikowany. W celu jego ro
 
 \section{Bibliografia}
 \href{https://pl.wikipedia.org/wiki/Prawo_malej%C4%85cych_przychod%C3%B3w}{1. Wikipedia, prawo malejących przychodów}
+
+\href{
+https://networkx.org/documentation/stable/index.html
+}{2. NetworkX}
 
 
 \section{Podział pracy}
