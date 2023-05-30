@@ -35,7 +35,7 @@ which takes several parameters:
 #### Running the app
 To run the app, run the following command in repo's root directory:
 ```
-PYTHONPATH="src" python src/main.py
+PYTHONPATH="${PYTHONPATH}:$(pwd)/src" python src/main.py
 ```
 The script will ask you to choose one of avaliable cities for simulations:
 ```
@@ -52,7 +52,7 @@ The graphs will be saved to `results` folder in the SVG format.
 #### Running the grid search
 To run grid search, run the following command in repo's root directory:
 ```
-PYTHONPATH="src" python src/grid_search.py
+PYTHONPATH="${PYTHONPATH}:$(pwd)/src" python src/grid_search.py
 ```
 
 #### Setting the parameters
