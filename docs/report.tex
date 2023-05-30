@@ -1,5 +1,5 @@
 % !TeX spellcheck = pl_PL
-\documentclass[12pt,a4paper,openright]{mwrep}
+\documentclass[12pt,a4paper]{article}
 
 % moje działają
 \usepackage{amssymb} % symbol kąta
@@ -88,22 +88,25 @@
 \date{\today}
 
 \maketitle
+\newpage
 \tableofcontents
 
-\chapter{Wstęp}
+\newpage
+
+\section{Wstęp}
 Celem naszego projektu jest znalezienie optymalnych tras linii dla autobusów, aby maksymalizować liczbę pasażerów, przy minimalizacji kosztów. Aby to osiągnąć, wykorzystywane są algorytmy genetyczne -  algorytmy przeszukujące przestrzeń rozwiązań, które opierają się na procesie działania mechanizmu dziedziczenia biologicznego.
 
 
 Pozycje przystanków są ustawione na sztywno w miejscach inspirowanych ich prawdziwą obecnością w Krakowie, a ich popularność jest zależna od gęstości zaludnienia dookoła nich. Stosowanie algorytmów genetycznych pozwoliło na wygenerowanie zestawu najlepszych połączeń autobusowych, które można skonfigurować dla lepszego wykorzystania zasobów oraz zwiększenie korzyści z transportu publicznego dla pasażerów.
 
-\chapter{Opis zagadnienia}
+\section{Opis zagadnienia}
 
-\section{Sformułowanie problemu}
+\subsection{Sformułowanie problemu}
 Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywającej dany obszar miejski, przy danym rozłożeniu przystanków. Linie te, powinny mieć możliwość obsłużenia jak największej liczby pasażerów, tworząc jak najmniej postojów oraz zatrzymując się na jak najmniejszej liczbie przystanków.
 
-\section{Model matematyczny}
+\subsection{Model matematyczny}
 
-\subsection{Założenia}
+\subsubsection{Założenia}
 
 \begin{enumerate}
     \item Przystankom przypisujemy ilość punktów w zależności od gęstości zaludnienia w pobliżu.
@@ -118,7 +121,7 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
     \item Maksymalizujemy sumę punktów zebranych przez wszystkie linie.
 \end{enumerate}
 
-\subsection{Dane}
+\subsubsection{Dane}
 \begin{enumerate}
     \item $n$ - liczba linii
     \item $m$ - liczba przystanków
@@ -146,14 +149,14 @@ Naszym celem w projekcie jest zaprojektowanie sieci linii autobusowych pokrywaj�
 
 
 
-\subsection{Szukane}
+\subsubsection{Szukane}
 $x_{i,j}$ - czy linia $i$ zatrzymuje się na przystanku $j$, gdzie:
 \begin{enumerate}
     \item $i \in \left[ 0, n-1 \right]$
     \item $j \in \left[ 0, m-1 \right]$
 \end{enumerate}
 
-\subsection{Hiperparametry}
+\subsubsection{Hiperparametry}
 \begin{enumerate}
     \item $\alpha$ - koszt zatrzymania się na przystanku,
     \item $\beta$ - koszt nowej linii,
@@ -162,7 +165,7 @@ $x_{i,j}$ - czy linia $i$ zatrzymuje się na przystanku $j$, gdzie:
     \item $R$ - hiperparametr zbiegania.
 \end{enumerate}
 
-\subsection{Funkcja zysku}
+\subsubsection{Funkcja zysku}
 \begin{align*}
     l_j                         & = \sum_{i=0}^{n-1} x_{i, j}                                               & \text{liczba linii zatrzymujących się na przystanku $j$}                 \\
     q_j                         & = \frac{p_j \cdot (1+\frac{R}{l_j})^{l_j}}{l_j}                           & \text{ile punktów każda linia uzyskuje z przystanku $j$}                 \\
@@ -189,16 +192,16 @@ Względem oryginalnego modelu zmieniło się:
 
 
 
-\chapter{Opis algorytmów}
+\section{Opis algorytmów}
 Nasz problem rozwiązywaliśmy algorytmami genetycznymi.
 
-\section{Reprezentacja środowiska}
+\subsection{Reprezentacja środowiska}
 Jak już zostało wspomniane, zajmowaliśmy się problemem optymalizacji istniejącej sieci komunikacyjnej, bez tworzenia nowych połączeń.
 
-\subsection{Reprezentacja mapy}
+\subsubsection{Reprezentacja mapy}
 Mapa z przystankami jest reprezentowana jako ważony graf z biblioteki \lstinline{NetworkX}.
 
-\subsection{Reprezentacja genotypu}
+\subsubsection{Reprezentacja genotypu}
 Genotyp składa się z listy linii autobusowych:
 \begin{lstlisting}[language=Python]
 class Genotype:
@@ -206,7 +209,7 @@ class Genotype:
         self.lines = lines
 \end{lstlisting}
 
-\subsection{Reprezentacja linii}
+\subsubsection{Reprezentacja linii}
 Linia posiada następujące parametry:
 \begin{enumerate}
     \item \lstinline{id} - id linii,
@@ -227,11 +230,11 @@ class Line:
         self.edges = []
 \end{lstlisting}
 
-\section{Rozwiązanie początkowe}
+\subsection{Rozwiązanie początkowe}
 Na początku, chcąc się skupić na realizacji algorytmu, wygenerowaliśmy losowo sieć połączeń. Powstała ona przez wygenerowanie N punktów na płaszczyźnie, a następnie połączeniu ich między sobą z pewnym prawdopodobieństwem. Dawało to całkiem dobre rezultaty:
 \img{map_seed_46}{Przykładowa wygenerowana mapa}
 
-\section{Symulacja}
+\subsection{Symulacja}
 \begin{algorithm}[H]
     \caption{Symulacja}
     \begin{algorithmic}[1]
@@ -262,7 +265,7 @@ Powyżej przedstawiony został podstawowy silnik symulacji. W każdej epoce wyko
 
 Na tym poziomie nie definiujemy co dana funkcja robi. Zostało to zrobione poniżej.
 
-\section{Selekcja}
+\subsection{Selekcja}
 \label{sec:selection}
 Wypróbowaliśmy wielu różnych metod selekcji nowych osobników:
 \begin{enumerate}
@@ -273,9 +276,9 @@ Wypróbowaliśmy wielu różnych metod selekcji nowych osobników:
     \item \lstinline{exponentional_survival_with_protection(best_protected, worst_protected, lambda)} - działa jak $exponentional\_survival(lambda, n)$, ale gwarantuje przeżycie $best\_protected$ najlepszym i $worst\_protected$ najgorszym osobnikom,
 \end{enumerate}
 
-\section{Mutacja}
+\subsection{Mutacja}
 
-\subsection{LineMutator}
+\subsubsection{LineMutator}
 Tworzy nowe mutacje dla danej linii.
 
 Możliwe mutacje:
@@ -289,7 +292,7 @@ Możliwe mutacje:
     \item \lstinline{replace_stops} - losowo zmienia zadaną liczbę przystanków z lini na inne. Nowe przystanki są wybierane z rozkładu jednostajnego lub wykładniczego gdzie przystanki bliższe do obecnego są bardziej prawdopodobne
 \end{enumerate}
 
-\subsection{GenotypeMutator}
+\subsubsection{GenotypeMutator}
 
 Możliwe mutacje:
 
@@ -301,9 +304,9 @@ Możliwe mutacje:
     \item \lstinline{cycle_stops_shift(G)} - tworzy nowy genotyp, ustawiając ciągi przystanków z lini obok siebie i wykonując \lstinline{cycle_rotation} na takim ciągu przystanków
 \end{enumerate}
 
-\section{Krzyżowanie}
+\subsection{Krzyżowanie}
 
-\subsection{GenotypeCrosser}
+\subsubsection{GenotypeCrosser}
 
 \begin{enumerate}
     \item \lstinline{merge_genotypes(G1, G2)} - tworzy nowy genotyp poprzez wybranie losowych lini z genotypów G1 i G2
@@ -311,17 +314,17 @@ Możliwe mutacje:
     \item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z lini z G1 i G2 na połowy i jedną z połów każdej lini łączy z połową lini z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten w którym dystans pomiędzy połączonymi przystankami jest minimalny
 \end{enumerate}
 
-\chapter{Aplikacja}
+\section{Aplikacja}
 
-Główny moduł znajduje się w pliku $main.py$ (zawiera on główną funkcję $run_simulation$). Szczegółowy opis i instrukcje znajduje się w $README.md$. 
+Główny moduł znajduje się w pliku $main.py$ (zawiera on główną funkcję $run_simulation$). Szczegółowy opis i instrukcje znajduje się w $README.md$.
 
 Paramtery algorytmu można podać zarówno do konstruktora klasy Simulation Engine.
 % Aplikacja –krótkadokumentacja użytkownika(jak uruchomić, charakterystyka danych, funkcjonalność aplikacji, w jaki sposób ustawić parametry instancji, jak ustawić parametry algorytmu,wynikii sposób ich interpretacji)
 
-\chapter{Eksperymenty}
+\section{Eksperymenty}
 Na naszym algorytmie przeprowadziliśmy szereg eksperymentów.
 
-\section{Eksperymenty proste}
+\subsection{Eksperymenty proste}
 \imgsidebyside{test1/0}{Populacja 0\\ dopasowanie $-121.46$}{test1/3}{Populacja 3\\ dopasowanie $1.71$}
 \imgsidebyside{test1/5}{Populacja 5\\ dopasowanie $11.08$}{test1/10}{Populacja 10\\ dopasowanie $14.40$}
 Jak widzimy, już po 10 epokach sieć połączeń znacznie się wyklarowała. Funkcja dopasowania wzrosła znacząco od generacji 0 do 10.
@@ -332,7 +335,7 @@ Sieć pokryła jeszcze więcej przystanków. Tempo wzrostu funkcji dopasowania z
 \imgcustomsize{test1/plot}{Wykres funkcji dopasowania}{0.6}
 Jak widać, rzeczywiście tempo dopasowywania się modelu znacznie spada w poźniejszych etapach symulacji.
 
-\section{Przeszukiwanie siatki hiper-parametrów}
+\subsection{Przeszukiwanie siatki hiper-parametrów}
 
 Pierwszy eksperyment obejmował wszystkie funkcje przetrwania. Przeszukiwana przestrzeń parametrów:
 \lstinputlisting{lst/hp}
@@ -382,7 +385,7 @@ Dla najlepszych parametrów graf miasta prezentuje się następująco:
 
 Nadal widoczne są patologiczne sytuacje. Np wierzchołki 19 i 23 są połączone tylko między sobą.
 
-\subsection{Dodatkowe operatory genetyczne}
+\subsubsection{Dodatkowe operatory genetyczne}
 
 Przetestowaliśmy dodatkowo (poprzednie parametry takie same jak powyżej):
 \lstinputlisting{lst/hp4}
@@ -419,7 +422,7 @@ Minimum wzrosło z 32.34 do 26.90, a maksimum z 34.72 do 35.90 (przed implementa
 Teraz całość najlepszych hiper-parametrów wygląda następująco:
 \lstinputlisting{lst/hp6}
 
-\section{Eksperymenty z mapą Krakowa}
+\subsection{Eksperymenty z mapą Krakowa}
 Udało nam się pobrać mapę Krakowa dzięki bibliotece OSMNX (OpenStreetMap NetworkX). Dane o ludności pobrano z msip.krakow.pl. Mapa z nałożoną punktacją wierzchołków (wg modelu) wygląda następująco:
 \imgsidebyside{krk}{Mapa Krakowa z danymi o ludności}{krk1.png}{Wynik algorytmu}
 Jaśniejszy kolor wierzchołka oznacza wyższą wartość punktową.
@@ -427,15 +430,15 @@ Po uruchomieniu naszego algorytmu, uzyskaliśmy:
 Ile przystanków ma ile linii:
 \lstinputlisting{lst/krk1}
 
-\chapter{Podsumowanie}
+\section{Podsumowanie}
 
 Problem generowania linii autobusowych jest bardzo skomplikowany. W celu jego rozwiązania, przydatne są algorytmy genetyczne. Z odpowiednią liczbą nowych generacji jesteśmy w stanie osiągnąć ciekawe wyniki. Nie są one jednak w pełni satysfakcjonujące.
 
-\chapter{Bibliografia}
+\section{Bibliografia}
 \href{https://pl.wikipedia.org/wiki/Prawo_malej%C4%85cych_przychod%C3%B3w}{1. Wikipedia, prawo malejących przychodów}
 
 
-\chapter{Podział pracy}
+\section{Podział pracy}
 \begin{itemize}
     \item Jakub Kosmydel - 25\%
     \begin{itemize}
