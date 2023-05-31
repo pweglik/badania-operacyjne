@@ -230,8 +230,8 @@ class Line:
         self.edges = []
 \end{lstlisting}
 
-Przystanki są uporządkowanym zbiorem wierzhcołków z grafu. Każda linia jest jednoznacznie reprezentowana przez swoje przystanki $stops$.
-Zbiór krawędzi należących do danej lini $egdes$ tworzymy w następujący sposób:
+Przystanki są uporządkowanym zbiorem wierzchołków z grafu. Każda linia jest jednoznacznie reprezentowana przez swoje przystanki $stops$.
+Zbiór krawędzi należących do danej linii $egdes$ tworzymy w następujący sposób:
 \begin{enumerate}
     \item Generujemy słownik $best_paths$ zawierający najkrótsze ścieżki od każdego do każdego wierzchołka. Używamy do tego funkcji $all_pairs_shortest_path()$ z biblioteki NetworkX
     \item Dla każdej pary kolejnych wierzchołków $u$ i $v$ w zbiorze $stops$ do zbioru $edges$ dodajemy wszystkie krawędzie leżące na najkrótszej ścieżce między $u$ i $v$
@@ -270,7 +270,7 @@ Powyżej przedstawiony został podstawowy silnik symulacji. W każdej epoce wyko
     \item Uruchamia funkcję nowej populacji, która dokonuje mutacji i krzyżowań.
 \end{itemize}
 
-Na tym poziomie nie definiujemy co dana funkcja robi. Zostało to zrobione poniżej.
+Na tym poziomie nie definiujemy, co dana funkcja robi. Zostało to zrobione poniżej.
 
 \subsection{Selekcja}
 \label{sec:selection}
@@ -279,7 +279,7 @@ Wypróbowaliśmy wielu różnych metod selekcji nowych osobników:
     \item \lstinline{n_best_survive(n)} - pozostawia daną liczbę $n$ najlepszych osobników,
     \item \lstinline{n_best_and_m_random_survive(n, m)} - pozostawia $n$ najlepszych osobników, oraz $m$ losowych spośród pozostałych,
     \item \lstinline{n_best_and_m_worst_survive(n, m)} - pozostawia $n$ najlepszych i $m$ najgorszych osobników,
-    \item \lstinline{exponentional_survival(n, lambda)} - pozostawia $n$ osobników w sposób losowy, ale zależny od uzystanej wartości $fitness$ i zgodny z rozkładem wykładniczym parametryzowanym przez $lambda$,
+    \item \lstinline{exponentional_survival(n, lambda)} - pozostawia $n$ osobników w sposób losowy, ale zależny od uzyskanej wartości $fitness$ i zgodny z rozkładem wykładniczym z parametrem $lambda$,
     \item \lstinline{exponentional_survival_with_protection(best_protected, worst_protected, lambda)} - działa jak $exponentional\_survival(lambda, n)$, ale gwarantuje przeżycie $best\_protected$ najlepszym i $worst\_protected$ najgorszym osobnikom,
 \end{enumerate}
 
@@ -291,12 +291,12 @@ Tworzy nowe mutacje dla danej linii.
 Możliwe mutacje:
 
 \begin{enumerate}
-    \item \lstinline{rotation_to_right} - losuje spójny ciąg przystanków w lini i przesuwa je o zadaną (lub losową) liczbę pozycji
-    \item \lstinline{cycle_rotation} - losuje pozycje przystanków w lini i przesuwa obecne na tych pozycjach przystanki o jedną pozycję w ramach wylosowanych pozycji
+    \item \lstinline{rotation_to_right} - losuje spójny ciąg przystanków w linii i przesuwa je o zadaną (lub losową) liczbę pozycji
+    \item \lstinline{cycle_rotation} - losuje pozycje przystanków w linii i przesuwa obecne na tych pozycjach przystanki o jedną pozycję w ramach wylosowanych pozycji
     \item \lstinline{invert} - odwraca kolejność przystanków, pomiędzy losowymi indeksami \lstinline{start} oraz \lstinline{end},
     \item \lstinline{erase_stops} - losowo usuwa zadaną liczbę przystanków z linii,
     \item \lstinline{add_stops} - losowo dodaje zadaną liczbę przystanków, spośród tych, które w linii nie występują
-    \item \lstinline{replace_stops} - losowo zmienia zadaną liczbę przystanków z lini na inne. Nowe przystanki są wybierane z rozkładu jednostajnego lub wykładniczego gdzie przystanki bliższe do obecnego są bardziej prawdopodobne
+    \item \lstinline{replace_stops} - losowo zmienia zadaną liczbę przystanków z linii na inne. Nowe przystanki są wybierane z rozkładu jednostajnego lub wykładniczego gdzie przystanki bliższe do obecnego są bardziej prawdopodobne
 \end{enumerate}
 
 \subsubsection{GenotypeMutator}
@@ -307,8 +307,8 @@ Możliwe mutacje:
     \item \lstinline{erase_line(G)} - tworzy nowy genotyp, usuwając losową linię,
     \item \lstinline{create_line(G)} - tworzy nowy genotyp, dodając losowo wygenerowaną linię,
     \item \lstinline{split_line(G)} - tworzy nowy genotyp, rozdzielając losową, losową linię dwie różne.
-    \item \lstinline{merge_lines(G)} - tworzy nowy genotyp, łącząc zadaną liczbę losowych linii. W zależności od wartości parametru line mogą być łączone całościowo lub na poziomie pojedyńczych przystanków
-    \item \lstinline{cycle_stops_shift(G)} - tworzy nowy genotyp, ustawiając ciągi przystanków z lini obok siebie i wykonując \lstinline{cycle_rotation} na takim ciągu przystanków
+    \item \lstinline{merge_lines(G)} - tworzy nowy genotyp, łącząc zadaną liczbę losowych linii. W zależności od wartości parametru linie mogą być łączone całościowo lub na poziomie pojedynczych przystanków
+    \item \lstinline{cycle_stops_shift(G)} - tworzy nowy genotyp, ustawiając ciągi przystanków z linii obok siebie i wykonując \lstinline{cycle_rotation} na takim ciągu przystanków
 \end{enumerate}
 
 \subsection{Krzyżowanie}
@@ -316,16 +316,16 @@ Możliwe mutacje:
 \subsubsection{GenotypeCrosser}
 
 \begin{enumerate}
-    \item \lstinline{merge_genotypes(G1, G2)} - tworzy nowy genotyp poprzez wybranie losowych lini z genotypów G1 i G2
+    \item \lstinline{merge_genotypes(G1, G2)} - tworzy nowy genotyp poprzez wybranie losowych linii z genotypów G1 i G2
     \item \lstinline{cycle_stops_shift(G1, G2)} - najpierw wykonuje \lstinline{merge_genotypes(G1, G2)}, a następnie \lstinline{GenotypeMutator.cycle_stops_shift(G)}
-    \item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z lini z G1 i G2 na połowy i jedną z połów każdej lini łączy z połową lini z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten w którym dystans pomiędzy połączonymi przystankami jest minimalny
+    \item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z linii z G1 i G2 na połowy i jedną z połów każdej linii łączy z połową linii z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten, w którym dystans pomiędzy połączonymi przystankami jest minimalny
 \end{enumerate}
 
 \section{Aplikacja}
 
 Główny moduł znajduje się w pliku $main.py$ (zawiera on główną funkcję $run_simulation$). Szczegółowy opis i instrukcje znajduje się w $README.md$.
 
-Paramtery algorytmu można podać zarówno do konstruktora klasy Simulation Engine.
+Parametry algorytmu można podać również do konstruktora klasy Simulation Engine.
 % Aplikacja –krótkadokumentacja użytkownika(jak uruchomić, charakterystyka danych, funkcjonalność aplikacji, w jaki sposób ustawić parametry instancji, jak ustawić parametry algorytmu,wynikii sposób ich interpretacji)
 
 \section{Eksperymenty}
@@ -334,13 +334,13 @@ Na naszym algorytmie przeprowadziliśmy szereg eksperymentów.
 \subsection{Eksperymenty proste}
 \imgsidebyside{test1/0}{Populacja 0\\ dopasowanie $-121.46$}{test1/3}{Populacja 3\\ dopasowanie $1.71$}
 \imgsidebyside{test1/5}{Populacja 5\\ dopasowanie $11.08$}{test1/10}{Populacja 10\\ dopasowanie $14.40$}
-Jak widzimy, już po 10 epokach sieć połączeń znacznie się wyklarowała. Funkcja dopasowania wzrosła znacząco od generacji 0 do 10.
+Jak widzimy, już po 10 epokach sieć połączeń znacznie się wyklarowała. Funkcja dopasowania wzrosła znacząco od generacji 0 do 10.
 
 \imgsidebyside{test1/20}{Populacja 20\\ dopasowanie $17.18$}{test1/100}{Populacja 100\\ dopasowanie $24.64$}
 Sieć pokryła jeszcze więcej przystanków. Tempo wzrostu funkcji dopasowania zmalało.
 
 \imgcustomsize{test1/plot}{Wykres funkcji dopasowania}{0.6}
-Jak widać, rzeczywiście tempo dopasowywania się modelu znacznie spada w poźniejszych etapach symulacji.
+Jak widać, rzeczywiście tempo dopasowywania się modelu znacznie spada w późniejszych etapach symulacji.
 
 \subsection{Przeszukiwanie siatki hiper-parametrów}
 
@@ -363,7 +363,7 @@ Funkcje przetrwania (opisy funkcji w sekcji \ref{sec:selection}):
 \imgsidebyside{gs1/7}{Rozkład dopasowania względem hiper-parametru}{gs1/8}{Rozkład dopasowania względem hiper-parametru}
 \imgsidebyside{gs1/9}{Rozkład dopasowania względem hiper-parametru}{gs1/10}{Rozkład dopasowania względem hiper-parametru}
 
-Jak widać niektóre rozkłady są lewoskośne, więc dalsze eksperymenty zawęziliśmy do wartości dla tych rozkładów. Jeżeli był to rozkład z parametrem 0.8 to wartości w dalszych eksperymentach to 0.5, 0.75, 0.9; dla parametru o wartości 0.2: 0.1, 0.25, 0.5. Dla rozkładów symetrycznych przyjęliśmy stałą wartość 0.5 (oprócz \lstinline|chance_merge_specimen| -- tutaj zostawiono duży rozrzut).
+Jak widać, niektóre rozkłady są lewoskośne, więc dalsze eksperymenty zawęziliśmy do wartości dla tych rozkładów. Jeżeli był to rozkład z parametrem 0.8 to wartości w dalszych eksperymentach to 0.5, 0.75, 0.9; dla parametru o wartości 0.2: 0.1, 0.25, 0.5. Dla rozkładów symetrycznych przyjęliśmy stałą wartość 0.5 (oprócz \lstinline|chance_merge_specimen| -- tutaj zostawiono duży rozrzut).
 
 Zdecydowanie lepiej radzi sobie funkcja przetrwania 0 od 1 i analogicznie 3 od 2. W poniższym eksperymencie zostały porównane tylko 0 i 1 ale do pozostałych wrócono niżej.
 
@@ -372,7 +372,7 @@ Teraz przestrzeń parametrów wygląda następująco:
 
 \img{gs2/all}{Rozkład funkcji dopasowania dla drugiego przeszukiwania siatki hiper-parametrów -- zawężona przestrzeń parametrów}
 
-Minimum wzrosło z 18.25 do 27.16, idziemy w dobrą stronę! Ale maksimum wzrosło tylko o 0.2.
+Minimum wzrosło z 18.25 do 27.16, idziemy w dobrą stronę! Ale maksimum wzrosło tylko o 0.2.
 
 \imgsidebyside{gs2/1}{Rozkład dopasowania względem hiper-parametru}{gs2/2}{Rozkład dopasowania względem hiper-parametru}
 \imgsidebyside{gs2/3}{Rozkład dopasowania względem hiper-parametru}{gs2/4}{Rozkład dopasowania względem hiper-parametru}
@@ -385,12 +385,12 @@ Najlepsze parametry z wykresów odczytano jako (najbardziej lewoskośny/najwięc
 Maksymalne dopasowanie (35.77) osiągnięto dla
 \lstinputlisting{lst/hp3_max}
 
-Jedyna różnica w \lstinline|chance_erase_line|. Na wykresie niebieski(=0.1) i pomarańczowy(=0.25) prawie się pokrywają.
+Jedyna różnica w \lstinline|chance_erase_line|. Na wykresie kolor niebieski ($=0.1$) i pomarańczowy ($=0.25$) prawie się pokrywają.
 
 Dla najlepszych parametrów graf miasta prezentuje się następująco:
 \imgsidebyside{best_params_hp3}{Epoka 100, dopasowanie 34.90}{best_params_hp3_1000}{Epoka 1000, dopasowanie 41.96}
 
-Nadal widoczne są patologiczne sytuacje. Np wierzchołki 19 i 23 są połączone tylko między sobą.
+Nadal widoczne są patologiczne sytuacje. Np. wierzchołki 19 i 23 są połączone tylko między sobą.
 
 \subsubsection{Dodatkowe operatory genetyczne}
 
@@ -426,59 +426,69 @@ Minimum wzrosło z 32.34 do 26.90, a maksimum z 34.72 do 35.90 (przed implementa
 \imgsidebyside{gs4/7}{Rozkład dopasowania względem hiper-parametru}{gs4/8}{Rozkład dopasowania względem hiper-parametru}
 \imgcustomsize{gs4/9}{Rozkład dopasowania względem hiper-parametru}{0.5}
 
-Teraz całość najlepszych hiper-parametrów wygląda następująco:
+Teraz całość najlepszych hiperparametrów wygląda następująco:
 \lstinputlisting{lst/hp6}
 
 \subsection{Eksperymenty z mapą Krakowa}
-Udało nam się pobrać mapę Krakowa dzięki bibliotece OSMNX (OpenStreetMap NetworkX). Dane o ludności pobrano z msip.krakow.pl. Mapa z nałożoną punktacją wierzchołków (wg modelu) wygląda następująco:
+Udało nam się pobrać mapę Krakowa dzięki bibliotece OSMNX (OpenStreetMap NetworkX). Dane o ludności pobrano z msip.krakow.pl. Mapa z nałożoną punktacją wierzchołków (wg modelu) wygląda następująco:
 \imgsidebyside{krk}{Mapa Krakowa z danymi o ludności}{krk1.png}{Wynik algorytmu}
 Jaśniejszy kolor wierzchołka oznacza wyższą wartość punktową.
-Po uruchomieniu naszego algorytmu, uzyskaliśmy:
+Po uruchomieniu naszego algorytmu uzyskaliśmy:
 Ile przystanków ma ile linii:
 \lstinputlisting{lst/krk1}
 
 \section{Podsumowanie}
 
-Problem optymalnego rozplanowania komunikacji miejskiej jest niezwykle skomplikowany. W naszej pracy rozważyliśmy jedynie jego uproszczoną wersję - rozłożenie linii, a i tak trudno jest o jednoznaczne wnioski.
+Problem optymalnego rozplanowania komunikacji miejskiej jest niezwykle skomplikowany. W naszej pracy rozważyliśmy jedynie jego uproszczoną wersję: rozłożenie linii, a i tak trudno jest o jednoznaczne wnioski.
 
-Podczas pracy nad rozwiązaniem wielokrotnie generowaliśmy rozwiązania ekstremalne i niepoprawne np. pokrycie miasta liniami wyłącznie o długości 2 lub jedną linią długości 500. Problemy te wynikały z tego, że algorytm genetyczny próbował znaleźć słaby punkt w naszej funkcji zysku. Jeśli kara za utworzenie nowej linii była zbyt wysoka, optymalnym rozwiązaniem była jedna długa linia. Jeśli kara ta była za niska, a koszt podróży po krawędzi zbyt wysoki, lepsze okazywało się tworzenie setek lini o najkrótszej możliwej długości. Ostatecznie udało nam się tak dobrać funkcję zysku, że powstawały rozwiązania "naturalne" (zarówno krótkie jak i dłuższe linie).
+Podczas pracy nad rozwiązaniem wielokrotnie generowaliśmy rozwiązania ekstremalne i niepoprawne np. pokrycie miasta liniami wyłącznie o długości 2 lub jedną linią długości 500. Problemy te wynikały z tego, że algorytm genetyczny próbował znaleźć słaby punkt w naszej funkcji zysku. Jeśli kara za utworzenie nowej linii była zbyt wysoka, optymalnym rozwiązaniem była jedna długa linia. Jeśli kara ta była za niska, a koszt podróży po krawędzi zbyt wysoki, lepsze okazywało się tworzenie setek linii o najkrótszej możliwej długości. Ostatecznie udało nam się tak dobrać funkcję zysku, że powstawały rozwiązania "naturalne" (zarówno krótkie jak i dłuższe linie).
 
 Kolejnym krokiem w pracy nad rozplanowaniem komunikacji mogłoby być generowanie przykładowych rozkładów jazdy, które musiałby sprostać zmiennemu natężeniu podróżujących jak i ograniczonej liczbie pojazdów. Takie rozwiązanie stanowiłoby już bliski rzeczywistości model komunikacji miejskiej.
 
 \section{Bibliografia}
-\href{https://pl.wikipedia.org/wiki/Prawo_malej%C4%85cych_przychod%C3%B3w}{1. Wikipedia, prawo malejących przychodów}
+\begin{enumerate}
 
-\href{
+\item\href{
+https://docs.python.org/3/
+}{Python 3.11}
+
+\item\href{
 https://networkx.org/documentation/stable/index.html
-}{2. NetworkX}
+}{NetworkX}
 
+\item\href{https://osmnx.readthedocs.io/en/stable/}{OSMNX}
+
+\item\href{https://pl.wikipedia.org/wiki/Prawo_malej%C4%85cych_przychod%C3%B3w}{Prawo malejących przychodów (Wikipedia)}
+
+\item\href{https://msip.krakow.pl}{Dane o zaludnieniu (Miejski System Informacji Przestrzennej)}
+\end{enumerate}
 
 \section{Podział pracy}
 \begin{itemize}
     \item Jakub Kosmydel - 25\%
     \begin{itemize}
-        \item Implementacja algorytmu Grid Search do poszukiwania optymlanych hiperparamterów
-        \item Wizualizacje ekspetymentów
-        \item Dokumentacja
+        \item implementacja algorytmu Grid Search do poszukiwania optymalnych hiperparametrów,
+        \item wizualizacje eksperymentów,
+        \item dokumentacja.
     \end{itemize}
     \item Norbert Morawski - 25\%
     \begin{itemize}
-        \item Przeszukiwanie przestrzeni hiperparametrów gridsearchem
-        \item Zaimportowanie rzeczywistych danych przy użyciu OpenStreetMap
-        \item Eksperymenty z optymalnymi paramterami
-        \item Dokumentacja
+        \item przeszukiwanie przestrzeni hiperparametrów z użyciem Grid Search,
+        \item zaimportowanie rzeczywistych danych przy użyciu OpenStreetMap,
+        \item eksperymenty z optymalnymi parametrami,
+        \item dokumentacja.
     \end{itemize}
     \item Przemysław Węglik - 25\%
     \begin{itemize}
-        \item Generacja grafów losowych
-        \item Prace nad architekturą projektu (Simulation Engine)
-        \item Pierwsze eksperymenty
+        \item generacja grafów losowych,
+        \item prace nad architekturą projektu (Simulation Engine),
+        \item pierwsze eksperymenty.
     \end{itemize}
     \item Bartłomiej Wiśniewski - 25\%
     \begin{itemize}
-        \item Stworzenie większości algorytmów mutujących i krzyżujących
-        \item Prace nad architekturą projektu (klasy Line i Genotype)
-        \item Prace nad utrzymywaniem kodu (typing, rewizje i śledzenie tasków)
+        \item stworzenie większości algorytmów mutujących i krzyżujących,
+        \item prace nad architekturą projektu (klasy Line i Genotype),
+        \item prace nad utrzymywaniem kodu (typing, rewizje i śledzenie tasków).
     \end{itemize}
 \end{itemize}
 \end{document}
