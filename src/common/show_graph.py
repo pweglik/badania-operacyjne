@@ -54,11 +54,11 @@ def show_graph(
     if show:
         plt.show()
     else:
-        plt.savefig(f"../results/gen_{gen_number}.svg")
+        plt.savefig(f"results/gen_{gen_number}.svg")
         plt.clf()
 
 
-def show_graph_osmx(
+def show_graph_osmnx(
     G: nx.MultiDiGraph,
     genotype: Genotype,
     gen_number: int = 0,

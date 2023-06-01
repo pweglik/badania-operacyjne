@@ -7,11 +7,11 @@ import numpy as np
 import networkx as nx
 
 from new_generation.Sanitizers import Sanitizer
-from src.utils import exp_pdf_for_range
-from src.common.Genotype import Genotype
-from src.common.Line import Line
-from src.common import line_generation
-from src.new_generation import generation_util
+from utils import exp_pdf_for_range
+from common.Genotype import Genotype
+from common.Line import Line
+from common import line_generation
+from new_generation import generation_util
 
 
 class LineMutator:

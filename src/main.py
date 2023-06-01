@@ -6,15 +6,17 @@ import numpy as np
 from fitness import fitness
 from initial_population import create_initial_population
 from networkx import Graph
-from new_generation.new_generation_function import new_generation_random
+from new_generation.new_generation_function import (
+    new_generation_random,
+    NewGenerationRandomParams,
+)
 
 from graph_generation import generate_city_graph, load_cracow_city_graph
 from SimultionEngine import SimulationEngine
 from new_generation.Mutators import GenotypeMutator, LineMutator
 from new_generation.SpecimenCrossers import GenotypeCrosser
-from common.params import N_IN_POPULATION, SEED, N
-from new_generation.new_generation_function import NewGenerationRandomParams
-from src.new_generation.Sanitizers import BasicSanitizer
+from common.params import N_IN_POPULATION, SEED, N, SimulationParams, default_params
+from new_generation.Sanitizers import BasicSanitizer
 from survival import n_best_survive
 
 
@@ -25,6 +27,7 @@ def run_simulation(
     no_of_generations: int,
     report_every_n: int,
     report_show: bool,
+    simulation_params: SimulationParams = default_params,
 ) -> None:
     """
     Run simulation with given parameters
@@ -34,6 +37,7 @@ def run_simulation(
     :param no_of_generations: Number of generations to simulate
     :param report_every_n: Report every n-th generation
     :param report_show: if <True> run plt.show(), otherwise plt.savefig(...)
+    :param simulation_params: optional parameter to set simulation params
     """
     line_mutator = LineMutator(G, all_stops, best_paths)
     genotype_mutator = GenotypeMutator(G, best_paths)
@@ -77,20 +81,57 @@ def run_simulation(
             params,
         ),
         population_sanitizer=BasicSanitizer(best_paths),
+        simulation_params=simulation_params,
     )
 
     sim_engine.run(no_of_generations, report_every_n, report_show=report_show)
 
 
-if __name__ == "__main__":
+def main_random():
     random.seed(SEED)
 
-    # G, best_paths = generate_city_graph(N)
+    G, best_paths = generate_city_graph(N)
+    all_stops = list(G.nodes)
+
+    start = time.time()
+    run_simulation(G, all_stops, best_paths, 100, 1, False, default_params.no_osmnx())
+    end = time.time()
+
+    print(f"took {end - start:6.4f}s")
+
+
+def main_cracow():
     G, best_paths = load_cracow_city_graph()
     all_stops = list(G.nodes)
 
     start = time.time()
-    run_simulation(G, all_stops, best_paths, 100, 1, False)
+    run_simulation(
+        G,
+        all_stops,
+        best_paths,
+        100,
+        1,
+        False,
+        default_params.with_osmnx().with_quadrature_scaling(),
+    )
     end = time.time()
 
     print(f"took {end - start:6.4f}s")
+
+
+if __name__ == "__main__":
+    print("available simulations:")
+    print("\t[0] Random city")
+    print("\t[1] Cracow city")
+    choice = input("your choice: ")
+
+    if choice == "0":
+        print("running on random city")
+        main_random()
+
+    elif choice == "1":
+        print("running on cracow city")
+        main_cracow()
+
+    else:
+        print("wrong input")

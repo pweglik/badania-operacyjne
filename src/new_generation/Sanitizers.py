@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 import functools
 import inspect
 from typing import Callable, Optional, ParamSpec, Type, TypeVar, Union
-from src.common.Genotype import Genotype
-from src.common.Line import Line
+from common.Genotype import Genotype
+from common.Line import Line
 
 
 P = ParamSpec("P")
