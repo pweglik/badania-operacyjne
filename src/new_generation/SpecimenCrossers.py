@@ -5,8 +5,8 @@ from networkx import Graph
 import numpy as np
 from common.Genotype import Genotype
 
-from src.new_generation import generation_util
-from src.common.Line import Line
+from new_generation import generation_util
+from common.Line import Line
 
 
 class GenotypeCrosser:

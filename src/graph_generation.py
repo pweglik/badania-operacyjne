@@ -2,6 +2,7 @@ from typing import Any
 import numpy as np
 
 import networkx as nx
+from networkx import convert_node_labels_to_integers
 
 from common.params import GRAPH_SEED, POINTS_MULTIPLIER
 
@@ -26,6 +27,7 @@ def generate_city_graph(n: int) -> tuple[nx.Graph, Any]:
 
     solitary = [n for n in nx.algorithms.isolate.isolates(G)]
     G.remove_nodes_from(solitary)
+    G = convert_node_labels_to_integers(G)
 
     positions = nx.function.get_node_attributes(G, "pos")
 
