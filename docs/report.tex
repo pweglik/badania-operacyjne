@@ -329,9 +329,9 @@ Możliwe mutacje:
     \item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z linii z G1 i G2 na połowy i jedną z połów każdej linii łączy z połową linii z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten, w którym dystans pomiędzy połączonymi przystankami jest minimalny
 \end{enumerate}
 
-\section{Rozwiązania niedopuszczalne}
+\subsection{Rozwiązania niedopuszczalne}
 
-\subsection{Sanitizer}
+\subsubsection{Sanitizer}
 
 \begin{enumerate}
     \item \lstinline{BasicSanitizer} - podstawowy sanitizer usuwający sąsiednie wystąpienia tego samego przystanku, linie o zerowej długości i osobników bez linii
@@ -392,11 +392,11 @@ Wyniki obliczeń głównego modułu zapisywane są w postaci rysunków w folder
 Moduł \lstinline|grid_search.py| został zaprojektowany jako wielowątkowy moduł uruchamiany z konsoli (w celu np. uruchomienia na zdalnym serwerze) z zapisem parametrów do pliku. Aby go uruchomić należy w terminalu wydać polecenie (głowny katalog projektu):
 \lstinputlisting{lst/rme/3rungrid}
 
+\paragraph{Wyniki}
+Wyniki zostaną zapisane w pliku \lstinline|gridsearch.csv| w katalogu \lstinline|results|. W konsoli wyświetlają się słowniki parametrów aktualnie testowanych.
+
 \subsubsection{Ustawianie parametrów}
 Aby ustawić parametry do sprawdzenia, należy edytować zmienną \lstinline|grid_search_params| w pliku \lstinline|grid_search.py|. Zawiera ona słownik list. Każdy hiperparametr ma swoją listę, w której zapisane są sprawdzane wartości tego parametru. Trzeba pamiętać że algorytm przeszukiwania sprawdza wszystkie możliwe kombinacje parametrów, więc sprawdzenie dużej przestrzeni może zająć znaczący czas.
-
-\subsubsection{Wyniki}
-Wyniki zostaną zapisane w pliku \lstinline|gridsearch.csv| w katalogu \lstinline|results|
 
 Parametry algorytmu można podać również do konstruktora klasy \lstinline|SimulationEngine|.
 
