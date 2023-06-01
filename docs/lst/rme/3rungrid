@@ -1,0 +1,1 @@
+PYTHONPATH="${PYTHONPATH}:$(pwd)/src" python src/grid_search.py
