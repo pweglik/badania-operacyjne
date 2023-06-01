@@ -14,20 +14,20 @@
 \contentsline {subsubsection}{\numberline {3.1.1}Reprezentacja mapy}{5}{subsubsection.3.1.1}%
 \contentsline {subsubsection}{\numberline {3.1.2}Reprezentacja genotypu}{5}{subsubsection.3.1.2}%
 \contentsline {subsubsection}{\numberline {3.1.3}Reprezentacja linii}{5}{subsubsection.3.1.3}%
-\contentsline {subsection}{\numberline {3.2}Rozwiązanie początkowe}{5}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Symulacja}{6}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Selekcja}{6}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Mutacja}{7}{subsection.3.5}%
-\contentsline {subsubsection}{\numberline {3.5.1}LineMutator}{7}{subsubsection.3.5.1}%
-\contentsline {subsubsection}{\numberline {3.5.2}GenotypeMutator}{7}{subsubsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.2}Rozwiązanie początkowe}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Symulacja}{7}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Selekcja}{7}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Mutacja}{8}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {3.5.1}LineMutator}{8}{subsubsection.3.5.1}%
+\contentsline {subsubsection}{\numberline {3.5.2}GenotypeMutator}{8}{subsubsection.3.5.2}%
 \contentsline {subsection}{\numberline {3.6}Krzyżowanie}{8}{subsection.3.6}%
 \contentsline {subsubsection}{\numberline {3.6.1}GenotypeCrosser}{8}{subsubsection.3.6.1}%
-\contentsline {section}{\numberline {4}Aplikacja}{8}{section.4}%
-\contentsline {section}{\numberline {5}Eksperymenty}{8}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Eksperymenty proste}{8}{subsection.5.1}%
+\contentsline {section}{\numberline {4}Aplikacja}{9}{section.4}%
+\contentsline {section}{\numberline {5}Eksperymenty}{9}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Eksperymenty proste}{9}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Przeszukiwanie siatki hiper-parametrów}{10}{subsection.5.2}%
-\contentsline {subsubsection}{\numberline {5.2.1}Dodatkowe operatory genetyczne}{15}{subsubsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.3}Eksperymenty z mapą Krakowa}{21}{subsection.5.3}%
-\contentsline {section}{\numberline {6}Podsumowanie}{21}{section.6}%
-\contentsline {section}{\numberline {7}Bibliografia}{22}{section.7}%
-\contentsline {section}{\numberline {8}Podział pracy}{22}{section.8}%
+\contentsline {subsubsection}{\numberline {5.2.1}Dodatkowe operatory genetyczne}{16}{subsubsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.3}Eksperymenty z mapą Krakowa}{22}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Podsumowanie}{22}{section.6}%
+\contentsline {section}{\numberline {7}Bibliografia}{23}{section.7}%
+\contentsline {section}{\numberline {8}Podział pracy}{23}{section.8}%

@@ -179,8 +179,16 @@ $x_{i,j}$ - czy linia $i$ zatrzymuje się na przystanku $j$, gdzie:
 \end{align*}
 gdzie
 \begin{itemize}
-	\item $K$ -- funkcja skalująca długość
+	\item $K$ -- funkcja skalująca długość, która dobrana odpowiednio pozwala uniknąć patologicznych sytuacji linii długości tylko 2 lub bardzo długich linii.
 \end{itemize}
+
+W generacji linii dla Krakowa użyto funkcji $K(s) = T - C \, (s - E)^2$, gdzie parametry przyjęto następująco:
+\begin{itemize}
+	\item $T=20000$ (top, wartość maksymalna funkcji)
+	\item $C=5$ (cutoff, współczynnik zmniejszania się funkcji)
+	\item $E=10$ (expected, "wartość oczekiwana", funkcja przyjmuje w $s=E$ maksimum)
+\end{itemize}
+
 Względem oryginalnego modelu zmieniło się:
 \begin{itemize}
 	\item Dodano funkcje $K$
