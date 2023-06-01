@@ -13,7 +13,7 @@ from SimultionEngine import SimulationEngine
 from new_generation.Mutators import GenotypeMutator, LineMutator
 from new_generation.SpecimenCrossers import GenotypeCrosser
 from common.params import N_IN_POPULATION, SEED, N
-from new_generation_function import NewGenerationRandomParams
+from new_generation.new_generation_function import NewGenerationRandomParams
 from src.new_generation.Sanitizers import BasicSanitizer
 from survival import n_best_survive
 

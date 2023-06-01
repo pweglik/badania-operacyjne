@@ -330,11 +330,66 @@ Możliwe mutacje:
 \end{enumerate}
 
 \section{Aplikacja}
+% Aplikacja -- krótka dokumentacja użytkownika
+% jak uruchomić
+% charakterystyka danych
+% funkcjonalność aplikacji
+% w jaki sposób ustawić parametry instancji
+% jak ustawić parametry algorytmu
+% wynikii sposób ich interpretacji
 
-Główny moduł znajduje się w pliku $main.py$ (zawiera on główną funkcję $run_simulation$). Szczegółowy opis i instrukcje znajduje się w $README.md$.
+Aby uruchomić aplikację należy zainstalować interpreter języka Python w wersji co najmniej 3.11. Należy także, przy pomocy programu \lstinline|pip| zainstalować wymagane biblioteki poleceniem:
+\lstinputlisting{lst/rme/1deps}
 
-Parametry algorytmu można podać również do konstruktora klasy Simulation Engine.
-% Aplikacja –krótkadokumentacja użytkownika(jak uruchomić, charakterystyka danych, funkcjonalność aplikacji, w jaki sposób ustawić parametry instancji, jak ustawić parametry algorytmu,wynikii sposób ich interpretacji)
+Aplikacja składa się z 3 modułów:
+\begin{itemize}
+	\item \lstinline|main.py| -- główny moduł aplikacji do uruchamiania eksperymentów,
+	\item \lstinline|grid_search.py| -- automatyczne wielordzeniowe przeszukiwanie hiperparametrów,
+	\item \lstinline|experiments.ipynb| -- notatnik Jupyter do szybkiego testowania algorytmu dla grafów losowych lub dla grafu miasta Krakowa.
+\end{itemize}
+
+\subsection{Notatnik Jupyter}
+Najłatwiejszą metodą uruchomienia aplikacji jest notatnik \lstinline|experiments.ipynb|. Pozwala on na szybkie uruchomienie algorytmu dla losowego grafu oraz dla grafu miasta Krakowa. Szybkie wyświetlanie wyników umożliwia weryfikację działania programu.
+
+\subsection{Głowny moduł}
+Plik \lstinline|main.py| służy jako przykład uruchomienia naszego algorytmu. Zawiera on funkcje \lstinline|run_simulation| przyjmującą następujące parametry:
+\begin{itemize}
+	\item \lstinline|G: Graph| - reprezentacja grafowa miasta,
+	\item \lstinline|all_stops: list[int]| - Przystanki w mieście (np. wszystkie wierzchołki w G)
+	\item \lstinline|best_paths| - słownik najkrótszych ścieżek pomiędzy każdymi dwoma przystankami w G
+	\item \lstinline|no_of_generations: int| - Liczba pokoleń do symulowania
+	\item \lstinline|report_every_n: int| - Zapisz/wyświetl wynik co N epok
+	\item \lstinline|report_show: bool| - jeżeli Prawda to wyświetl wyniki co N epok, jeżeli Fałsz to zapisz wynik do pliku w katalogu \lstinline|results|
+	\item \lstinline|simulation_params: SimulationParams| - opcjonalne parametry symulacji
+\end{itemize}
+
+\subsubsection{Ustawienie parametrów}
+Aby ustawić parametry przykładowego uruchomienia należy odszukać zmienną \lstinline|params| w funkcji \lstinline|run_simulations|. Zapisane są tam wszystkie parametry algorytmu genetycznego.
+
+\subsubsection{Uruchomienie}
+Żeby uruchomić główny moduł w konsoli, należy wykonać (w katalogu głównym):
+\lstinputlisting{lst/rme/2runmain}
+
+Skrypt zapyta nas o wybór miasta:
+\lstinputlisting{lst/rme/2mainex}
+Po dokonaniu wyboru rozpoczną się obliczenia.
+
+\paragraph{Wyniki}
+Wyniki obliczeń głównego modułu zapisywane są w postaci rysunków w folderze \lstinline|results|. W konsoli na bieżąco wyświetlane są statystyki:
+\lstinputlisting{lst/rme/2mainres}
+
+\subsection{Poszukiwanie hiperparametrów}
+Moduł \lstinline|grid_search.py| został zaprojektowany jako wielowątkowy moduł uruchamiany z konsoli (w celu np. uruchomienia na zdalnym serwerze) z zapisem parametrów do pliku. Aby go uruchomić należy w terminalu wydać polecenie (głowny katalog projektu):
+\lstinputlisting{lst/rme/3rungrid}
+
+\subsubsection{Ustawianie parametrów}
+Aby ustawić parametry do sprawdzenia, należy edytować zmienną \lstinline|grid_search_params| w pliku \lstinline|grid_search.py|. Zawiera ona słownik list. Każdy hiperparametr ma swoją listę, w której zapisane są sprawdzane wartości tego parametru. Trzeba pamiętać że algorytm przeszukiwania sprawdza wszystkie możliwe kombinacje parametrów, więc sprawdzenie dużej przestrzeni może zająć znaczący czas.
+
+\subsubsection{Wyniki}
+Wyniki zostaną zapisane w pliku \lstinline|gridsearch.csv| w katalogu \lstinline|results|
+
+Parametry algorytmu można podać również do konstruktora klasy \lstinline|SimulationEngine|.
+
 
 \section{Eksperymenty}
 Na naszym algorytmie przeprowadziliśmy szereg eksperymentów.
