@@ -257,7 +257,7 @@ Na początku, chcąc się skupić na realizacji algorytmu, wygenerowaliśmy los
         \State populacja = \Call {populacja\_początkowa}{ }
         \State \Call {zapisz\_populację}{ }
         \ForTo{i}{0}{\text{liczba\_pokoleń} - 1}
-        \State populacja = \Call{usuń\_puste}{populacja}
+        \State populacja = \Call{usun\_niedopuszczalne}{populacja}
         \State populacja\_dopasowanie = \Call{fitness}{populacja}
 
         \State populacja = \Call{funkcja\_przetrwania}{populacja, populacja\_dopasowanie}
@@ -329,6 +329,15 @@ Możliwe mutacje:
     \item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z linii z G1 i G2 na połowy i jedną z połów każdej linii łączy z połową linii z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten, w którym dystans pomiędzy połączonymi przystankami jest minimalny
 \end{enumerate}
 
+\section{Rozwiązania niedopuszczalne}
+
+\subsection{Sanitizer}
+
+\begin{enumerate}
+    \item \lstinline{BasicSanitizer} - podstawowy sanitizer usuwający sąsiednie wystąpienia tego samego przystanku, linie o zerowej długości i osobników bez linii
+    \item \lstinline{RejectingSanitizer(criterium_sanitizer: Sanitizer)} - sprawdza czy \lstinline{criterium_sanitizer} wprowadziłby jakiekolwiek zmiany w genotypie i jeżeli tak to go usuwa
+\end{enumerate}
+
 \section{Aplikacja}
 % Aplikacja -- krótka dokumentacja użytkownika
 % jak uruchomić
@@ -362,6 +371,7 @@ Plik \lstinline|main.py| służy jako przykład uruchomienia naszego algorytmu. 
 	\item \lstinline|report_show: bool| - jeżeli Prawda to wyświetl wyniki co N epok, jeżeli Fałsz to zapisz wynik do pliku w katalogu \lstinline|results|
 	\item \lstinline|simulation_params: SimulationParams| - opcjonalne parametry symulacji
 \end{itemize}
+
 
 \subsubsection{Ustawienie parametrów}
 Aby ustawić parametry przykładowego uruchomienia należy odszukać zmienną \lstinline|params| w funkcji \lstinline|run_simulations|. Zapisane są tam wszystkie parametry algorytmu genetycznego.
@@ -549,9 +559,10 @@ https://networkx.org/documentation/stable/index.html
     \end{itemize}
     \item Bartłomiej Wiśniewski - 25\%
     \begin{itemize}
-        \item stworzenie większości algorytmów mutujących i krzyżujących,
-        \item prace nad architekturą projektu (klasy Line i Genotype),
-        \item prace nad utrzymywaniem kodu (typing, rewizje i śledzenie tasków).
+        \item Stworzenie większości algorytmów mutujących i krzyżujących
+        \item Stworzenie logiki sprowadzającą osobników do obrzaru rozwiązań dozwolonych (Sanitizery)
+        \item Prace nad architekturą projektu (klasy Line i Genotype)
+        \item Prace nad utrzymywaniem kodu (typing, rewizje i śledzenie tasków)
     \end{itemize}
 \end{itemize}
 \end{document}
