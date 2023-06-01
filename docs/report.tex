@@ -239,7 +239,7 @@ Na początku, chcąc się skupić na realizacji algorytmu, wygenerowaliśmy los
         \State populacja = \Call {populacja\_początkowa}{ }
         \State \Call {zapisz\_populację}{ }
         \ForTo{i}{0}{\text{liczba\_pokoleń} - 1}
-        \State populacja = \Call{usuń\_puste}{populacja}
+        \State populacja = \Call{usun\_niedopuszczalne}{populacja}
         \State populacja\_dopasowanie = \Call{fitness}{populacja}
 
         \State populacja = \Call{funkcja\_przetrwania}{populacja, populacja\_dopasowanie}
@@ -309,6 +309,15 @@ Możliwe mutacje:
     \item \lstinline{merge_genotypes(G1, G2)} - tworzy nowy genotyp poprzez wybranie losowych lini z genotypów G1 i G2
     \item \lstinline{cycle_stops_shift(G1, G2)} - najpierw wykonuje \lstinline{merge_genotypes(G1, G2)}, a następnie \lstinline{GenotypeMutator.cycle_stops_shift(G)}
     \item \lstinline{line_based_merge(G1, G2)} - dzieli każdą z lini z G1 i G2 na połowy i jedną z połów każdej lini łączy z połową lini z drugiego genotypu. Z 4 możliwych przypadków połączenia wybiera ten w którym dystans pomiędzy połączonymi przystankami jest minimalny
+\end{enumerate}
+
+\section{Rozwiązania niedopuszczalne}
+
+\subsection{Sanitizer}
+
+\begin{enumerate}
+    \item \lstinline{BasicSanitizer} - podstawowy sanitizer usuwający sąsiednie wystąpienia tego samego przystanku, linie o zerowej długości i osobników bez linii
+    \item \lstinline{RejectingSanitizer(criterium_sanitizer: Sanitizer)} - sprawdza czy \lstinline{criterium_sanitizer} wprowadziłby jakiekolwiek zmiany w genotypie i jeżeli tak to go usuwa
 \end{enumerate}
 
 \chapter{Aplikacja}
@@ -459,6 +468,7 @@ Problem generowania linii autobusowych jest bardzo skomplikowany. W celu jego ro
     \item Bartłomiej Wiśniewski - 25\%
     \begin{itemize}
         \item Stworzenie większości algorytmów mutujących i krzyżujących
+        \item Stworzenie logiki sprowadzającą osobników do obrzaru rozwiązań dozwolonych (Sanitizery)
         \item Prace nad architekturą projektu (klasy Line i Genotype)
         \item Prace nad utrzymywaniem kodu (typing, rewizje i śledzenie tasków)
     \end{itemize}

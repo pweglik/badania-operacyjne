@@ -25,35 +25,6 @@ class Sanitizer(ABC):
     def sanitizeGenotype(self, genotype: Genotype) -> Optional[Genotype]:
         pass
 
-    def sanitize(
-        self, _fn: Callable[P, GL] | Callable[P, Optional[GL]]
-    ) -> Callable[P, Optional[GL]]:
-        if inspect.signature(_fn).return_annotation in [Line, Optional[Line]]:
-
-            @functools.wraps(_fn)
-            def lineWrapper(*args: P.args, **kwds: P.kwargs) -> Optional[Line]:
-                line = _fn(*args, **kwds)
-                if line is not None:
-                    return self.sanitizeLine(line)
-                else:
-                    return None
-
-            return lineWrapper
-
-        if inspect.signature(_fn).return_annotation in [Genotype, Optional[Genotype]]:
-
-            @functools.wraps(_fn)
-            def genotypeWrapper(*args: P.args, **kwds: P.kwargs) -> Optional[Genotype]:
-                genotype = _fn(*args, **kwds)
-                if genotype is not None:
-                    return self.sanitizeGenotype(genotype)
-                else:
-                    return None
-
-            return genotypeWrapper
-
-        return _fn
-
 
 class BasicSanitizer(Sanitizer):
     def sanitizeLine(self, line: Line) -> Optional[Line]:
@@ -90,13 +61,3 @@ class RejectingSanitizer(Sanitizer):
             genotype if self.delegate.sanitizeGenotype(genotype) == genotype else None
         )
 
-
-if __name__ == "__main__":
-    sanitizer = BasicSanitizer([])
-
-    @sanitizer.sanitize
-    def test(_: Genotype) -> Genotype:
-        return Genotype([])
-
-    print(test.__name__)
-    print(test(Genotype([])))
